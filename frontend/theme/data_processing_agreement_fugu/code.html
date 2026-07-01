@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Fugu - Data Processing Agreement</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Geist:wght@400;600&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-high": "#e9e7f2",
+                      "surface": "#fbf8ff",
+                      "on-primary-fixed": "#1c1b1b",
+                      "on-error": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "surface-container": "#efecf8",
+                      "surface-variant": "#e3e1ec",
+                      "on-secondary-fixed": "#0c006a",
+                      "surface-bright": "#fbf8ff",
+                      "surface-tint": "#5f5e5e",
+                      "surface-dim": "#dad9e4",
+                      "primary-fixed-dim": "#c9c6c5",
+                      "on-secondary-fixed-variant": "#332bbf",
+                      "primary-container": "#1c1b1b",
+                      "on-tertiary-container": "#868381",
+                      "accent-teal-glow": "#3FFFC0",
+                      "on-surface": "#1a1b23",
+                      "surface-container-low": "#f4f2fd",
+                      "background-alt": "#FAFAFA",
+                      "accent-magenta": "#FF2E9A",
+                      "tertiary-fixed-dim": "#cac6c3",
+                      "error-container": "#ffdad6",
+                      "on-primary": "#ffffff",
+                      "outline-variant": "#c4c7c7",
+                      "accent-violet": "#7B2FF7",
+                      "on-tertiary-fixed": "#1d1b1a",
+                      "primary": "#000000",
+                      "inverse-primary": "#c9c6c5",
+                      "outline": "#747878",
+                      "border-subtle": "#18181B",
+                      "surface-container-lowest": "#ffffff",
+                      "background": "#fbf8ff",
+                      "on-primary-container": "#858383",
+                      "secondary-fixed": "#e2dfff",
+                      "on-tertiary": "#ffffff",
+                      "inverse-on-surface": "#f1effa",
+                      "on-secondary-container": "#fffbff",
+                      "on-error-container": "#93000a",
+                      "tertiary-container": "#1d1b1a",
+                      "on-surface-variant": "#444748",
+                      "secondary-fixed-dim": "#c2c1ff",
+                      "inverse-surface": "#2f3038",
+                      "on-primary-fixed-variant": "#474646",
+                      "secondary": "#4a46d5",
+                      "tertiary-fixed": "#e6e1df",
+                      "tertiary": "#000000",
+                      "on-tertiary-fixed-variant": "#484645",
+                      "secondary-container": "#6462ef",
+                      "on-background": "#1a1b23",
+                      "error": "#ba1a1a",
+                      "surface-container-highest": "#e3e1ec",
+                      "primary-fixed": "#e5e2e1"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "48px",
+                      "unit": "8px",
+                      "max-width": "1440px",
+                      "margin-mobile": "16px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "label-caps": [
+                              "JetBrains Mono"
+                      ],
+                      "body-lg": [
+                              "Geist"
+                      ],
+                      "code-md": [
+                              "JetBrains Mono"
+                      ],
+                      "body-sm": [
+                              "Geist"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "headline-xl": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Geist"
+                      ],
+                      "code-sm": [
+                              "JetBrains Mono"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "label-caps": [
+                              "11px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "code-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "22px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-xl": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "code-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "18px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .brand-gradient {
+            background: linear-gradient(135deg, #7B2FF7 0%, #0c006a 100%);
+        }
+        .btn-primary {
+            position: relative;
+            background: linear-gradient(135deg, #7B2FF7 0%, #0c006a 100%);
+            color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 10px rgba(123, 47, 247, 0.15);
+        }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 0 15px rgba(123, 47, 247, 0.25), inset 0 0 0 1px #3FFFC0;
+        }
+        
+        /* Navigation Suppression Logic applied contextually - this is a legal document page, top global nav makes sense, side global nav does not (using document-specific TOC instead) */
+      </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased min-h-screen flex flex-col">
+<!-- TopNavBar (Shared Component JSON Mapping) -->
+<header class="flex justify-between items-center w-full px-margin-desktop h-16 sticky top-0 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant">
+<div class="flex items-center gap-6">
+<div class="font-headline-md text-headline-md font-bold text-primary">
+                Fugu
+            </div>
+<nav class="hidden md:flex gap-6">
+<!-- Highlight 'Docs' as closest semantic match for a DPA -->
+<a class="text-on-surface-variant font-body-md text-body-md hover:text-secondary transition-colors" href="#">Platform</a>
+<a class="text-on-surface-variant font-body-md text-body-md hover:text-secondary transition-colors" href="#">Solutions</a>
+<a aria-current="page" class="text-primary font-bold border-b-2 border-secondary font-body-md text-body-md hover:text-secondary transition-colors opacity-80 scale-95" href="#">Docs</a>
+<a class="text-on-surface-variant font-body-md text-body-md hover:text-secondary transition-colors" href="#">Pricing</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<!-- Search on Right (Implicit from JSON) -->
+<div class="hidden lg:flex items-center bg-surface-container-lowest border border-outline-variant rounded p-1">
+<span class="material-symbols-outlined text-on-surface-variant px-2 text-sm">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm py-1 w-48 text-on-surface font-body-sm" placeholder="Search..." type="text"/>
+</div>
+<a class="font-body-md text-body-md text-primary font-semibold hover:text-secondary transition-colors" href="#">Login</a>
+<a class="btn-primary font-body-md text-body-md px-4 py-2 font-semibold" href="#">Start free trial</a>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow flex flex-col md:flex-row w-full max-w-[1440px] mx-auto">
+<!-- Document Specific Table of Contents (NOT the global app SideNavBar, as per Semantic Shell Mandate for focused document views) -->
+<aside class="w-full md:w-64 shrink-0 p-margin-mobile md:p-margin-desktop md:sticky md:top-16 md:h-[calc(100vh-64px)] overflow-y-auto border-r border-outline-variant hidden md:block bg-background">
+<nav class="flex flex-col gap-1">
+<div class="font-label-caps text-label-caps text-on-surface-variant mb-4 uppercase tracking-wider">Contents</div>
+<a class="flex items-center gap-3 px-4 py-2 text-primary font-semibold border-l-2 border-secondary-container bg-surface-container-low transition-all font-body-sm text-body-sm" href="#definitions">
+                    Definitions
+                </a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:bg-surface-container transition-all border-l-2 border-transparent font-body-sm text-body-sm" href="#processing">
+                    Processing Details
+                </a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:bg-surface-container transition-all border-l-2 border-transparent font-body-sm text-body-sm" href="#security">
+                    Security Measures
+                </a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:bg-surface-container transition-all border-l-2 border-transparent font-body-sm text-body-sm" href="#subprocessors">
+                    Sub-processors
+                </a>
+</nav>
+</aside>
+<!-- Document Canvas -->
+<article class="flex-grow p-margin-mobile md:p-margin-desktop max-w-4xl bg-surface-container-lowest border-x border-outline-variant min-h-screen">
+<header class="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-12 gap-6">
+<div>
+<h1 class="font-headline-xl text-headline-xl text-primary mb-4">Data Processing Agreement</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Last updated: October 24, 2023</p>
+</div>
+<button class="bg-surface-container-lowest border border-primary text-primary px-4 py-2 rounded-lg font-body-sm text-body-sm font-semibold flex items-center gap-2 hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">download</span>
+                    Download PDF
+                </button>
+</header>
+<div class="prose prose-slate max-w-none text-on-surface font-body-md text-body-md space-y-8">
+<p>This Data Processing Agreement ("DPA") forms part of the Terms of Service or other written or electronic agreement between Fugu Enterprise ("Fugu") and the entity or person agreeing to these terms ("Customer") to reflect the parties' agreement with regard to the Processing of Personal Data.</p>
+<section class="scroll-mt-24" id="definitions">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-6 pb-2 border-b border-outline-variant">1. Definitions</h2>
+<ul class="list-none space-y-4 pl-0">
+<li class="flex gap-4">
+<span class="font-bold min-w-[120px]">"CCPA"</span>
+<span>means the California Consumer Privacy Act, Cal. Civ. Code § 1798.100 et seq., and its implementing regulations.</span>
+</li>
+<li class="flex gap-4">
+<span class="font-bold min-w-[120px]">"GDPR"</span>
+<span>means the Regulation (EU) 2016/679 of the European Parliament and of the Council of 27 April 2016 on the protection of natural persons with regard to the processing of personal data and on the free movement of such data.</span>
+</li>
+<li class="flex gap-4">
+<span class="font-bold min-w-[120px]">"Personal Data"</span>
+<span>means any information relating to an identified or identifiable natural person ('data subject') where such information is contained within Customer Data.</span>
+</li>
+</ul>
+</section>
+<section class="scroll-mt-24" id="processing">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-6 pb-2 border-b border-outline-variant">2. Processing Details</h2>
+<p class="mb-4">Fugu will only Process Personal Data on documented instructions from Customer, unless required to do so by applicable law to which Fugu is subject.</p>
+<div class="bg-background-alt border border-outline-variant rounded-lg p-6 font-code-sm text-code-sm text-on-surface">
+<p class="mb-2"><strong class="text-primary font-code-md">Nature and Purpose of Processing:</strong> Provision of the RAG Infrastructure services, routing, and necessary technical support.</p>
+<p class="mb-2"><strong class="text-primary font-code-md">Categories of Data Subjects:</strong> Customer's end-users, employees, or contractors whose data is embedded in queries.</p>
+<p><strong class="text-primary font-code-md">Types of Personal Data:</strong> Text inputs, query logs, API keys, metadata.</p>
+</div>
+</section>
+<section class="scroll-mt-24" id="security">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-6 pb-2 border-b border-outline-variant">3. Security Measures</h2>
+<p>Fugu implements and maintains appropriate technical and organizational security measures to protect Personal Data against Security Incidents, taking into account the state of the art, the costs of implementation and the nature, scope, context and purposes of Processing.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+<div class="border border-outline-variant rounded-[10px] p-4 bg-surface-container-lowest">
+<div class="flex items-center gap-2 mb-2 text-primary">
+<span class="material-symbols-outlined text-accent-violet">lock</span>
+<h3 class="font-headline-md text-headline-md text-sm">Encryption</h3>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">All Personal Data is encrypted at rest using AES-256 and in transit using TLS 1.3 or higher.</p>
+</div>
+<div class="border border-outline-variant rounded-[10px] p-4 bg-surface-container-lowest">
+<div class="flex items-center gap-2 mb-2 text-primary">
+<span class="material-symbols-outlined text-accent-teal-glow">admin_panel_settings</span>
+<h3 class="font-headline-md text-headline-md text-sm">Access Control</h3>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Strict role-based access control (RBAC) and mandatory MFA for all internal systems.</p>
+</div>
+</div>
+</section>
+<section class="scroll-mt-24 pb-24" id="subprocessors">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-6 pb-2 border-b border-outline-variant">4. Sub-processors</h2>
+<p class="mb-6">Customer provides a general authorization for Fugu to engage Sub-processors to Process Personal Data. The current list of Sub-processors is maintained below:</p>
+<div class="border border-outline-variant rounded-[10px] overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-background-alt border-b border-outline-variant">
+<th class="p-4 font-label-caps text-label-caps text-on-surface-variant">Entity Name</th>
+<th class="p-4 font-label-caps text-label-caps text-on-surface-variant">Service Provided</th>
+<th class="p-4 font-label-caps text-label-caps text-on-surface-variant">Location</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm text-on-surface">
+<tr class="border-b border-outline-variant">
+<td class="p-4 font-semibold text-primary">AWS (Amazon Web Services)</td>
+<td class="p-4">Cloud Infrastructure Hosting</td>
+<td class="p-4">United States (us-east-1)</td>
+</tr>
+<tr class="border-b border-outline-variant">
+<td class="p-4 font-semibold text-primary">Pinecone</td>
+<td class="p-4">Vector Database</td>
+<td class="p-4">United States</td>
+</tr>
+<tr>
+<td class="p-4 font-semibold text-primary">Datadog</td>
+<td class="p-4">System Monitoring &amp; Logs</td>
+<td class="p-4">United States</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</article>
+<!-- Right empty spacer to keep document centered visually if wide enough -->
+<div class="hidden lg:block lg:w-64 shrink-0 bg-background"></div>
+</main>
+</body></html>

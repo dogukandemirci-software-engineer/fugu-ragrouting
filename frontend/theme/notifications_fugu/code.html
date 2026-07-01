@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Notifications | Fugu Enterprise</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;display= those-fonts-dont-exist-but-geist-does" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Geist font is defined in the config, using Inter/JetBrains Mono as secondary backups via CDN -->
+<style>
+        @font-face {
+            font-family: 'Geist';
+            src: url('https://cdn.jsdelivr.net/npm/geist-font@1.1.0/fonts/geist-sans/Geist-Regular.woff2') format('woff2');
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: 'Geist';
+            src: url('https://cdn.jsdelivr.net/npm/geist-font@1.1.0/fonts/geist-sans/Geist-Bold.woff2') format('woff2');
+            font-weight: 700;
+        }
+        body { font-family: 'Geist', sans-serif; }
+        
+        .brand-gradient {
+            background: linear-gradient(135deg, #2A1FB8 0%, #7B2FF7 50%, #FF2E9A 100%);
+        }
+        
+        .primary-accent-button {
+            background: linear-gradient(135deg, #2A1FB8 0%, #7B2FF7 50%, #FF2E9A 100%);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .primary-accent-button::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.15), transparent);
+            pointer-events: none;
+        }
+        .primary-accent-button:hover {
+            box-shadow: 0 0 15px rgba(123, 47, 247, 0.25);
+            border: 1px solid #3FFFC0;
+        }
+
+        .unread-indicator {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #7B2FF7, #FF2E9A);
+        }
+
+        .glass-header {
+            background: rgba(251, 248, 255, 0.8);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-container": "#6462ef",
+                      "border-subtle": "#18181B",
+                      "accent-teal-glow": "#3FFFC0",
+                      "on-surface": "#1a1b23",
+                      "primary-fixed": "#e5e2e1",
+                      "primary-container": "#1c1b1b",
+                      "surface-bright": "#fbf8ff",
+                      "on-tertiary-fixed-variant": "#484645",
+                      "surface-container": "#efecf8",
+                      "on-background": "#1a1b23",
+                      "accent-violet": "#7B2FF7",
+                      "tertiary-fixed": "#e6e1df",
+                      "on-tertiary-fixed": "#1d1b1a",
+                      "on-primary": "#ffffff",
+                      "tertiary-fixed-dim": "#cac6c3",
+                      "on-secondary-container": "#fffbff",
+                      "primary-fixed-dim": "#c9c6c5",
+                      "on-tertiary": "#ffffff",
+                      "accent-magenta": "#FF2E9A",
+                      "on-primary-fixed-variant": "#474646",
+                      "on-tertiary-container": "#868381",
+                      "on-primary-container": "#858383",
+                      "secondary-fixed-dim": "#c2c1ff",
+                      "secondary": "#4a46d5",
+                      "surface-container-highest": "#e3e1ec",
+                      "outline-variant": "#c4c7c7",
+                      "inverse-surface": "#2f3038",
+                      "on-error-container": "#93000a",
+                      "background": "#fbf8ff",
+                      "secondary-fixed": "#e2dfff",
+                      "on-error": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "on-surface-variant": "#444748",
+                      "on-secondary": "#ffffff",
+                      "background-alt": "#FAFAFA",
+                      "surface-container-lowest": "#ffffff",
+                      "surface": "#fbf8ff",
+                      "surface-dim": "#dad9e4",
+                      "on-secondary-fixed": "#0c006a",
+                      "surface-container-low": "#f4f2fd",
+                      "surface-variant": "#e3e1ec",
+                      "inverse-primary": "#c9c6c5",
+                      "surface-container-high": "#e9e7f2",
+                      "on-primary-fixed": "#1c1b1b",
+                      "error": "#ba1a1a",
+                      "outline": "#747878",
+                      "surface-tint": "#5f5e5e",
+                      "on-secondary-fixed-variant": "#332bbf",
+                      "primary": "#000000",
+                      "inverse-on-surface": "#f1effa",
+                      "tertiary": "#000000",
+                      "tertiary-container": "#1d1b1a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "unit": "8px",
+                      "margin-desktop": "48px",
+                      "gutter": "24px",
+                      "max-width": "1440px",
+                      "margin-mobile": "16px"
+              },
+              "fontFamily": {
+                      "headline-md": ["Inter"],
+                      "code-md": ["JetBrains Mono"],
+                      "code-sm": ["JetBrains Mono"],
+                      "label-caps": ["JetBrains Mono"],
+                      "headline-lg": ["Inter"],
+                      "body-md": ["Geist"],
+                      "body-lg": ["Geist"],
+                      "body-sm": ["Geist"],
+                      "headline-xl": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "code-md": ["14px", {"lineHeight": "22px", "fontWeight": "400"}],
+                      "code-sm": ["12px", {"lineHeight": "18px", "fontWeight": "400"}],
+                      "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background-alt min-h-screen text-on-surface">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col h-screen w-64 border-r border-border-subtle bg-surface dark:bg-background z-50">
+<div class="p-6">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-10 h-10 brand-gradient rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">fluid_med</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Fugu</h1>
+<p class="text-[10px] font-label-caps uppercase tracking-widest text-on-surface-variant">RAG Infrastructure</p>
+</div>
+</div>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-body-md text-body-md">Documents</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">search_check</span>
+<span class="font-body-md text-body-md">Query Explorer</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">vpn_key</span>
+<span class="font-body-md text-body-md">API Keys</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-body-md text-body-md">Team</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="font-body-md text-body-md">Usage</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-primary font-bold border-l-2 border-secondary bg-surface-container-low" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-body-md text-body-md">Notifications</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</nav>
+</div>
+<div class="mt-auto p-6">
+<button class="primary-accent-button w-full py-3 rounded-[10px] text-white font-bold font-body-sm shadow-sm transition-transform active:scale-[0.98]">
+                Upgrade Plan
+            </button>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="sticky top-0 z-40 flex items-center justify-between px-margin-desktop w-full ml-64 max-w-[calc(100%-16rem)] h-16 bg-surface border-b border-border-subtle">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="w-full bg-background-alt border border-border-subtle rounded-lg py-2 pl-10 pr-4 text-body-sm focus:ring-1 focus:ring-secondary focus:border-secondary outline-none transition-all" placeholder="Search documentation or logs..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6 ml-gutter">
+<div class="flex items-center gap-4 text-on-surface-variant">
+<button class="hover:text-primary transition-colors flex items-center">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<button class="hover:text-primary transition-colors flex items-center relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-accent-magenta rounded-full border-2 border-surface"></span>
+</button>
+</div>
+<div class="h-8 w-[1px] bg-border-subtle"></div>
+<div class="flex items-center gap-3">
+<img class="w-8 h-8 rounded-full border border-border-subtle object-cover" data-alt="A professional headshot of a software engineer in a high-tech minimalist studio with cool blue and violet ambient lighting. The person is wearing a dark, sleek turtleneck, embodying a corporate modern and highly technical aesthetic. The background is softly blurred, showing hints of advanced computer hardware and glowing data server lights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEVEZiQMZHeJyOWTtUuuOAhiVvHKfZqdGIB1mtdAS3qtA8MRuXvQ1X0nbTJ4rwOHUmMtHlfNmKp_zwUAVPZ7rgEU4zQ0xjTly_UlfE2uCfOLwyOkGgw6OJ1GIy9qHRqCJxhMpw3xiZisTJyIxaZOGCJwynsKt7OlQT66A8DLRrRiFqkKTLhpazct5-iAmVgdQI0wJVDRzGrZqYtDcCI_mqOI439UhAcLox9s4PvfJbH-_ei_s5SGtI"/>
+<span class="font-body-sm font-semibold text-on-surface">Alex Chen</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 p-margin-desktop">
+<div class="max-w-[1000px] mx-auto">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2">Notifications</h2>
+<p class="text-on-surface-variant font-body-md">Manage your alerts, system updates, and security logs.</p>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-surface border border-primary text-primary rounded-lg font-bold font-body-sm hover:bg-surface-container-low transition-all active:scale-[0.99]">
+<span class="material-symbols-outlined text-[18px]">done_all</span>
+                    Mark all as read
+                </button>
+</div>
+<!-- Tabs -->
+<div class="flex border-b border-border-subtle mb-6 overflow-x-auto no-scrollbar">
+<button class="px-6 py-3 border-b-2 border-secondary text-primary font-bold font-body-sm whitespace-nowrap">All</button>
+<button class="px-6 py-3 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-body-sm whitespace-nowrap">Security</button>
+<button class="px-6 py-3 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-body-sm whitespace-nowrap">Billing</button>
+<button class="px-6 py-3 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-body-sm whitespace-nowrap">System</button>
+</div>
+<!-- Notification List -->
+<div class="space-y-4 pb-20">
+<!-- Item 1: Unread / Billing -->
+<div class="group relative bg-surface border border-border-subtle rounded-xl p-5 flex gap-4 transition-all hover:border-secondary overflow-hidden">
+<div class="unread-indicator"></div>
+<div class="flex-shrink-0 w-12 h-12 bg-surface-container-low rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-accent-violet">warning</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-headline-md text-body-lg font-bold text-primary">75% Quota Reached</h3>
+<span class="text-[11px] font-label-caps text-on-surface-variant">2 MINS AGO</span>
+</div>
+<p class="text-on-surface-variant font-body-sm leading-relaxed mb-3">Your monthly vector processing quota is approaching its limit. Upgrade your plan to avoid interruption of RAG services.</p>
+<div class="flex gap-3">
+<button class="text-secondary font-bold text-[13px] hover:underline">View Usage</button>
+<button class="text-on-surface-variant font-bold text-[13px] hover:text-primary">Dismiss</button>
+</div>
+</div>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+</div>
+<!-- Item 2: Unread / Security -->
+<div class="group relative bg-surface border border-border-subtle rounded-xl p-5 flex gap-4 transition-all hover:border-secondary overflow-hidden">
+<div class="unread-indicator"></div>
+<div class="flex-shrink-0 w-12 h-12 bg-surface-container-low rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-accent-magenta">security</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-headline-md text-body-lg font-bold text-primary">New Login Detected</h3>
+<span class="text-[11px] font-label-caps text-on-surface-variant">1 HOUR AGO</span>
+</div>
+<p class="text-on-surface-variant font-body-sm leading-relaxed mb-3">A new login was detected from a Chrome browser on Windows (IP: 192.168.1.1, San Francisco, US). If this wasn't you, secure your account immediately.</p>
+<div class="flex gap-3">
+<button class="text-secondary font-bold text-[13px] hover:underline">Review Activity</button>
+</div>
+</div>
+</div>
+<!-- Item 3: Read / System -->
+<div class="group relative bg-surface border border-border-subtle rounded-xl p-5 flex gap-4 opacity-75 transition-all hover:opacity-100">
+<div class="flex-shrink-0 w-12 h-12 bg-surface-container-low rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">info</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-headline-md text-body-lg font-bold text-primary">System Maintenance Complete</h3>
+<span class="text-[11px] font-label-caps text-on-surface-variant">5 HOURS AGO</span>
+</div>
+<p class="text-on-surface-variant font-body-sm leading-relaxed">The scheduled database optimization for the US-East-1 region has been successfully completed. No downtime was recorded.</p>
+</div>
+</div>
+<!-- Item 4: Read / Billing -->
+<div class="group relative bg-surface border border-border-subtle rounded-xl p-5 flex gap-4 opacity-75 transition-all hover:opacity-100">
+<div class="flex-shrink-0 w-12 h-12 bg-surface-container-low rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">receipt_long</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-headline-md text-body-lg font-bold text-primary">Invoice Available: OCT-2024</h3>
+<span class="text-[11px] font-label-caps text-on-surface-variant">OCT 24</span>
+</div>
+<p class="text-on-surface-variant font-body-sm leading-relaxed mb-3">Your invoice for the period of October 1st to October 31st is now ready for download in the billing portal.</p>
+<button class="text-on-surface-variant font-bold text-[13px] hover:text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">download</span> Download PDF
+                        </button>
+</div>
+</div>
+<!-- Item 5: Read / System -->
+<div class="group relative bg-surface border border-border-subtle rounded-xl p-5 flex gap-4 opacity-75 transition-all hover:opacity-100">
+<div class="flex-shrink-0 w-12 h-12 bg-surface-container-low rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-headline-md text-body-lg font-bold text-primary">New Feature: Hybrid Search</h3>
+<span class="text-[11px] font-label-caps text-on-surface-variant">OCT 22</span>
+</div>
+<p class="text-on-surface-variant font-body-sm leading-relaxed mb-3">Hybrid search is now available for all enterprise clusters. Combine semantic vector search with traditional keyword search for improved accuracy.</p>
+<button class="text-secondary font-bold text-[13px] hover:underline">Read Documentation</button>
+</div>
+</div>
+</div>
+<!-- Empty State Illustration Placeholder (Asymmetric layout helper) -->
+<div class="mt-12 p-8 border-2 border-dashed border-border-subtle rounded-2xl flex flex-col items-center justify-center text-center bg-background">
+<div class="w-24 h-24 mb-6 rounded-full bg-surface flex items-center justify-center border border-border-subtle shadow-sm relative">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant">notifications_off</span>
+<div class="absolute -top-1 -right-1 w-6 h-6 brand-gradient rounded-full flex items-center justify-center text-[10px] text-white font-bold">!</div>
+</div>
+<h4 class="font-headline-md text-primary mb-2">Configure custom alerts</h4>
+<p class="text-on-surface-variant font-body-md max-w-sm mx-auto mb-6">Want to get notified about specific infrastructure events? Set up custom webhooks or email alerts.</p>
+<button class="secondary-button px-6 py-2 border border-primary font-bold rounded-lg text-body-sm hover:bg-primary hover:text-white transition-all">Configure Alerts</button>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="flex justify-between items-center px-margin-desktop py-4 mt-auto ml-64 border-t border-border-subtle bg-surface-container-lowest dark:bg-surface-container-low">
+<div class="flex items-center gap-4">
+<span class="font-label-caps text-label-caps text-primary uppercase">Fugu Systems</span>
+<span class="text-on-surface-variant font-code-sm text-code-sm">© 2024 Fugu Systems Inc.</span>
+</div>
+<div class="flex gap-6 text-on-surface-variant font-code-sm text-code-sm">
+<a class="hover:underline hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">Documentation</a>
+<a class="hover:underline hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">API Status</a>
+<a class="hover:underline hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">Privacy Policy</a>
+</div>
+</footer>
+<script>
+        // Simple micro-interaction for notification items
+        document.querySelectorAll('.group').forEach(item => {
+            item.addEventListener('click', () => {
+                const indicator = item.querySelector('.unread-indicator');
+                if (indicator) {
+                    indicator.style.opacity = '0';
+                    item.classList.add('opacity-75');
+                    setTimeout(() => {
+                        indicator.remove();
+                    }, 300);
+                }
+            });
+        });
+    </script>
+</body></html>

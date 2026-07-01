@@ -1,0 +1,13 @@
+{
+  "name": "fugu-example",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "ts-node app.ts"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.2",
+    "@types/node": "^20.10.0"
+  }
+}

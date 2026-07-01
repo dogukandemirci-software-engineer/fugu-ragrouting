@@ -1,0 +1,134 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Geist font (served via Vercel CDN or local) */
+@import url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/style.css');
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: 'Geist', 'Inter', sans-serif;
+    color: theme('colors.on-surface');
+    background-color: theme('colors.background');
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', sans-serif;
+  }
+
+  code, pre, .font-code {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer components {
+  /* Brand gradient button */
+  .btn-brand {
+    @apply inline-flex items-center gap-2 px-6 py-3 rounded-card text-body-md font-body text-white
+           transition-all duration-200 active:scale-[0.98];
+    background: linear-gradient(135deg, #7B2FF7 0%, #2A1FB8 50%, #FF2E9A 100%);
+    box-shadow: 0 4px 10px -2px rgba(123, 47, 247, 0.15);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-brand::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.1), transparent);
+    pointer-events: none;
+  }
+
+  .btn-brand:hover {
+    box-shadow: 0 0 15px rgba(123, 47, 247, 0.25);
+    outline: 1px solid #3FFFC0;
+  }
+
+  /* Secondary outline button */
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg text-body-sm font-body
+           border border-border-subtle text-primary bg-surface-container-lowest
+           hover:bg-surface-container transition-colors duration-200;
+  }
+
+  /* Destructive button */
+  .btn-destructive {
+    @apply inline-flex items-center gap-2 px-3 py-1 rounded-lg text-[12px] font-bold
+           border border-error text-error uppercase tracking-wider
+           hover:bg-error hover:text-white transition-all duration-200;
+  }
+
+  /* Glass panel */
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(24, 24, 27, 0.1);
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    background: linear-gradient(135deg, #7B2FF7, #3FFFC0, #FF2E9A);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Accent border card (plan card, etc.) */
+  .accent-border {
+    position: relative;
+  }
+
+  .accent-border::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(135deg, #7B2FF7, #3FFFC0);
+    border-radius: 11px;
+    z-index: -1;
+  }
+
+  /* Card defaults */
+  .card {
+    @apply bg-surface-container-lowest border border-outline-variant rounded-card p-6;
+  }
+
+  /* Sidebar nav item */
+  .nav-item {
+    @apply flex items-center gap-3 px-4 py-2 rounded-lg text-on-surface-variant
+           hover:text-primary hover:bg-surface-container-low transition-colors duration-150
+           text-body-sm font-body cursor-pointer;
+  }
+
+  .nav-item-active {
+    @apply nav-item text-primary font-bold bg-surface-container-low
+           border-l-2 border-secondary;
+  }
+
+  /* Badge variants */
+  .badge-full-access {
+    @apply bg-secondary-container text-white text-label-caps px-2 py-0.5 rounded-full;
+  }
+
+  .badge-read-only {
+    @apply bg-surface-container-highest text-on-surface text-label-caps px-2 py-0.5 rounded-full;
+  }
+
+  .badge-success {
+    @apply text-[12px] font-bold px-2 py-0.5 rounded-md;
+    background-color: #ECFDF5;
+    color: #059669;
+  }
+
+  .badge-error {
+    @apply text-[12px] font-bold px-2 py-0.5 rounded-md bg-error-container text-on-error-container;
+  }
+}

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Webhooks &amp; Integrations | Fugu Enterprise</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+        
+        /* Custom Geist-like body font fallback */
+        @font-face {
+            font-family: 'Geist';
+            src: url('https://cdn.jsdelivr.net/npm/geist-font@1.1.0/fonts/geist-sans/Geist-Regular.woff2') format('woff2');
+        }
+
+        body {
+            font-family: 'Geist', sans-serif;
+            background-color: #fbf8ff;
+        }
+
+        .brand-gradient {
+            background: linear-gradient(135deg, #7B2FF7 0%, #2A1FB8 50%, #FF2E9A 100%);
+        }
+
+        .primary-accent-button {
+            background: linear-gradient(135deg, #7B2FF7 0%, #2A1FB8 50%, #FF2E9A 100%);
+            position: relative;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 10px rgba(123, 47, 247, 0.15);
+        }
+
+        .primary-accent-button::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.1), transparent);
+            border-radius: 10px;
+        }
+
+        .primary-accent-button:hover {
+            box-shadow: 0 0 15px rgba(123, 47, 247, 0.25);
+            outline: 1px solid #3FFFC0;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #18181B;
+            border-radius: 10px;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-container": "#6462ef",
+                      "border-subtle": "#18181B",
+                      "accent-teal-glow": "#3FFFC0",
+                      "on-surface": "#1a1b23",
+                      "primary-fixed": "#e5e2e1",
+                      "primary-container": "#1c1b1b",
+                      "surface-bright": "#fbf8ff",
+                      "on-tertiary-fixed-variant": "#484645",
+                      "surface-container": "#efecf8",
+                      "on-background": "#1a1b23",
+                      "accent-violet": "#7B2FF7",
+                      "tertiary-fixed": "#e6e1df",
+                      "on-tertiary-fixed": "#1d1b1a",
+                      "on-primary": "#ffffff",
+                      "tertiary-fixed-dim": "#cac6c3",
+                      "on-secondary-container": "#fffbff",
+                      "primary-fixed-dim": "#c9c6c5",
+                      "on-tertiary": "#ffffff",
+                      "accent-magenta": "#FF2E9A",
+                      "on-primary-fixed-variant": "#474646",
+                      "on-tertiary-container": "#868381",
+                      "on-primary-container": "#858383",
+                      "secondary-fixed-dim": "#c2c1ff",
+                      "secondary": "#4a46d5",
+                      "surface-container-highest": "#e3e1ec",
+                      "outline-variant": "#c4c7c7",
+                      "inverse-surface": "#2f3038",
+                      "on-error-container": "#93000a",
+                      "background": "#fbf8ff",
+                      "secondary-fixed": "#e2dfff",
+                      "on-error": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "on-surface-variant": "#444748",
+                      "on-secondary": "#ffffff",
+                      "background-alt": "#FAFAFA",
+                      "surface-container-lowest": "#ffffff",
+                      "surface": "#fbf8ff",
+                      "surface-dim": "#dad9e4",
+                      "on-secondary-fixed": "#0c006a",
+                      "surface-container-low": "#f4f2fd",
+                      "surface-variant": "#e3e1ec",
+                      "inverse-primary": "#c9c6c5",
+                      "surface-container-high": "#e9e7f2",
+                      "on-primary-fixed": "#1c1b1b",
+                      "error": "#ba1a1a",
+                      "outline": "#747878",
+                      "surface-tint": "#5f5e5e",
+                      "on-secondary-fixed-variant": "#332bbf",
+                      "primary": "#000000",
+                      "inverse-on-surface": "#f1effa",
+                      "tertiary": "#000000",
+                      "tertiary-container": "#1d1b1a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "unit": "8px",
+                      "margin-desktop": "48px",
+                      "gutter": "24px",
+                      "max-width": "1440px",
+                      "margin-mobile": "16px"
+              },
+              "fontFamily": {
+                      "headline-md": ["Inter"],
+                      "code-md": ["JetBrains Mono"],
+                      "code-sm": ["JetBrains Mono"],
+                      "label-caps": ["JetBrains Mono"],
+                      "headline-lg": ["Inter"],
+                      "body-md": ["Geist"],
+                      "body-lg": ["Geist"],
+                      "body-sm": ["Geist"],
+                      "headline-xl": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "code-md": ["14px", {"lineHeight": "22px", "fontWeight": "400"}],
+                      "code-sm": ["12px", {"lineHeight": "18px", "fontWeight": "400"}],
+                      "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface">
+<!-- Side Navigation Shell -->
+<aside class="fixed left-0 top-0 h-full flex flex-col bg-surface dark:bg-background h-screen w-64 border-r border-border-subtle z-50">
+<div class="p-6 flex flex-col gap-1">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-xl">charging_station</span>
+</div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Fugu Enterprise</h1>
+</div>
+<p class="font-label-caps text-label-caps text-on-surface-variant opacity-70">RAG Infrastructure</p>
+</div>
+<nav class="flex-1 px-4 py-4 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-body-md text-body-md">Documents</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">search_check</span>
+<span class="font-body-md text-body-md">Query Explorer</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">vpn_key</span>
+<span class="font-body-md text-body-md">API Keys</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-primary font-bold border-l-2 border-secondary bg-surface-container-low" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-body-md text-body-md">Team</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="font-body-md text-body-md">Usage</span>
+</a>
+</nav>
+<div class="p-4 mt-auto">
+<button class="w-full py-2 px-4 rounded-lg border border-border-subtle font-body-sm text-body-sm hover:bg-surface-container-high transition-colors">
+                Upgrade Plan
+            </button>
+</div>
+</aside>
+<!-- Top Navigation Shell -->
+<header class="sticky top-0 z-40 flex items-center justify-between px-margin-desktop w-full ml-64 max-w-[calc(100%-16rem)] h-16 bg-surface border-b border-border-subtle">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md focus-within:ring-1 focus-within:ring-secondary rounded-lg">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="w-full bg-surface border border-border-subtle rounded-lg py-1.5 pl-10 pr-4 font-body-sm text-body-sm focus:outline-none" placeholder="Search webhooks..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<nav class="hidden md:flex items-center gap-6">
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Documentation</a>
+<a class="font-body-sm text-body-sm text-primary border-b-2 border-secondary" href="#">Integrations</a>
+</nav>
+<div class="flex items-center gap-3 pl-6 border-l border-border-subtle/20">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary">help_outline</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-high overflow-hidden border border-border-subtle">
+<img class="w-full h-full object-cover" data-alt="Close-up professional headshot of a software engineer with glasses, looking directly at the camera with a neutral expression. The lighting is soft and cinematic with a high-key, modern white aesthetic background that fits an enterprise software dashboard look. The style is sharp and high-resolution, following the minimalist color palette of white, gray, and black." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlnaPYOkdlY3ODi0ZOXjDY6SeRcHACKQ1scWxIV4RvwmWlxLz6Xvdn02YxpD8ZbRVWr2wKJGwbelcApjU4CAkI0C2eTMUKRPKR_ktSEeTz6xay7Y79WdkKFjlcbMa-Ftj4nN9wzmt1SkqyvH7PVTD_83Sg-z-NM-jJknUsby53ayPJx_Nn7ngmBVIhuTYGtIBSPsbgfj4PbNx5DytcFyELO41s80MIQ6Y3F0RDW73GaPAmzmF_RG7P"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-64 p-margin-desktop max-w-screen-xl">
+<!-- Webhooks Header Section -->
+<section class="flex items-center justify-between mb-10">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2">Webhooks</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl">Configure HTTP callbacks to receive real-time notifications when events happen in your RAG pipelines.</p>
+</div>
+<button class="primary-accent-button px-6 py-3 rounded-xl font-body-md text-body-md font-semibold text-white flex items-center gap-2">
+<span class="material-symbols-outlined">add</span>
+                Add Webhook
+            </button>
+</section>
+<!-- Webhooks Table Section -->
+<section class="mb-16">
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-background-alt border-b border-border-subtle">
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase">Name</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase">URL</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase">Events</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase text-center">Status</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase">Last Fired</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle/10">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-accent-teal-glow"></div>
+<span class="font-body-md text-body-md font-bold">Slack Notifications</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="font-code-sm text-code-sm text-on-surface-variant">hooks.slack.com/services/T02...</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-wrap gap-1">
+<span class="px-2 py-0.5 bg-surface-container border border-border-subtle/20 rounded font-code-sm text-[10px]">document.indexed</span>
+</div>
+</td>
+<td class="px-6 py-5 text-center">
+<span class="px-2 py-1 rounded-full bg-green-50 text-green-700 text-[10px] font-bold border border-green-200 uppercase">Active</span>
+</td>
+<td class="px-6 py-5">
+<span class="font-body-sm text-body-sm text-on-surface-variant">2 mins ago</span>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary">more_vert</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-accent-magenta"></div>
+<span class="font-body-md text-body-md font-bold">Ingestion Errors</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="font-code-sm text-code-sm text-on-surface-variant">api.pagerduty.com/v2/enqueue</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-wrap gap-1">
+<span class="px-2 py-0.5 bg-surface-container border border-border-subtle/20 rounded font-code-sm text-[10px]">quota.limit_reached</span>
+<span class="px-2 py-0.5 bg-surface-container border border-border-subtle/20 rounded font-code-sm text-[10px]">ingestion.failed</span>
+</div>
+</td>
+<td class="px-6 py-5 text-center">
+<span class="px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold border border-border-subtle/10 uppercase">Inactive</span>
+</td>
+<td class="px-6 py-5">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Never</span>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary">more_vert</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- Integrations Grid Section -->
+<section>
+<div class="mb-8">
+<h3 class="font-headline-md text-headline-md text-primary mb-2">Available Integrations</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Native connectors to streamline your observability and alerting workflow.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Slack Card -->
+<div class="bg-surface border border-border-subtle p-6 rounded-xl flex flex-col hover:border-accent-violet transition-colors">
+<div class="w-12 h-12 bg-white border border-border-subtle/10 rounded-lg flex items-center justify-center mb-4 shadow-sm">
+<span class="material-symbols-outlined text-primary text-3xl">chat</span>
+</div>
+<h4 class="font-body-lg text-body-lg font-bold mb-2">Slack</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex-1 mb-6">Receive index updates and system alerts directly in your Slack channels.</p>
+<button class="w-full py-2 border border-primary rounded-lg font-body-sm text-body-sm font-bold hover:bg-primary hover:text-white transition-all">Connect</button>
+</div>
+<!-- Discord Card -->
+<div class="bg-surface border border-border-subtle p-6 rounded-xl flex flex-col hover:border-accent-violet transition-colors">
+<div class="w-12 h-12 bg-white border border-border-subtle/10 rounded-lg flex items-center justify-center mb-4 shadow-sm">
+<span class="material-symbols-outlined text-primary text-3xl">sports_esports</span>
+</div>
+<h4 class="font-body-lg text-body-lg font-bold mb-2">Discord</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex-1 mb-6">Automate community notifications and monitor RAG usage through Discord webhooks.</p>
+<button class="w-full py-2 border border-primary rounded-lg font-body-sm text-body-sm font-bold hover:bg-primary hover:text-white transition-all">Connect</button>
+</div>
+<!-- PagerDuty Card -->
+<div class="bg-surface border border-border-subtle p-6 rounded-xl flex flex-col hover:border-accent-violet transition-colors">
+<div class="w-12 h-12 bg-white border border-border-subtle/10 rounded-lg flex items-center justify-center mb-4 shadow-sm">
+<span class="material-symbols-outlined text-primary text-3xl">notifications_active</span>
+</div>
+<h4 class="font-body-lg text-body-lg font-bold mb-2">PagerDuty</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex-1 mb-6">Critical alert routing and incident management for high-availability production RAG.</p>
+<button class="w-full py-2 border border-primary rounded-lg font-body-sm text-body-sm font-bold hover:bg-primary hover:text-white transition-all">Connect</button>
+</div>
+<!-- Email Card -->
+<div class="bg-surface border border-border-subtle p-6 rounded-xl flex flex-col hover:border-accent-violet transition-colors">
+<div class="w-12 h-12 bg-white border border-border-subtle/10 rounded-lg flex items-center justify-center mb-4 shadow-sm">
+<span class="material-symbols-outlined text-primary text-3xl">mail</span>
+</div>
+<h4 class="font-body-lg text-body-lg font-bold mb-2">Email</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex-1 mb-6">Scheduled reports and activity digests delivered straight to your inbox.</p>
+<button class="w-full py-2 border border-primary rounded-lg font-body-sm text-body-sm font-bold hover:bg-primary hover:text-white transition-all">Connect</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Shell -->
+<footer class="flex justify-between items-center px-margin-desktop py-4 border-t border-border-subtle mt-auto ml-64 bg-surface-container-lowest text-on-surface-variant">
+<div class="flex items-center gap-6">
+<span class="font-label-caps text-label-caps text-primary">FUGU SYSTEMS</span>
+<span class="font-code-sm text-code-sm opacity-60">© 2024 Fugu Systems Inc.</span>
+</div>
+<div class="flex items-center gap-6">
+<a class="font-code-sm text-code-sm hover:underline hover:text-primary transition-colors" href="#">Documentation</a>
+<a class="font-code-sm text-code-sm hover:underline hover:text-primary transition-colors" href="#">API Status</a>
+<a class="font-code-sm text-code-sm hover:underline hover:text-primary transition-colors" href="#">Privacy Policy</a>
+</div>
+</footer>
+<script>
+        // Simple micro-interaction for active row
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('click', () => {
+                row.classList.toggle('bg-surface-container-low');
+                row.style.transform = 'scale(0.998)';
+                setTimeout(() => {
+                    row.style.transform = 'scale(1)';
+                }, 150);
+            });
+        });
+
+        // Search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-accent-violet/20');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-accent-violet/20');
+        });
+    </script>
+</body></html>

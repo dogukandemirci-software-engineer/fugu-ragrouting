@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Fugu Dashboard - Security Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Geist:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#e9e7f2",
+                        "surface": "#fbf8ff",
+                        "on-primary-fixed": "#1c1b1b",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "surface-container": "#efecf8",
+                        "surface-variant": "#e3e1ec",
+                        "on-secondary-fixed": "#0c006a",
+                        "surface-bright": "#fbf8ff",
+                        "surface-tint": "#5f5e5e",
+                        "surface-dim": "#dad9e4",
+                        "primary-fixed-dim": "#c9c6c5",
+                        "on-secondary-fixed-variant": "#332bbf",
+                        "primary-container": "#1c1b1b",
+                        "on-tertiary-container": "#868381",
+                        "accent-teal-glow": "#3FFFC0",
+                        "on-surface": "#1a1b23",
+                        "surface-container-low": "#f4f2fd",
+                        "background-alt": "#FAFAFA",
+                        "accent-magenta": "#FF2E9A",
+                        "tertiary-fixed-dim": "#cac6c3",
+                        "error-container": "#ffdad6",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#c4c7c7",
+                        "accent-violet": "#7B2FF7",
+                        "on-tertiary-fixed": "#1d1b1a",
+                        "primary": "#000000",
+                        "inverse-primary": "#c9c6c5",
+                        "outline": "#747878",
+                        "border-subtle": "#18181B",
+                        "surface-container-lowest": "#ffffff",
+                        "background": "#fbf8ff",
+                        "on-primary-container": "#858383",
+                        "secondary-fixed": "#e2dfff",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#f1effa",
+                        "on-secondary-container": "#fffbff",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#1d1b1a",
+                        "on-surface-variant": "#444748",
+                        "secondary-fixed-dim": "#c2c1ff",
+                        "inverse-surface": "#2f3038",
+                        "on-primary-fixed-variant": "#474646",
+                        "secondary": "#4a46d5",
+                        "tertiary-fixed": "#e6e1df",
+                        "tertiary": "#000000",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "secondary-container": "#6462ef",
+                        "on-background": "#1a1b23",
+                        "error": "#ba1a1a",
+                        "surface-container-highest": "#e3e1ec",
+                        "primary-fixed": "#e5e2e1"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "48px",
+                        "unit": "8px",
+                        "max-width": "1440px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["JetBrains Mono"],
+                        "body-lg": ["Geist"],
+                        "code-md": ["JetBrains Mono"],
+                        "body-sm": ["Geist"],
+                        "headline-md": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "body-md": ["Geist"],
+                        "code-sm": ["JetBrains Mono"],
+                        "headline-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "code-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "code-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .brand-gradient {
+            background: linear-gradient(135deg, #7B2FF7 0%, #3FFFC0 100%);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #7B2FF7 0%, #3FFFC0 100%);
+            color: white;
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 0 15px rgba(123, 47, 247, 0.15);
+            transition: all 0.2s ease;
+        }
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 10px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.1), transparent);
+            pointer-events: none;
+        }
+        .btn-primary:hover {
+            box-shadow: inset 0 0 0 1px #3FFFC0, 0 0 20px rgba(123, 47, 247, 0.25);
+        }
+        
+        .toggle-active {
+            background: linear-gradient(135deg, #7B2FF7 0%, #3FFFC0 100%);
+        }
+        .toggle-active .toggle-dot {
+            transform: translateX(100%);
+            border-color: #3FFFC0;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md text-body-md min-h-screen flex antialiased">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-full flex flex-col py-6 bg-surface-container-lowest border-r border-outline-variant w-64 z-40">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg brand-gradient flex items-center justify-center text-white font-bold">F</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-black text-primary">Fugu Enterprise</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">RAG Infrastructure</p>
+</div>
+</div>
+<div class="flex-1 flex flex-col gap-2 px-2">
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-sm text-body-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-body-sm text-body-sm">Documents</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+<span class="font-body-sm text-body-sm">Query Explorer</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="vpn_key">vpn_key</span>
+<span class="font-body-sm text-body-sm">API Keys</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-body-sm text-body-sm">Team</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-primary font-semibold border-l-2 border-secondary-container bg-surface-container-low" href="#">
+<span class="material-symbols-outlined text-secondary" data-icon="settings">settings</span>
+<span class="font-body-sm text-body-sm">Settings</span>
+</a>
+</div>
+<div class="px-4 mt-auto">
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="swap_horiz">swap_horiz</span>
+<span class="font-body-sm text-body-sm">Switch Organization</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center w-full px-gutter h-14 bg-surface/80 backdrop-blur-md border-b border-outline-variant sticky top-0 z-30">
+<div class="flex items-center gap-4">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">Fugu Dashboard</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="pl-10 pr-4 py-1.5 rounded-full border border-outline-variant bg-surface text-body-sm focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary w-64 transition-all" placeholder="Search settings..." type="text"/>
+</div>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Settings Content -->
+<div class="p-margin-desktop flex-1 max-w-[1000px] w-full mx-auto">
+<div class="mb-8">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2">Security Settings</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Manage authentication, access controls, and active sessions for your organization.</p>
+</div>
+<!-- SSO / SAML Configuration (Enterprise) -->
+<section class="bg-surface-container-lowest border border-border-subtle rounded-xl mb-8 overflow-hidden">
+<div class="bg-background-alt px-6 py-4 border-b border-border-subtle flex justify-between items-center">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="shield_lock">shield_lock</span>
+<h3 class="font-headline-md text-headline-md text-primary">SSO / SAML Configuration</h3>
+</div>
+<span class="bg-surface-container-high text-primary font-label-caps text-label-caps px-2 py-1 rounded border border-outline-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="lock">lock</span>
+                        ENTERPRISE
+                    </span>
+</div>
+<div class="p-6">
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-6">Configure Single Sign-On using your preferred identity provider. This feature requires an Enterprise license.</p>
+<div class="flex flex-col gap-4 max-w-md">
+<div>
+<label class="block font-label-caps text-label-caps text-primary mb-1">IdP Entity ID</label>
+<input class="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface-container text-on-surface-variant opacity-70 cursor-not-allowed" disabled="" placeholder="e.g., https://sts.windows.net/..." type="text"/>
+</div>
+<div>
+<label class="block font-label-caps text-label-caps text-primary mb-1">SSO URL</label>
+<input class="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface-container text-on-surface-variant opacity-70 cursor-not-allowed" disabled="" placeholder="e.g., https://login.microsoftonline.com/..." type="text"/>
+</div>
+<div>
+<label class="block font-label-caps text-label-caps text-primary mb-1">X.509 Certificate</label>
+<textarea class="w-full px-3 py-2 border border-outline-variant rounded-lg bg-surface-container text-on-surface-variant font-code-sm text-code-sm opacity-70 cursor-not-allowed" disabled="" placeholder="Paste certificate here..." rows="3"></textarea>
+</div>
+<button class="mt-2 py-2 px-4 border border-border-subtle rounded-lg bg-surface-container text-on-surface-variant font-body-sm text-body-sm opacity-50 cursor-not-allowed w-fit" disabled="">
+                            Upgrade to Configure SSO
+                        </button>
+</div>
+</div>
+</section>
+<!-- Two-Factor Authentication (2FA) -->
+<section class="bg-surface-container-lowest border border-border-subtle rounded-xl mb-8 overflow-hidden">
+<div class="bg-background-alt px-6 py-4 border-b border-border-subtle flex justify-between items-center">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="phonelink_lock">phonelink_lock</span>
+<h3 class="font-headline-md text-headline-md text-primary">Two-Factor Authentication</h3>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-accent-teal-glow shadow-[0_0_8px_#3FFFC0]"></span>
+<span class="font-label-caps text-label-caps text-primary">ACTIVE</span>
+</div>
+</div>
+<div class="p-6 flex items-start justify-between">
+<div class="max-w-xl">
+<p class="font-body-md text-body-md text-primary font-medium mb-1">Authenticator App</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">Protect your account with an extra layer of security. We recommend using an authenticator app like Google Authenticator or Authy.</p>
+<button class="bg-surface text-primary border border-border-subtle px-4 py-2 rounded-lg font-body-sm text-body-sm hover:bg-surface-container transition-colors">
+                            Manage 2FA Settings
+                        </button>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>

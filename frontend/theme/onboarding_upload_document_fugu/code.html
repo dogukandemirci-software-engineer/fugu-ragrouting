@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Fugu Enterprise - Onboarding Step 2</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600&amp;family=Inter:wght@600;700&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary": "#ffffff",
+                      "primary": "#000000",
+                      "on-surface": "#1a1b23",
+                      "on-primary-fixed-variant": "#474646",
+                      "primary-container": "#1c1b1b",
+                      "inverse-primary": "#c9c6c5",
+                      "surface-tint": "#5f5e5e",
+                      "on-primary-fixed": "#1c1b1b",
+                      "secondary": "#4a46d5",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "on-secondary-fixed-variant": "#332bbf",
+                      "secondary-fixed-dim": "#c2c1ff",
+                      "surface-variant": "#e3e1ec",
+                      "on-error": "#ffffff",
+                      "primary-fixed": "#e5e2e1",
+                      "surface-container-highest": "#e3e1ec",
+                      "surface-container-high": "#e9e7f2",
+                      "tertiary": "#000000",
+                      "tertiary-container": "#1d1b1a",
+                      "on-background": "#1a1b23",
+                      "on-surface-variant": "#444748",
+                      "on-error-container": "#93000a",
+                      "outline-variant": "#c4c7c7",
+                      "on-tertiary-container": "#868381",
+                      "on-secondary-fixed": "#0c006a",
+                      "inverse-surface": "#2f3038",
+                      "on-secondary-container": "#fffbff",
+                      "background-alt": "#FAFAFA",
+                      "secondary-container": "#6462ef",
+                      "surface-dim": "#dad9e4",
+                      "surface-container-low": "#f4f2fd",
+                      "accent-magenta": "#FF2E9A",
+                      "accent-teal-glow": "#3FFFC0",
+                      "on-tertiary-fixed": "#1d1b1a",
+                      "outline": "#747878",
+                      "border-subtle": "#18181B",
+                      "on-tertiary-fixed-variant": "#484645",
+                      "error": "#ba1a1a",
+                      "tertiary-fixed": "#e6e1df",
+                      "on-primary-container": "#858383",
+                      "error-container": "#ffdad6",
+                      "surface": "#fbf8ff",
+                      "inverse-on-surface": "#f1effa",
+                      "surface-bright": "#fbf8ff",
+                      "accent-violet": "#7B2FF7",
+                      "tertiary-fixed-dim": "#cac6c3",
+                      "on-tertiary": "#ffffff",
+                      "secondary-fixed": "#e2dfff",
+                      "surface-container": "#efecf8",
+                      "background": "#fbf8ff",
+                      "primary-fixed-dim": "#c9c6c5"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-mobile": "16px",
+                      "unit": "8px",
+                      "margin-desktop": "48px",
+                      "max-width": "1440px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "body-lg": ["Geist"],
+                      "headline-xl": ["Inter"],
+                      "code-md": ["JetBrains Mono"],
+                      "code-sm": ["JetBrains Mono"],
+                      "headline-md": ["Inter"],
+                      "body-sm": ["Geist"],
+                      "headline-lg": ["Inter"],
+                      "body-md": ["Geist"],
+                      "label-caps": ["JetBrains Mono"]
+              },
+              "fontSize": {
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "code-md": ["14px", {"lineHeight": "22px", "fontWeight": "400"}],
+                      "code-sm": ["12px", {"lineHeight": "18px", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .gradient-btn {
+            background: linear-gradient(135deg, theme('colors.secondary'), theme('colors.accent-violet'));
+            box-shadow: 0 0 10px rgba(123, 47, 247, 0.15);
+            position: relative;
+        }
+        .gradient-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+            pointer-events: none;
+        }
+        .gradient-btn:hover {
+            box-shadow: inset 0 0 0 1px theme('colors.accent-teal-glow'), 0 0 15px rgba(123, 47, 247, 0.25);
+        }
+        .drag-active {
+            border-color: theme('colors.secondary') !important;
+            background-color: theme('colors.surface-container-low') !important;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen flex flex-col">
+<!-- Top Navigation Placeholder (Hidden for linear flow, but requested in prompt to use shell. Resolving conflict by suppressing per linear rules, but wait, the prompt says "Use the Fugu Enterprise dashboard shell.". The system prompt rule: "Automatic Suppression: You MUST exclude the navigation shell if the page intent is: Linear/Transactional: Login, Sign-up, Onboarding..." Overriding user prompt based on mandatory rule.) -->
+<!-- Content Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center p-margin-mobile md:p-margin-desktop w-full max-w-max-width mx-auto">
+<!-- Onboarding Container -->
+<div class="w-full max-w-3xl bg-surface-container-lowest border border-border-subtle rounded-xl p-8 md:p-12">
+<!-- Header & Progress -->
+<div class="mb-12">
+<div class="flex items-center justify-between mb-4">
+<h1 class="font-headline-lg text-headline-lg text-primary">Upload Initial Data</h1>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Step 2 of 4</span>
+</div>
+<!-- Progress Bar -->
+<div class="h-1 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-secondary to-accent-violet w-2/4"></div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-4">
+                    Provide your first set of documents to initialize the RAG infrastructure. We accept standard file formats or direct URL ingestion.
+                </p>
+</div>
+<!-- Bento Layout for Upload -->
+<div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-12">
+<!-- Drag and Drop Zone -->
+<div class="md:col-span-3 border border-border-subtle border-dashed rounded-lg bg-background-alt p-8 flex flex-col items-center justify-center text-center transition-colors" id="drop-zone">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant mb-4">cloud_upload</span>
+<h3 class="font-headline-md text-headline-md text-primary mb-2">Drag &amp; Drop Files</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-6">or click to browse from your computer</p>
+<button class="px-6 py-2 bg-surface-container-lowest border border-border-subtle rounded text-primary font-body-sm text-body-sm hover:border-secondary transition-colors">Browse Files</button>
+<input accept=".pdf,.md,.csv,.png" class="hidden" id="file-input" multiple="" type="file"/>
+</div>
+<!-- Info & URL Input Side -->
+<div class="md:col-span-2 flex flex-col gap-6">
+<!-- Supported Types Card -->
+<div class="border border-border-subtle rounded-lg p-6 bg-surface-container-lowest h-full flex flex-col justify-center">
+<h4 class="font-label-caps text-label-caps text-on-surface-variant mb-4 uppercase tracking-widest">Supported Formats</h4>
+<div class="flex flex-wrap gap-2">
+<span class="px-2 py-1 bg-surface-variant rounded font-code-sm text-code-sm text-primary">PDF</span>
+<span class="px-2 py-1 bg-surface-variant rounded font-code-sm text-code-sm text-primary">MD</span>
+<span class="px-2 py-1 bg-surface-variant rounded font-code-sm text-code-sm text-primary">CSV</span>
+<span class="px-2 py-1 bg-surface-variant rounded font-code-sm text-code-sm text-primary">PNG</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-4">Max file size: 50MB per document.</p>
+</div>
+</div>
+<!-- URL Import -->
+<div class="md:col-span-5 border border-border-subtle rounded-lg p-6 bg-surface-container-lowest">
+<label class="block font-body-sm text-body-sm text-primary mb-2" for="url-import">Import from URL (Optional)</label>
+<div class="flex gap-2">
+<input class="flex-grow bg-surface-container-lowest border border-border-subtle rounded px-4 py-2 font-body-md text-body-md text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary" id="url-import" placeholder="https://example.com/data.csv" type="text"/>
+<button class="px-4 py-2 border border-border-subtle bg-surface-variant rounded text-primary hover:bg-surface-dim transition-colors font-body-sm text-body-sm">Add URL</button>
+</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex items-center justify-between border-t border-border-subtle pt-6">
+<button class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors">Skip for now</button>
+<div class="flex gap-4">
+<button class="px-6 py-2 border border-border-subtle rounded text-primary font-body-md text-body-md hover:bg-surface-variant transition-colors">Back</button>
+<button class="gradient-btn px-6 py-2 rounded-lg text-on-primary font-body-md text-body-md font-semibold transition-all">Continue</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="flex justify-between items-center px-margin-desktop py-4 border-t border-border-subtle bg-surface-container-lowest w-full mt-auto">
+<div class="font-label-caps text-label-caps text-primary">
+            © 2024 Fugu Systems Inc.
+        </div>
+<div class="flex gap-6">
+<a class="font-code-sm text-code-sm text-on-surface-variant hover:underline hover:text-primary opacity-80 hover:opacity-100 transition-opacity" href="#">Documentation</a>
+<a class="font-code-sm text-code-sm text-on-surface-variant hover:underline hover:text-primary opacity-80 hover:opacity-100 transition-opacity" href="#">API Status</a>
+<a class="font-code-sm text-code-sm text-on-surface-variant hover:underline hover:text-primary opacity-80 hover:opacity-100 transition-opacity" href="#">Privacy Policy</a>
+</div>
+</footer>
+<script>
+        // Simple drag and drop visual feedback
+        const dropZone = document.getElementById('drop-zone');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.add('drag-active');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {</script></body></html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>500 - Internal Server Error | Fugu</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Geist:wght@400&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#2f3038",
+                        "on-secondary-container": "#fffbff",
+                        "background-alt": "#FAFAFA",
+                        "outline-variant": "#c4c7c7",
+                        "on-tertiary-container": "#868381",
+                        "on-secondary-fixed": "#0c006a",
+                        "on-surface-variant": "#444748",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "error": "#ba1a1a",
+                        "border-subtle": "#18181B",
+                        "accent-teal-glow": "#3FFFC0",
+                        "on-tertiary-fixed": "#1d1b1a",
+                        "outline": "#747878",
+                        "secondary-container": "#6462ef",
+                        "surface-dim": "#dad9e4",
+                        "surface-container-low": "#f4f2fd",
+                        "accent-magenta": "#FF2E9A",
+                        "surface": "#fbf8ff",
+                        "inverse-on-surface": "#f1effa",
+                        "on-primary-container": "#858383",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed": "#e6e1df",
+                        "primary-fixed-dim": "#c9c6c5",
+                        "background": "#fbf8ff",
+                        "secondary-fixed": "#e2dfff",
+                        "surface-container": "#efecf8",
+                        "surface-bright": "#fbf8ff",
+                        "accent-violet": "#7B2FF7",
+                        "tertiary-fixed-dim": "#cac6c3",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed-variant": "#474646",
+                        "primary": "#000000",
+                        "on-surface": "#1a1b23",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#4a46d5",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#c9c6c5",
+                        "surface-tint": "#5f5e5e",
+                        "on-primary-fixed": "#1c1b1b",
+                        "primary-container": "#1c1b1b",
+                        "primary-fixed": "#e5e2e1",
+                        "surface-container-highest": "#e3e1ec",
+                        "surface-variant": "#e3e1ec",
+                        "on-error": "#ffffff",
+                        "secondary-fixed-dim": "#c2c1ff",
+                        "on-secondary-fixed-variant": "#332bbf",
+                        "tertiary-container": "#1d1b1a",
+                        "on-background": "#1a1b23",
+                        "tertiary": "#000000",
+                        "surface-container-high": "#e9e7f2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "48px",
+                        "unit": "8px",
+                        "gutter": "24px",
+                        "max-width": "1440px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Geist"],
+                        "headline-md": ["Inter"],
+                        "code-sm": ["JetBrains Mono"],
+                        "code-md": ["JetBrains Mono"],
+                        "headline-xl": ["Inter"],
+                        "body-lg": ["Geist"],
+                        "label-caps": ["JetBrains Mono"],
+                        "body-md": ["Geist"],
+                        "headline-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "code-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "code-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+                        "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-caps": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .brand-gradient {
+            background: linear-gradient(135deg, #7B2FF7 0%, #FF2E9A 100%);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #7B2FF7 0%, #FF2E9A 100%);
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 0 10px rgba(123, 47, 247, 0.15);
+        }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            border-radius: inherit;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .btn-primary:hover {
+            box-shadow: inset 0 0 0 1px #3FFFC0, 0 0 15px rgba(123, 47, 247, 0.25);
+        }
+        
+        .pulse-element {
+            animation: pulse-op 4s ease-in-out infinite alternate;
+        }
+        @keyframes pulse-op {
+            0% { opacity: 0.3; transform: scale(0.98); }
+            100% { opacity: 0.7; transform: scale(1.02); }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+<!-- Abstract background elements for corporate modern tech vibe -->
+<div class="absolute inset-0 pointer-events-none overflow-hidden z-0 flex items-center justify-center">
+<div class="w-[800px] h-[800px] border border-outline-variant/30 rounded-full absolute pulse-element"></div>
+<div class="w-[600px] h-[600px] border border-outline-variant/20 rounded-full absolute" style="animation: pulse-op 5s ease-in-out infinite alternate-reverse;"></div>
+<div class="w-[400px] h-[400px] border border-outline-variant/40 rounded-full absolute pulse-element" style="animation-delay: 1s;"></div>
+<!-- Subtle gradient orb -->
+<div class="absolute top-1/4 right-1/4 w-96 h-96 bg-accent-violet opacity-5 rounded-full blur-[100px]"></div>
+<div class="absolute bottom-1/4 left-1/4 w-96 h-96 bg-accent-magenta opacity-5 rounded-full blur-[100px]"></div>
+</div>
+<!-- Main Content Container -->
+<main class="relative z-10 flex flex-col items-center text-center px-margin-mobile md:px-margin-desktop w-full max-w-max-width mx-auto">
+<!-- Error Code Display -->
+<div class="mb-gutter relative">
+<h1 class="font-headline-xl text-[120px] leading-none tracking-tighter text-transparent bg-clip-text brand-gradient select-none">
+                500
+            </h1>
+<div class="absolute -top-4 -right-8">
+<span class="material-symbols-outlined text-accent-magenta opacity-80" style="font-size: 48px;">warning</span>
+</div>
+</div>
+<!-- Messaging -->
+<div class="max-w-xl bg-surface-container-lowest border border-border-subtle rounded-xl p-gutter mb-margin-desktop">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-unit">Internal Server Error</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">
+                Our infrastructure encountered an unexpected exception while processing your request. Our engineering team has been notified and is investigating the routing anomaly.
+            </p>
+<div class="bg-[#0A0A0A] rounded-lg p-4 text-left border border-border-subtle font-code-sm text-code-sm">
+<div class="flex items-center justify-between mb-2 pb-2 border-b border-surface-tint/30">
+<span class="text-on-tertiary-container">Trace ID</span>
+<span class="text-accent-teal-glow">req_8f73b2a9c1</span>
+</div>
+<div class="flex items-center gap-2 text-surface-dim">
+<span class="material-symbols-outlined text-[16px]">terminal</span>
+<span class="text-[#f4f2fd]">ERR_CONNECTION_REFUSED</span>
+</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex flex-col sm:flex-row gap-4 items-center justify-center w-full max-w-md">
+<button class="btn-primary w-full sm:w-auto px-6 py-3 rounded-[10px] text-on-primary font-body-md text-body-md font-semibold transition-all flex items-center justify-center gap-2 group">
+<span class="material-symbols-outlined text-[20px] group-hover:-rotate-180 transition-transform duration-500">refresh</span>
+                Retry Request
+            </button>
+<a class="w-full sm:w-auto px-6 py-3 rounded-[10px] bg-surface-container-lowest border border-[#0A0A0A] text-primary font-body-md text-body-md font-medium hover:bg-surface-container-low transition-colors flex items-center justify-center gap-2" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+                Back to Dashboard
+            </a>
+</div>
+</main>
+<!-- Footer signature -->
+<footer class="absolute bottom-margin-mobile md:bottom-margin-desktop w-full text-center z-10 pointer-events-none">
+<p class="font-label-caps text-label-caps text-on-tertiary-container flex items-center justify-center gap-2">
+<span class="w-2 h-2 rounded-full bg-error inline-block pulse-element"></span>
+            SYSTEM STATUS: DEGRADED
+        </p>
+</footer>
+</body></html>

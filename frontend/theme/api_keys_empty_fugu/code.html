@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Fugu Enterprise - API Keys</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600&amp;family=Inter:wght@600;700&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary": "#ffffff",
+                      "primary": "#000000",
+                      "on-surface": "#1a1b23",
+                      "on-primary-fixed-variant": "#474646",
+                      "primary-container": "#1c1b1b",
+                      "inverse-primary": "#c9c6c5",
+                      "surface-tint": "#5f5e5e",
+                      "on-primary-fixed": "#1c1b1b",
+                      "secondary": "#4a46d5",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "on-secondary-fixed-variant": "#332bbf",
+                      "secondary-fixed-dim": "#c2c1ff",
+                      "surface-variant": "#e3e1ec",
+                      "on-error": "#ffffff",
+                      "primary-fixed": "#e5e2e1",
+                      "surface-container-highest": "#e3e1ec",
+                      "surface-container-high": "#e9e7f2",
+                      "tertiary": "#000000",
+                      "tertiary-container": "#1d1b1a",
+                      "on-background": "#1a1b23",
+                      "on-surface-variant": "#444748",
+                      "on-error-container": "#93000a",
+                      "outline-variant": "#c4c7c7",
+                      "on-tertiary-container": "#868381",
+                      "on-secondary-fixed": "#0c006a",
+                      "inverse-surface": "#2f3038",
+                      "on-secondary-container": "#fffbff",
+                      "background-alt": "#FAFAFA",
+                      "secondary-container": "#6462ef",
+                      "surface-dim": "#dad9e4",
+                      "surface-container-low": "#f4f2fd",
+                      "accent-magenta": "#FF2E9A",
+                      "accent-teal-glow": "#3FFFC0",
+                      "on-tertiary-fixed": "#1d1b1a",
+                      "outline": "#747878",
+                      "border-subtle": "#18181B",
+                      "on-tertiary-fixed-variant": "#484645",
+                      "error": "#ba1a1a",
+                      "tertiary-fixed": "#e6e1df",
+                      "on-primary-container": "#858383",
+                      "error-container": "#ffdad6",
+                      "surface": "#fbf8ff",
+                      "inverse-on-surface": "#f1effa",
+                      "surface-bright": "#fbf8ff",
+                      "accent-violet": "#7B2FF7",
+                      "tertiary-fixed-dim": "#cac6c3",
+                      "on-tertiary": "#ffffff",
+                      "secondary-fixed": "#e2dfff",
+                      "surface-container": "#efecf8",
+                      "background": "#fbf8ff",
+                      "primary-fixed-dim": "#c9c6c5"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-mobile": "16px",
+                      "unit": "8px",
+                      "margin-desktop": "48px",
+                      "max-width": "1440px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "body-lg": [
+                              "Geist"
+                      ],
+                      "headline-xl": [
+                              "Inter"
+                      ],
+                      "code-md": [
+                              "JetBrains Mono"
+                      ],
+                      "code-sm": [
+                              "JetBrains Mono"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "body-sm": [
+                              "Geist"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Geist"
+                      ],
+                      "label-caps": [
+                              "JetBrains Mono"
+                      ]
+              },
+              "fontSize": {
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-xl": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "code-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "22px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "code-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "18px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-caps": [
+                              "11px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+            },
+          },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer utilities {
+            .bg-brand-gradient {
+                background: linear-gradient(135deg, #7B2FF7 0%, #FF2E9A 100%);
+            }
+            .glow-primary {
+                box-shadow: 0 0 10px rgba(123, 47, 247, 0.15);
+            }
+            .glossy-overlay {
+                background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            }
+        }
+    </style>
+</head>
+<body class="bg-background-alt text-on-surface font-body-md text-body-md min-h-screen flex antialiased">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col bg-surface fixed left-0 top-0 h-screen w-64 border-r border-border-subtle z-50">
+<div class="p-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center">
+<span class="text-on-primary font-headline-md font-bold">F</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary leading-tight">Fugu Enterprise</h1>
+<p class="font-code-sm text-code-sm text-on-surface-variant">RAG Infrastructure</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">description</span>
+<span>Documents</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">search_check</span>
+<span>Query Explorer</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-primary font-bold border-l-2 border-secondary bg-surface-container-low transition-colors rounded-r-DEFAULT active:scale-[0.99] duration-150" href="#">
+<span class="material-symbols-outlined text-secondary">vpn_key</span>
+<span>API Keys</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">group</span>
+<span>Team</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span>Usage</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="p-6 border-t border-border-subtle">
+<button class="w-full py-2 px-4 border border-border-subtle rounded-DEFAULT text-primary font-body-sm font-semibold hover:bg-surface-container-low transition-colors">
+                Upgrade Plan
+            </button>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col min-h-screen md:ml-64 w-full">
+<!-- TopNavBar -->
+<header class="sticky top-0 z-40 flex items-center justify-between px-margin-desktop h-16 w-full bg-surface border-b border-border-subtle">
+<div class="flex items-center flex-1">
+<h2 class="font-headline-md text-headline-md font-bold text-primary md:hidden">Fugu Enterprise</h2>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors focus-within:ring-1 focus-within:ring-secondary rounded p-1">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors focus-within:ring-1 focus-within:ring-secondary rounded p-1">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-variant border border-border-subtle overflow-hidden flex-shrink-0 cursor-pointer">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A clean, professional headshot avatar of a user on a white background, suitable for an enterprise web application profile picture. Minimalist corporate style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA96lA7woRKYxUilvTvEAqiZWetipJIz6bKfLcomXHRbS9P3TZxMyesiUoRq4pYCP-YSK4uxWsJB9PcUQIA6FnDGVkOMHebG_AXfnHOkA7A_8sRPD58HtkoYnXItEek6nagqIP0B4xggGI4BHS-2PdADPwlqUuzDl4rOlHGlA5YfNpe0xG6P9Z5vIiFj-_pRSdGVANwzyG9NATGddL43GqdnYLpEMTjQUX7_FvXmTDG2vGtcJvTO2rq"/>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 px-margin-mobile md:px-margin-desktop py-12 flex flex-col max-w-max-width mx-auto w-full">
+<div class="mb-8">
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary">API Keys</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">Manage your programmatic access to the Fugu Enterprise RAG infrastructure.</p>
+</div>
+<!-- Empty State Container -->
+<div class="flex-1 flex flex-col items-center justify-center py-20 px-4 bg-surface rounded-lg border border-border-subtle text-center">
+<div class="w-48 h-48 mb-8 relative">
+<!-- Abstract Illustration placeholder -->
+<div class="absolute inset-0 bg-surface-container-low rounded-full opacity-50"></div>
+<span class="material-symbols-outlined text-[100px] text-on-surface-variant absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-20">vpn_key</span>
+<span class="material-symbols-outlined text-[64px] text-accent-violet absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -mt-4">code</span>
+<span class="material-symbols-outlined text-[32px] text-accent-teal-glow absolute top-1/2 left-1/2 transform translate-x-4 translate-y-4">lock_open</span>
+</div>
+<h3 class="font-headline-md text-headline-md font-bold text-primary mb-3">No API Keys Yet</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md mb-8">
+                    API keys are required to authenticate your applications with our RAG endpoints. Generate your first key to start querying your document infrastructure programmatically.
+                </p>
+<button class="relative bg-brand-gradient text-on-primary font-body-md font-semibold px-6 py-3 rounded-[10px] glow-primary transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] group overflow-hidden border-0">
+<div class="absolute inset-0 glossy-overlay pointer-events-none"></div>
+<div class="absolute inset-0 opacity-0 group-hover:opacity-100 border border-accent-teal-glow rounded-[10px] pointer-events-none transition-opacity duration-200"></div>
+<span class="relative z-10 flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                        Create your first key
+                    </span>
+</button>
+<div class="mt-8 flex items-center gap-2 text-on-surface-variant font-code-sm text-code-sm">
+<span class="material-symbols-outlined text-[16px]">menu_book</span>
+<a class="hover:text-primary hover:underline transition-colors" href="#">Read authentication docs</a>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="mt-auto px-margin-desktop py-4 flex flex-col md:flex-row justify-between items-center border-t border-border-subtle bg-surface-container-lowest">
+<div class="font-code-sm text-code-sm text-on-surface-variant mb-4 md:mb-0">
+                © 2024 Fugu Systems Inc.
+            </div>
+<div class="flex items-center gap-6">
+<a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary hover:underline opacity-80 hover:opacity-100 transition-all" href="#">Documentation</a>
+<a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary hover:underline opacity-80 hover:opacity-100 transition-all" href="#">API Status</a>
+<a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary hover:underline opacity-80 hover:opacity-100 transition-all" href="#">Privacy Policy</a>
+</div>
+</footer>
+</div>
+</body></html>

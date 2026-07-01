@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Fugu - Document Details</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-background": "#1a1b23",
+                      "tertiary-container": "#1d1b1a",
+                      "surface-container-high": "#e9e7f2",
+                      "tertiary": "#000000",
+                      "on-error": "#ffffff",
+                      "surface-variant": "#e3e1ec",
+                      "surface-container-highest": "#e3e1ec",
+                      "primary-fixed": "#e5e2e1",
+                      "on-secondary-fixed-variant": "#332bbf",
+                      "secondary-fixed-dim": "#c2c1ff",
+                      "surface-tint": "#5f5e5e",
+                      "on-primary-fixed": "#1c1b1b",
+                      "inverse-primary": "#c9c6c5",
+                      "secondary": "#4a46d5",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "primary-container": "#1c1b1b",
+                      "on-primary-fixed-variant": "#474646",
+                      "on-secondary": "#ffffff",
+                      "primary": "#000000",
+                      "on-surface": "#1a1b23",
+                      "background": "#fbf8ff",
+                      "primary-fixed-dim": "#c9c6c5",
+                      "tertiary-fixed-dim": "#cac6c3",
+                      "on-tertiary": "#ffffff",
+                      "surface-bright": "#fbf8ff",
+                      "accent-violet": "#7B2FF7",
+                      "surface-container": "#efecf8",
+                      "secondary-fixed": "#e2dfff",
+                      "on-primary-container": "#858383",
+                      "error-container": "#ffdad6",
+                      "inverse-on-surface": "#f1effa",
+                      "surface": "#fbf8ff",
+                      "tertiary-fixed": "#e6e1df",
+                      "border-subtle": "#18181B",
+                      "on-tertiary-fixed-variant": "#484645",
+                      "error": "#ba1a1a",
+                      "accent-magenta": "#FF2E9A",
+                      "secondary-container": "#6462ef",
+                      "surface-dim": "#dad9e4",
+                      "surface-container-low": "#f4f2fd",
+                      "on-tertiary-fixed": "#1d1b1a",
+                      "outline": "#747878",
+                      "accent-teal-glow": "#3FFFC0",
+                      "outline-variant": "#c4c7c7",
+                      "on-tertiary-container": "#868381",
+                      "on-secondary-fixed": "#0c006a",
+                      "on-secondary-container": "#fffbff",
+                      "background-alt": "#FAFAFA",
+                      "inverse-surface": "#2f3038",
+                      "on-surface-variant": "#444748",
+                      "on-error-container": "#93000a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-mobile": "16px",
+                      "margin-desktop": "48px",
+                      "unit": "8px",
+                      "gutter": "24px",
+                      "max-width": "1440px"
+              },
+              "fontFamily": {
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "body-sm": [
+                              "Geist"
+                      ],
+                      "code-md": [
+                              "JetBrains Mono"
+                      ],
+                      "code-sm": [
+                              "JetBrains Mono"
+                      ],
+                      "body-lg": [
+                              "Geist"
+                      ],
+                      "headline-xl": [
+                              "Inter"
+                      ],
+                      "label-caps": [
+                              "JetBrains Mono"
+                      ],
+                      "body-md": [
+                              "Geist"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "code-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "22px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "code-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "18px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-xl": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-caps": [
+                              "11px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        /* Custom styles that cannot be fully expressed in Tailwind config */
+        .brand-gradient {
+            background: linear-gradient(135deg, theme('colors.accent-violet'), theme('colors.secondary'));
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, theme('colors.accent-violet'), theme('colors.secondary'));
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(123, 47, 247, 0.15);
+        }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            z-index: -1;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 0 15px rgba(123, 47, 247, 0.3), inset 0 0 0 1px theme('colors.accent-teal-glow');
+        }
+        .active-nav-line {
+            background: linear-gradient(180deg, theme('colors.secondary'), theme('colors.accent-teal-glow'));
+        }
+        
+        /* Grid Layouts */
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: theme('spacing.gutter');
+        }
+        
+        @media (min-width: 768px) {
+            .layout-grid {
+                grid-template-columns: repeat(8, 1fr);
+            }
+            .sidebar-col { grid-column: span 2; }
+            .content-col { grid-column: span 6; }
+        }
+        
+        @media (min-width: 1280px) {
+            .layout-grid {
+                grid-template-columns: repeat(12, 1fr);
+            }
+            .sidebar-col { grid-column: span 2; }
+            .content-col { grid-column: span 10; }
+            
+            .inner-grid {
+                display: grid;
+                grid-template-columns: repeat(10, 1fr);
+                gap: theme('spacing.gutter');
+            }
+            .meta-panel { grid-column: span 3; }
+            .main-panel { grid-column: span 4; }
+            .graph-panel { grid-column: span 3; }
+        }
+    </style>
+</head>
+<body class="bg-background-alt text-on-surface h-full flex flex-col antialiased">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant">
+<div class="flex items-center gap-8">
+<a class="font-headline-lg text-headline-lg font-bold text-primary flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-accent-violet">hub</span>
+                Fugu
+            </a>
+<!-- Desktop Nav Links -->
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-label-caps text-label-caps" href="#">Dashboard</a>
+<a class="text-primary border-b-2 border-secondary font-bold pb-1 font-label-caps text-label-caps" href="#">Documents</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-label-caps text-label-caps" href="#">API Keys</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-label-caps text-label-caps" href="#">Team</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-label-caps text-label-caps" href="#">Settings</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<!-- Search -->
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="pl-9 pr-4 py-1.5 bg-surface border border-border-subtle rounded-lg text-sm focus:outline-none focus:border-secondary transition-colors w-64 placeholder-on-surface-variant/50 font-body-sm text-body-sm text-on-background" placeholder="Search documents..." type="text"/>
+</div>
+<!-- Actions -->
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<button class="btn-primary text-white px-4 py-2 rounded-lg font-label-caps text-label-caps transition-all">
+                Create New
+            </button>
+<div class="w-8 h-8 rounded-full border border-border-subtle overflow-hidden ml-2 cursor-pointer">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="A detailed headshot portrait of a professional software engineer in a modern office setting. Bright, even lighting highlights an approachable yet focused expression. The background is a slightly blurred, high-tech corporate environment featuring glass panels and subtle blue-toned ambient light." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDac1AVVw58Vkg4LQJNc2m2YpygTp4aSRRSrK8rxX35guf6VSGotrQKvHlPFyUmDqd0zmi8tGXMNY0PfmGmg9Ttqfs716LDD7CclOW1qqUcz0PBv5wXjhWcNbPxTNl3LYbEMteBGUgONAEC58fcmmmujwVanPw052ngw_1UQsreulMiZiNhIyPFin2FyKJPr9YsUiWOox5FYeNaWdeHCwTZPT7pfj9CtruBYAn5wKFM_1wGeeCAqzPO"/>
+</div>
+</div>
+</header>
+<!-- Main Layout Container -->
+<div class="flex-1 pt-16 flex w-full max-w-[1440px] mx-auto">
+<!-- SideNavBar -->
+<aside class="hidden lg:flex flex-col fixed left-0 top-16 bottom-0 w-64 overflow-y-auto bg-background-alt border-r border-outline-variant z-40">
+<div class="p-6 border-b border-outline-variant/50">
+<div class="flex items-center gap-3 mb-1">
+<div class="w-8 h-8 rounded bg-surface border border-border-subtle flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary text-sm">corporate_fare</span>
+</div>
+<div>
+<h2 class="font-headline-md text-body-md font-bold text-primary truncate">Fugu Enterprise</h2>
+<p class="font-body-sm text-label-caps text-on-surface-variant truncate">RAG Infrastructure</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 py-4 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+                    Overview
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">upload_file</span>
+                    Ingestion
+                </a>
+<a class="relative flex items-center gap-3 px-4 py-3 text-primary font-bold before:absolute before:left-0 before:h-full before:w-0.5 active-nav-line bg-surface-container font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">description</span>
+                    Documentation
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">hub</span>
+                    Graph View
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container transition-all font-label-caps text-label-caps" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">extension</span>
+                    Integrations
+                </a>
+</nav>
+<div class="p-4 mt-auto border-t border-outline-variant/50">
+<div class="flex flex-col gap-1 mb-4">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary transition-all font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined text-[18px]">support_agent</span>
+                        Support
+                    </a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary transition-all font-body-sm text-body-sm" href="#">
+<span class="material-symbols-outlined text-[18px]">sensors</span>
+                        API Status
+                    </a>
+</div>
+<button class="w-full py-2 px-4 bg-surface border border-border-subtle rounded-lg text-primary font-label-caps text-label-caps hover:bg-surface-container transition-colors flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-accent-violet">bolt</span>
+                    Upgrade Plan
+                </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 lg:ml-64 p-margin-mobile md:p-margin-desktop overflow-y-auto">
+<!-- Breadcrumbs & Header -->
+<div class="mb-8">
+<div class="flex items-center gap-2 text-on-surface-variant font-label-caps text-label-caps mb-4">
+<a class="hover:text-primary transition-colors" href="#">Documents</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Financial_Reports_Q3</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-semibold">Q3_Earnings_Transcript.pdf</span>
+</div>
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h1 class="font-headline-xl text-headline-xl text-primary flex items-center gap-3">
+<span class="material-symbols-outlined text-headline-xl text-secondary" style="font-variation-settings: 'FILL' 1;">description</span>
+                            Q3_Earnings_Transcript.pdf
+                        </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-2">Parsed into 42 semantic chunks. 8 entities extracted.</p>
+</div>
+<div class="flex items-center gap-3 shrink-0">
+<button class="px-4 py-2 bg-surface border border-border-subtle rounded-lg text-primary font-label-caps text-label-caps hover:bg-surface-container transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">download</span>
+                            Source
+                        </button>
+<button class="btn-primary text-white px-5 py-2 rounded-lg font-label-caps text-label-caps transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">sync</span>
+                            Re-index
+                        </button>
+</div>
+</div>
+</div>
+<!-- Bento Grid Layout for Detail View -->
+<div class="inner-grid grid-cols-1 md:grid-cols-2 lg:grid-cols-10">
+<!-- Left Panel: Metadata -->
+<div class="meta-panel lg:col-span-3 flex flex-col gap-6">
+<div class="bg-surface border border-border-subtle rounded-xl overflow-hidden flex flex-col">
+<div class="bg-background-alt px-5 py-4 border-b border-border-subtle flex items-center justify-between">
+<h3 class="font-label-caps text-label-caps text-primary">Metadata</h3>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">info</span>
+</div>
+<div class="p-5 flex flex-col gap-4 flex-1">
+<div class="flex justify-between items-center pb-3 border-b border-outline-variant/30">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Status</span>
+<div class="flex items-center gap-1.5">
+<div class="w-2 h-2 rounded-full bg-accent-teal-glow shadow-[0_0_8px_rgba(63,255,192,0.6)]"></div>
+<span class="font-label-caps text-label-caps text-primary">Indexed</span>
+</div>
+</div>
+<div class="flex justify-between items-center pb-3 border-b border-outline-variant/30">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Document ID</span>
+<span class="font-code-sm text-code-sm text-primary">doc_9a8f7c6e5</span>
+</div>
+<div class="flex justify-between items-center pb-3 border-b border-outline-variant/30">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Uploaded</span>
+<span class="font-body-sm text-body-sm text-primary">Oct 24, 2023 14:32</span>
+</div>
+<div class="flex justify-between items-center pb-3 border-b border-outline-variant/30">
+<span class="font-body-sm text-body-sm text-on-surface-variant">File Size</span>
+<span class="font-code-sm text-code-sm text-primary">2.4 MB</span>
+</div>
+<div class="flex justify-between items-center pb-3 border-b border-outline-variant/30">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Parser Strategy</span>
+<span class="font-code-sm text-code-sm text-accent-violet">Hierarchical</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Center Panel: Extracted Chunks Preview -->
+<div class="main-panel lg:col-span-4 flex flex-col gap-6">
+<div class="bg-surface border border-border-subtle rounded-xl overflow-hidden flex flex-col h-[600px]">
+<div class="bg-background-alt px-5 py-4 border-b border-border-subtle flex items-center justify-between shrink-0">
+<h3 class="font-label-caps text-label-caps text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-secondary">data_object</span>
+                                Chunk Preview
+                            </h3>
+<div class="flex items-center gap-2">
+<span class="font-code-sm text-code-sm text-on-surface-variant">Chunk 4/42</span>
+<div class="flex gap-1">
+<button class="w-6 h-6 rounded border border-border-subtle flex items-center justify-center hover:bg-surface-container transition-colors text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined text-[14px]">arrow_back</span></button>
+<button class="w-6 h-6 rounded border border-border-subtle flex items-center justify-center hover:bg-surface-container transition-colors text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined text-[14px]">arrow_forward</span></button>
+</div>
+</div>
+</div>
+<div class="p-5 flex-1 overflow-y-auto bg-on-background text-[#e2e8f0]">
+<div class="flex items-center gap-3 mb-4 text-xs font-code-sm">
+<span class="px-2 py-1 rounded bg-[#2f3038] text-[#a3a3a3] border border-[#3f3f46]">Embedding: text-embedding-ada-002</span>
+<span class="px-2 py-1 rounded bg-[#2f3038] text-[#a3a3a3] border border-[#3f3f46]">Tokens: 128</span>
+</div>
+<pre class="font-code-md text-code-md whitespace-pre-wrap leading-relaxed"><span class="text-accent-teal-glow">"content"</span>: <span class="text-[#fca5a5]">"Turning to Q3 financial highlights, total revenue grew 18% year-over-year to $4.2 billion, driven primarily by strength in our enterprise software segment. Gross margin expanded 120 basis points to 74.5%, reflecting improved operational efficiencies. Operating expenses were slightly lower than forecasted..."</span>,
+
+<span class="text-accent-teal-glow">"metadata"</span>: {
+  <span class="text-secondary-fixed-dim">"page"</span>: <span class="text-[#c084fc]">4</span>,
+  <span class="text-secondary-fixed-dim">"section"</span>: <span class="text-[#fca5a5]">"Financial Overview"</span>,
+  <span class="text-secondary-fixed-dim">"speaker"</span>: <span class="text-[#fca5a5]">"Jane Doe, CFO"</span>
+}
+                            </pre>
+</div>
+</div>
+</div>
+<!-- Right Panel: Relationships Graph -->
+<div class="graph-panel lg:col-span-3 flex flex-col gap-6">
+<div class="bg-surface border border-border-subtle rounded-xl overflow-hidden flex flex-col h-[600px]">
+<div class="bg-background-alt px-5 py-4 border-b border-border-subtle flex items-center justify-between shrink-0">
+<h3 class="font-label-caps text-label-caps text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-accent-violet">hub</span>
+                                Extracted Relationships
+                            </h3>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">open_in_full</span>
+</button>
+</div>
+<div class="relative flex-1 bg-surface-container-low p-4 flex items-center justify-center overflow-hidden group">
+<!-- Placeholder for visualization -->
+<div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(theme('colors.border-subtle') 1px, transparent 1px); background-size: 20px 20px;"></div>
+<!-- Mock Graph Structure -->
+<div class="relative w-full h-full">
+<!-- Nodes -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full border-2 border-secondary bg-surface flex items-center justify-center z-10 shadow-[0_0_15px_rgba(74,70,213,0.2)]">
+<span class="font-code-sm text-code-sm text-primary font-bold">Doc</span>
+</div>
+<div class="absolute top-1/4 left-1/4 w-12 h-12 rounded-full border border-accent-violet bg-surface flex items-center justify-center z-10">
+<span class="font-code-sm text-label-caps text-on-surface-variant">Org</span>
+</div>
+<div class="absolute bottom-1/4 left-1/3 w-12 h-12 rounded-full border border-accent-teal-glow bg-surface flex items-center justify-center z-10">
+<span class="font-code-sm text-label-caps text-on-surface-variant">Person</span>
+</div>
+<div class="absolute top-1/3 right-1/4 w-12 h-12 rounded-full border border-outline-variant bg-surface flex items-center justify-center z-10">
+<span class="font-code-sm text-label-caps text-on-surface-variant">Metric</span>
+</div>
+<!-- SVG Lines to connect nodes (simulated) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none stroke-outline-variant/40" style="stroke-width: 1.5px;">
+<line stroke-dasharray="4 4" x1="50%" x2="25%" y1="50%" y2="25%"></line>
+<line x1="50%" x2="33%" y1="50%" y2="75%"></line>
+<line stroke-dasharray="2 2" x1="50%" x2="75%" y1="50%" y2="33%"></line>
+</svg>
+</div>
+<div class="absolute bottom-4 left-4 right-4 bg-surface/90 backdrop-blur border border-border-subtle p-3 rounded-lg flex items-start gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<span class="material-symbols-outlined text-accent-violet text-[20px] shrink-0 mt-0.5">insights</span>
+<div>
+<p class="font-body-sm text-body-sm text-primary mb-1">Entity Graph Generated</p>
+<p class="font-code-sm text-label-caps text-on-surface-variant">8 nodes, 12 edges mapped from semantic context.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

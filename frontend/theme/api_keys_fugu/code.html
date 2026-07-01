@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>API Keys - Fugu Enterprise</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Geist:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed-variant": "#332bbf",
+                    "primary": "#000000",
+                    "on-primary-fixed": "#1c1b1b",
+                    "tertiary": "#000000",
+                    "inverse-on-surface": "#f1effa",
+                    "on-error": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "primary-container": "#1c1b1b",
+                    "secondary-container": "#6462ef",
+                    "accent-violet": "#7B2FF7",
+                    "surface-container-highest": "#e3e1ec",
+                    "outline-variant": "#c4c7c7",
+                    "surface-variant": "#e3e1ec",
+                    "on-primary": "#ffffff",
+                    "on-surface": "#1a1b23",
+                    "on-primary-fixed-variant": "#474646",
+                    "surface-tint": "#5f5e5e",
+                    "outline": "#747878",
+                    "error": "#ba1a1a",
+                    "primary-fixed": "#e5e2e1",
+                    "secondary": "#4a46d5",
+                    "surface-bright": "#fbf8ff",
+                    "tertiary-fixed-dim": "#cac6c3",
+                    "tertiary-fixed": "#e6e1df",
+                    "inverse-surface": "#2f3038",
+                    "background": "#fbf8ff",
+                    "on-surface-variant": "#444748",
+                    "surface-dim": "#dad9e4",
+                    "secondary-fixed": "#e2dfff",
+                    "on-tertiary-fixed": "#1d1b1a",
+                    "on-background": "#1a1b23",
+                    "background-alt": "#FAFAFA",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-container": "#fffbff",
+                    "error-container": "#ffdad6",
+                    "surface-container-low": "#f4f2fd",
+                    "secondary-fixed-dim": "#c2c1ff",
+                    "primary-fixed-dim": "#c9c6c5",
+                    "accent-teal-glow": "#3FFFC0",
+                    "surface-container": "#efecf8",
+                    "on-secondary-fixed": "#0c006a",
+                    "on-primary-container": "#858383",
+                    "on-tertiary-container": "#868381",
+                    "surface": "#fbf8ff",
+                    "accent-magenta": "#FF2E9A",
+                    "inverse-primary": "#c9c6c5",
+                    "tertiary-container": "#1d1b1a",
+                    "surface-container-high": "#e9e7f2",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#484645",
+                    "border-subtle": "#18181B"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "8px",
+                    "gutter": "24px",
+                    "margin-desktop": "48px",
+                    "max-width": "1440px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "body-sm": ["Geist"],
+                    "headline-xl": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-lg": ["Geist"],
+                    "body-md": ["Geist"],
+                    "code-sm": ["JetBrains Mono"],
+                    "label-caps": ["JetBrains Mono"],
+                    "headline-lg": ["Inter"],
+                    "code-md": ["JetBrains Mono"]
+            },
+            "fontSize": {
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "code-sm": ["12px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "code-md": ["14px", {"lineHeight": "22px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .brand-gradient {
+            background: linear-gradient(135deg, #7B2FF7 0%, #2A1FB8 100%);
+        }
+        .accent-btn {
+            background: linear-gradient(135deg, #7B2FF7 0%, #2A1FB8 100%);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(123, 47, 247, 0.15);
+        }
+        .accent-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            pointer-events: none;
+        }
+        .accent-btn:hover {
+            box-shadow: 0 0 15px rgba(63, 255, 192, 0.3);
+            border: 1px solid #3FFFC0;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e3e1ec;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface antialiased flex">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-full flex flex-col h-screen w-64 border-r border-border-subtle bg-surface z-50">
+<div class="p-6 flex flex-col gap-1">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Fugu Enterprise</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant opacity-70">RAG Infrastructure</p>
+</div>
+<nav class="flex-1 px-3 space-y-1 mt-4">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-body-md text-body-md">Documents</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="search_check">search_check</span>
+<span class="font-body-md text-body-md">Query Explorer</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-primary font-bold border-l-2 border-secondary bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined text-secondary" data-icon="vpn_key" style="font-variation-settings: 'FILL' 1;">vpn_key</span>
+<span class="font-body-md text-body-md">API Keys</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-body-md text-body-md">Team</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+<span class="font-body-md text-body-md">Usage</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</nav>
+<div class="p-6 mt-auto">
+<button class="w-full py-2 px-4 rounded-lg border border-border-subtle text-primary font-body-sm text-body-sm hover:bg-surface-container-low transition-colors">
+                Upgrade Plan
+            </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 ml-64 min-h-screen flex flex-col bg-background-alt">
+<!-- TopNavBar Shell -->
+<header class="sticky top-0 z-40 flex items-center justify-between px-margin-desktop w-full h-16 border-b border-border-subtle bg-surface">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-60" data-icon="search">search</span>
+<input class="w-full bg-white border border-border-subtle rounded-lg pl-10 pr-4 py-2 font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-secondary transition-all" placeholder="Search API keys..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors" data-icon="help_outline">help_outline</span>
+</div>
+<div class="h-8 w-8 rounded-full border border-border-subtle overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a developer in a modern studio setting with soft cyan and violet rim lighting. The style is clean, corporate and high-end, matching a technical enterprise platform aesthetic. High resolution, minimalist background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ1Dly4GpjZacmweIkifQkWjdsf9_gr8R4ULFsIj7ZeLd2nQN48oJqRvwh91DOvfoWQ3c39YarYUv_VMZHXaht5QKAtRdqspySILt3zdfr0p22GV18d2InZzfyr5d5nTT1Cfx6353Fud3Z6uY9VJ5wHH7kRGT7ExMLWe571wWTRto3bZ8K9YUQ1bRRRP-D5aFav8TnEXsNVNxwi6vR-hFCcxArk6wRnvgrs0ZykQv2mZU0lKLC1ETw"/>
+</div>
+</div>
+</header>
+<!-- API Keys Content Section -->
+<section class="flex-1 p-margin-desktop max-w-[1440px] w-full mx-auto">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2">API Keys</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Manage your organization's API credentials and secure your data integrations.</p>
+</div>
+<button class="accent-btn text-white px-6 py-3 rounded-[10px] font-body-md text-body-md flex items-center gap-2 transition-all active:scale-95">
+<span class="material-symbols-outlined text-[20px]" data-icon="add">add</span>
+                    Create new key
+                </button>
+</div>
+<!-- Dashboard Grid Area -->
+<div class="space-y-gutter">
+<!-- Keys Table Card -->
+<div class="bg-white border border-border-subtle rounded-[10px] overflow-hidden">
+<div class="px-6 py-4 bg-background-alt border-b border-border-subtle flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Active Credentials</span>
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant cursor-pointer" data-icon="filter_list">filter_list</span>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant cursor-pointer" data-icon="more_horiz">more_horiz</span>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-border-subtle">
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant bg-white">Name</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant bg-white">Key</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant bg-white">Created Date</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant bg-white">Last Used</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant bg-white">Scope</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant bg-white">Status</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant bg-white text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle">
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-5 font-body-md text-body-md font-semibold text-primary">Production - Main</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<code class="font-code-md text-code-md bg-surface-container-low px-2 py-1 rounded border border-outline-variant">fugu_live_••••••••</code>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant cursor-pointer hover:text-primary" data-icon="content_copy">content_copy</span>
+</div>
+</td>
+<td class="px-6 py-5 font-code-sm text-code-sm text-on-surface-variant">2024-10-12 14:22</td>
+<td class="px-6 py-5 font-code-sm text-code-sm text-on-surface-variant">2 min ago</td>
+<td class="px-6 py-5">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-white text-[11px] font-bold">Full Access</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 rounded-full bg-accent-teal-glow"></div>
+<span class="text-body-sm font-medium">Active</span>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="px-3 py-1 border border-error text-error text-[12px] font-bold rounded-lg hover:bg-error hover:text-white transition-all uppercase tracking-wider">Revoke</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-5 font-body-md text-body-md font-semibold text-primary">Staging - Vector Sync</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<code class="font-code-md text-code-md bg-surface-container-low px-2 py-1 rounded border border-outline-variant">fugu_test_••••••••</code>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant cursor-pointer hover:text-primary" data-icon="content_copy">content_copy</span>
+</div>
+</td>
+<td class="px-6 py-5 font-code-sm text-code-sm text-on-surface-variant">2024-11-05 09:15</td>
+<td class="px-6 py-5 font-code-sm text-code-sm text-on-surface-variant">1 hour ago</td>
+<td class="px-6 py-5">
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface text-[11px] font-bold">Read-only</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 rounded-full bg-accent-teal-glow"></div>
+<span class="text-body-sm font-medium">Active</span>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="px-3 py-1 border border-error text-error text-[12px] font-bold rounded-lg hover:bg-error hover:text-white transition-all uppercase tracking-wider">Revoke</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group opacity-60">
+<td class="px-6 py-5 font-body-md text-body-md font-semibold text-primary">Deprecated SDK Key</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<code class="font-code-md text-code-md bg-surface-container-low px-2 py-1 rounded border border-outline-variant italic line-through">fugu_live_••••••••</code>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant opacity-0" data-icon="content_copy">content_copy</span>
+</div>
+</td>
+<td class="px-6 py-5 font-code-sm text-code-sm text-on-surface-variant">2024-05-20 11:00</td>
+<td class="px-6 py-5 font-code-sm text-code-sm text-on-surface-variant">6 months ago</td>
+<td class="px-6 py-5">
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface text-[11px] font-bold">Full Access</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 rounded-full bg-on-surface-variant"></div>
+<span class="text-body-sm font-medium text-on-surface-variant">Revoked</span>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="px-3 py-1 border border-border-subtle text-on-surface-variant text-[12px] font-bold rounded-lg cursor-not-allowed uppercase tracking-wider" disabled="">Revoked</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Info Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Documentation Shortcut Card -->
+<div class="bg-white border border-border-subtle rounded-[10px] p-6 hover:border-secondary transition-all cursor-pointer group">
+<div class="flex items-start justify-between mb-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</div>
+<h4 class="font-headline-md text-[18px] text-primary mb-2">Auth Documentation</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Learn how to implement header-based authentication for your Fugu API requests.</p>
+</div>
+<!-- Usage Stats Card -->
+<div class="bg-white border border-border-subtle rounded-[10px] p-6">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-accent-violet mb-4">
+<span class="material-symbols-outlined" data-icon="bolt">bolt</span>
+</div>
+<h4 class="font-headline-md text-[18px] text-primary mb-2">Monthly Requests</h4>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg text-headline-lg">1.2M</span>
+<span class="font-body-sm text-body-sm text-accent-teal-glow font-bold">↑ 12%</span>
+</div>
+<div class="mt-4 w-full bg-surface-container-low h-1 rounded-full overflow-hidden">
+<div class="h-full brand-gradient w-[70%]"></div>
+</div>
+</div>
+<!-- IP Whitelist Card -->
+<div class="bg-white border border-border-subtle rounded-[10px] p-6">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-primary mb-4">
+<span class="material-symbols-outlined" data-icon="security">security</span>
+</div>
+<h4 class="font-headline-md text-[18px] text-primary mb-2">IP Restrictions</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">Add another layer of security by restricting API calls to specific IP addresses.</p>
+<a class="text-secondary font-bold text-body-sm hover:underline" href="#">Manage Whitelist</a>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer Shell -->
+<footer class="flex justify-between items-center px-margin-desktop py-4 mt-auto border-t border-border-subtle bg-surface-container-lowest">
+<div class="flex items-center gap-6">
+<span class="font-label-caps text-label-caps text-primary tracking-[0.1em] font-bold">FUGU SYSTEMS</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">© 2024 Fugu Systems Inc.</span>
+</div>
+<div class="flex gap-8">
+<a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary hover:underline transition-colors" href="#">Documentation</a>
+<a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary hover:underline transition-colors" href="#">API Status</a>
+<a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary hover:underline transition-colors" href="#">Privacy Policy</a>
+</div>
+</footer>
+</main>
+<!-- Simple Notification Script -->
+<script>
+        // Simple Copy to Clipboard Interaction
+        document.querySelectorAll('[data-icon="content_copy"]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const row = e.target.closest('tr');
+                const keyName = row.querySelector('td:first-child').innerText;
+                
+                // Visual feedback
+                const originalIcon = btn.innerText;
+                btn.innerText = 'check';
+                btn.classList.add('text-accent-teal-glow');
+                
+                setTimeout(() => {
+                    btn.innerText = originalIcon;
+                    btn.classList.remove('text-accent-teal-glow');
+                }, 2000);
+
+                console.log(`Copied key for: ${keyName}`);
+            });
+        });
+
+        // Revoke Interaction
+        document.querySelectorAll('button:contains("Revoke")').forEach(btn => {
+             // In vanilla JS we'd use filter/loop since :contains isn't standard
+        });
+        
+        // Fix for button selection in script
+        const revokeButtons = Array.from(document.querySelectorAll('button')).filter(b => b.innerText === 'REVOKE');
+        revokeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if(confirm('Are you sure you want to revoke this API key? This action is immediate and cannot be undone.')) {
+                    const row = btn.closest('tr');
+                    row.classList.add('opacity-40', 'pointer-events-none');
+                    btn.innerText = 'REVOKED';
+                    btn.classList.replace('text-error', 'text-on-surface-variant');
+                    btn.classList.replace('border-error', 'border-border-subtle');
+                }
+            });
+        });
+    </script>
+</body></html>

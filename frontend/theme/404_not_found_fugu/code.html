@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>404 - Page Not Found | Fugu Enterprise</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&amp;family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#6462ef",
+                        "border-subtle": "#18181B",
+                        "accent-teal-glow": "#3FFFC0",
+                        "on-surface": "#1a1b23",
+                        "primary-fixed": "#e5e2e1",
+                        "primary-container": "#1c1b1b",
+                        "surface-bright": "#fbf8ff",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "surface-container": "#efecf8",
+                        "on-background": "#1a1b23",
+                        "accent-violet": "#7B2FF7",
+                        "tertiary-fixed": "#e6e1df",
+                        "on-tertiary-fixed": "#1d1b1a",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed-dim": "#cac6c3",
+                        "on-secondary-container": "#fffbff",
+                        "primary-fixed-dim": "#c9c6c5",
+                        "on-tertiary": "#ffffff",
+                        "accent-magenta": "#FF2E9A",
+                        "on-primary-fixed-variant": "#474646",
+                        "on-tertiary-container": "#868381",
+                        "on-primary-container": "#858383",
+                        "secondary-fixed-dim": "#c2c1ff",
+                        "secondary": "#4a46d5",
+                        "surface-container-highest": "#e3e1ec",
+                        "outline-variant": "#c4c7c7",
+                        "inverse-surface": "#2f3038",
+                        "on-error-container": "#93000a",
+                        "background": "#fbf8ff",
+                        "secondary-fixed": "#e2dfff",
+                        "on-error": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-surface-variant": "#444748",
+                        "on-secondary": "#ffffff",
+                        "background-alt": "#FAFAFA",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#fbf8ff",
+                        "surface-dim": "#dad9e4",
+                        "on-secondary-fixed": "#0c006a",
+                        "surface-container-low": "#f4f2fd",
+                        "surface-variant": "#e3e1ec",
+                        "inverse-primary": "#c9c6c5",
+                        "surface-container-high": "#e9e7f2",
+                        "on-primary-fixed": "#1c1b1b",
+                        "error": "#ba1a1a",
+                        "outline": "#747878",
+                        "surface-tint": "#5f5e5e",
+                        "on-secondary-fixed-variant": "#332bbf",
+                        "primary": "#000000",
+                        "inverse-on-surface": "#f1effa",
+                        "tertiary": "#000000",
+                        "tertiary-container": "#1d1b1a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "margin-desktop": "48px",
+                        "gutter": "24px",
+                        "max-width": "1440px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "code-md": ["JetBrains Mono"],
+                        "code-sm": ["JetBrains Mono"],
+                        "label-caps": ["JetBrains Mono"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Geist"],
+                        "body-lg": ["Geist"],
+                        "body-sm": ["Geist"],
+                        "headline-xl": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "code-md": ["14px", {"lineHeight": "22px", "fontWeight": "400"}],
+                        "code-sm": ["12px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        @layer base {
+            body {
+                @apply bg-background text-on-surface antialiased;
+                font-family: 'Geist', sans-serif;
+            }
+            .material-symbols-outlined {
+                font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            }
+        }
+
+        .brand-gradient {
+            background: linear-gradient(135deg, #7B2FF7 0%, #2A1FB8 50%, #FF2E9A 100%);
+        }
+
+        .primary-btn-shadow {
+            box-shadow: 0 4px 10px rgba(123, 47, 247, 0.15);
+        }
+
+        .primary-btn-shadow:hover {
+            box-shadow: 0 4px 20px rgba(123, 47, 247, 0.25);
+            outline: 1px solid #3FFFC0;
+        }
+
+        .error-code-glow {
+            text-shadow: 0 0 40px rgba(123, 47, 247, 0.05);
+        }
+
+        /* Micro-interaction for the grid background */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(24, 24, 27, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(24, 24, 27, 0.03) 1px, transparent 1px);
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen overflow-hidden">
+<!-- Global Grid Background -->
+<div class="fixed inset-0 bg-grid pointer-events-none z-0"></div>
+<!-- Minimal Header (Branding only) -->
+<header class="relative z-10 w-full px-margin-desktop py-8 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg brand-gradient flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[20px]" style="font-variation-settings: 'FILL' 1">terminal</span>
+</div>
+<span class="font-headline-md text-headline-md font-bold text-primary tracking-tight">Fugu Enterprise</span>
+</div>
+</header>
+<main class="flex-grow flex flex-col items-center justify-center px-margin-mobile md:px-margin-desktop relative z-10">
+<!-- 404 Visual Content -->
+<div class="max-w-3xl w-full text-center space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+<div class="relative">
+<!-- Large 404 text -->
+<h1 class="font-headline-xl text-[120px] md:text-[200px] leading-none font-extrabold tracking-tighter text-primary error-code-glow select-none">
+                    404
+                </h1>
+<!-- Abstract visual element (Data line) -->
+<div class="absolute top-1/2 left-0 w-full h-[2px] brand-gradient opacity-20 -translate-y-1/2 hidden md:block"></div>
+</div>
+<div class="space-y-4 max-w-xl mx-auto">
+<h2 class="font-headline-lg text-headline-lg text-primary">
+                    This endpoint does not exist.
+                </h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                    The resource you are looking for might have been moved or deleted. Our retrieval engine was unable to locate the specified document fragment in the current infrastructure.
+                </p>
+</div>
+<!-- Action Cluster -->
+<div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
+<!-- Primary Action -->
+<a class="group relative px-8 py-3 rounded-lg brand-gradient text-white font-body-md font-semibold transition-all duration-300 transform active:scale-[0.98] primary-btn-shadow flex items-center gap-2" href="/dashboard">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+                    Back to Dashboard
+                    <!-- Inner glow effect -->
+<div class="absolute inset-0 rounded-lg bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</a>
+<!-- Secondary Action -->
+<a class="px-8 py-3 rounded-lg bg-white border border-border-subtle text-primary font-body-md font-medium hover:bg-surface-container-low transition-colors duration-200 flex items-center gap-2" href="/support">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+                    Contact Support
+                </a>
+</div>
+<!-- Tech Details (Minimalist/Code aesthetic) -->
+<div class="pt-16 opacity-40">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded border border-border-subtle bg-surface-container-low">
+<span class="font-code-sm text-code-sm text-on-surface-variant select-all">ERR_NULL_RESPONSE_RETRY_FAILED</span>
+<span class="w-[1px] h-3 bg-border-subtle"></span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">Trace: 0x8F92A1</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Simple Footer from Shared Components logic -->
+<footer class="relative z-10 flex justify-between items-center px-margin-desktop py-8 border-t border-border-subtle/5 bg-transparent">
+<div class="flex items-center gap-6">
+<span class="font-code-sm text-code-sm text-on-surface-variant opacity-80">© 2024 Fugu Systems Inc.</span>
+</div>
+<div class="flex items-center gap-6">
+<a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors hover:underline" href="#">Documentation</a>
+<a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors hover:underline" href="#">API Status</a>
+<a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors hover:underline" href="#">Privacy Policy</a>
+</div>
+</footer>
+<!-- Subtle Floating Particles Micro-interaction -->
+<div class="fixed inset-0 pointer-events-none z-0" id="particles-container"></div>
+<script>
+        // Simple micro-interaction: Floating technical particles
+        const container = document.getElementById('particles-container');
+        const particleCount = 15;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            const size = Math.random() * 2 + 1;
+            const x = Math.random() * 100;
+            const y = Math.random() * 100;
+            const delay = Math.random() * 5;
+            const duration = 15 + Math.random() * 20;
+
+            particle.style.cssText = `
+                position: absolute;
+                width: ${size}px;
+                height: ${size}px;
+                background: ${i % 3 === 0 ? '#7B2FF7' : '#000000'};
+                opacity: 0.1;
+                border-radius: 50%;
+                left: ${x}%;
+                top: ${y}%;
+                animation: float ${duration}s infinite linear;
+                animation-delay: -${delay}s;
+            `;
+            container.appendChild(particle);
+        }
+
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes float {
+                0% { transform: translateY(0) translateX(0); }
+                33% { transform: translateY(-20px) translateX(10px); }
+                66% { transform: translateY(-10px) translateX(-15px); }
+                100% { transform: translateY(0) translateX(0); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Hover effect for the 404 text to make it feel "active"
+        const errorText = document.querySelector('h1');
+        document.addEventListener('mousemove', (e) => {
+            const x = (window.innerWidth / 2 - e.pageX) / 100;
+            const y = (window.innerHeight / 2 - e.pageY) / 100;
+            errorText.style.transform = `translate(${x}px, ${y}px)`;
+        });
+    </script>
+</body></html>

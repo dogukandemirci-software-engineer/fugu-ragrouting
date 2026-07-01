@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Check Your Email - Fugu Enterprise</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&amp;family=Inter:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary": "#ffffff",
+                        "primary": "#000000",
+                        "on-surface": "#1a1b23",
+                        "on-primary-fixed-variant": "#474646",
+                        "primary-container": "#1c1b1b",
+                        "inverse-primary": "#c9c6c5",
+                        "surface-tint": "#5f5e5e",
+                        "on-primary-fixed": "#1c1b1b",
+                        "secondary": "#4a46d5",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed-variant": "#332bbf",
+                        "secondary-fixed-dim": "#c2c1ff",
+                        "surface-variant": "#e3e1ec",
+                        "on-error": "#ffffff",
+                        "primary-fixed": "#e5e2e1",
+                        "surface-container-highest": "#e3e1ec",
+                        "surface-container-high": "#e9e7f2",
+                        "tertiary": "#000000",
+                        "tertiary-container": "#1d1b1a",
+                        "on-background": "#1a1b23",
+                        "on-surface-variant": "#444748",
+                        "on-error-container": "#93000a",
+                        "outline-variant": "#c4c7c7",
+                        "on-tertiary-container": "#868381",
+                        "on-secondary-fixed": "#0c006a",
+                        "inverse-surface": "#2f3038",
+                        "on-secondary-container": "#fffbff",
+                        "background-alt": "#FAFAFA",
+                        "secondary-container": "#6462ef",
+                        "surface-dim": "#dad9e4",
+                        "surface-container-low": "#f4f2fd",
+                        "accent-magenta": "#FF2E9A",
+                        "accent-teal-glow": "#3FFFC0",
+                        "on-tertiary-fixed": "#1d1b1a",
+                        "outline": "#747878",
+                        "border-subtle": "#18181B",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#e6e1df",
+                        "on-primary-container": "#858383",
+                        "error-container": "#ffdad6",
+                        "surface": "#fbf8ff",
+                        "inverse-on-surface": "#f1effa",
+                        "surface-bright": "#fbf8ff",
+                        "accent-violet": "#7B2FF7",
+                        "tertiary-fixed-dim": "#cac6c3",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed": "#e2dfff",
+                        "surface-container": "#efecf8",
+                        "background": "#fbf8ff",
+                        "primary-fixed-dim": "#c9c6c5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "unit": "8px",
+                        "margin-desktop": "48px",
+                        "max-width": "1440px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Geist"],
+                        "headline-xl": ["Inter"],
+                        "code-md": ["JetBrains Mono"],
+                        "code-sm": ["JetBrains Mono"],
+                        "headline-md": ["Inter"],
+                        "body-sm": ["Geist"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Geist"],
+                        "label-caps": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "code-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+                        "code-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-caps": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #FAFAFA;
+        }
+        .bg-brand-gradient {
+            background: linear-gradient(135deg, #7B2FF7 0%, #FF2E9A 100%);
+        }
+        .btn-primary {
+            position: relative;
+            background: linear-gradient(135deg, #7B2FF7 0%, #FF2E9A 100%);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(123, 47, 247, 0.15);
+            transition: all 0.2s ease-in-out;
+            overflow: hidden;
+        }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.1), transparent);
+            pointer-events: none;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 0 15px rgba(123, 47, 247, 0.25), inset 0 0 0 1px #3FFFC0;
+        }
+        .btn-secondary {
+            background-color: white;
+            border: 1px solid #0A0A0A;
+            color: #0A0A0A;
+            border-radius: 10px;
+            transition: all 0.2s ease-in-out;
+        }
+        .btn-secondary:hover {
+            background-color: #FAFAFA;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid #18181B;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+<!-- Auth Container -->
+<main class="w-full max-w-[480px]">
+<!-- Brand Header -->
+<div class="text-center mb-8">
+<h1 class="font-headline-md text-headline-md text-primary font-bold">Fugu Enterprise</h1>
+<p class="font-code-sm text-code-sm text-on-surface-variant mt-2 tracking-widest uppercase">RAG Infrastructure</p>
+</div>
+<!-- Main Card -->
+<div class="glass-panel p-8 sm:p-10 shadow-sm relative overflow-hidden">
+<!-- Decorative Accent Line -->
+<div class="absolute top-0 left-0 w-full h-1 bg-brand-gradient"></div>
+<div class="flex flex-col items-center text-center">
+<!-- Graphic -->
+<div class="w-20 h-20 bg-surface-container-lowest border border-border-subtle rounded-xl flex items-center justify-center mb-6 relative group">
+<div class="absolute inset-0 bg-brand-gradient opacity-10 rounded-xl group-hover:opacity-20 transition-opacity"></div>
+<span class="material-symbols-outlined text-accent-violet text-4xl" style="font-variation-settings: 'FILL' 1;">
+                        mark_email_read
+                    </span>
+<!-- Decorative dots -->
+<div class="absolute -top-2 -right-2 w-4 h-4 bg-accent-teal-glow rounded-full border-2 border-white animate-pulse"></div>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-4">Check your email</h2>
+<div class="font-body-md text-body-md text-on-surface-variant space-y-4 mb-8">
+<p>
+                        We sent a password reset link to <br/>
+<strong class="text-primary font-semibold">user@enterprise.com</strong>
+</p>
+<p class="text-sm">
+                        Click the link in the email to reset your password. The link will expire in 15 minutes.
+                    </p>
+</div>
+<!-- Actions -->
+<div class="w-full space-y-4">
+<button class="btn-primary w-full py-3 px-4 font-body-md text-body-md font-medium flex justify-center items-center gap-2" onclick="window.location.href='#'" type="button">
+<span class="material-symbols-outlined text-[20px]">open_in_new</span>
+                        Open Email App
+                    </button>
+<button class="btn-secondary w-full py-3 px-4 font-body-md text-body-md font-medium flex justify-center items-center gap-2" type="button">
+                        Resend link
+                    </button>
+</div>
+<!-- Back to login -->
+<div class="mt-8">
+<a class="font-code-sm text-code-sm text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-[16px] group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                        Back to login
+                    </a>
+</div>
+</div>
+</div>
+<!-- Footer Links -->
+<div class="mt-8 flex justify-center gap-6 font-code-sm text-code-sm text-on-surface-variant">
+<a class="hover:text-primary transition-colors" href="#">Help</a>
+<a class="hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="hover:text-primary transition-colors" href="#">Terms</a>
+</div>
+</main>
+</body></html>

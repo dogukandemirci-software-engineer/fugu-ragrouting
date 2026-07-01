@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Fugu Dashboard - Mobile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600&amp;family=Inter:wght@600;700&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container": "#efecf8",
+                      "outline": "#747878",
+                      "on-tertiary-fixed-variant": "#484645",
+                      "error": "#ba1a1a",
+                      "primary-fixed": "#e5e2e1",
+                      "secondary": "#4a46d5",
+                      "secondary-fixed-dim": "#c2c1ff",
+                      "surface-variant": "#e3e1ec",
+                      "on-secondary-fixed-variant": "#332bbf",
+                      "on-background": "#1a1b23",
+                      "tertiary-fixed-dim": "#cac6c3",
+                      "on-tertiary-fixed": "#1d1b1a",
+                      "primary-container": "#1c1b1b",
+                      "on-error": "#ffffff",
+                      "primary": "#000000",
+                      "accent-magenta": "#FF2E9A",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-container": "#868381",
+                      "on-secondary-fixed": "#0c006a",
+                      "surface-container-low": "#f4f2fd",
+                      "surface-tint": "#5f5e5e",
+                      "border-subtle": "#18181B",
+                      "inverse-surface": "#2f3038",
+                      "inverse-primary": "#c9c6c5",
+                      "on-tertiary": "#ffffff",
+                      "on-primary-fixed": "#1c1b1b",
+                      "background-alt": "#FAFAFA",
+                      "on-error-container": "#93000a",
+                      "on-primary-fixed-variant": "#474646",
+                      "background": "#fbf8ff",
+                      "secondary-container": "#6462ef",
+                      "surface-container-highest": "#e3e1ec",
+                      "on-primary-container": "#858383",
+                      "tertiary-fixed": "#e6e1df",
+                      "surface-dim": "#dad9e4",
+                      "surface-container-high": "#e9e7f2",
+                      "on-surface-variant": "#444748",
+                      "on-surface": "#1a1b23",
+                      "surface": "#fbf8ff",
+                      "on-secondary": "#ffffff",
+                      "tertiary": "#000000",
+                      "primary-fixed-dim": "#c9c6c5",
+                      "secondary-fixed": "#e2dfff",
+                      "accent-violet": "#7B2FF7",
+                      "on-secondary-container": "#fffbff",
+                      "surface-bright": "#fbf8ff",
+                      "accent-teal-glow": "#3FFFC0",
+                      "tertiary-container": "#1d1b1a",
+                      "on-primary": "#ffffff",
+                      "outline-variant": "#c4c7c7",
+                      "inverse-on-surface": "#f1effa",
+                      "error-container": "#ffdad6"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "unit": "8px",
+                      "gutter": "24px",
+                      "max-width": "1440px",
+                      "margin-mobile": "16px",
+                      "margin-desktop": "48px"
+              },
+              "fontFamily": {
+                      "code-md": ["JetBrains Mono"],
+                      "body-sm": ["Geist"],
+                      "headline-md": ["Inter"],
+                      "body-md": ["Geist"],
+                      "headline-xl": ["Inter"],
+                      "label-caps": ["JetBrains Mono"],
+                      "code-sm": ["JetBrains Mono"],
+                      "body-lg": ["Geist"],
+                      "headline-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "code-md": ["14px", {"lineHeight": "22px", "fontWeight": "400"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "code-sm": ["12px", {"lineHeight": "18px", "fontWeight": "400"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .gradient-primary { background: linear-gradient(135deg, #4a46d5 0%, #7B2FF7 100%); }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-md antialiased flex flex-col min-h-screen">
+<!-- Mobile Top Navigation Bar -->
+<header class="flex justify-between items-center w-full px-margin-mobile h-14 sticky top-0 z-50 bg-surface border-b border-border-subtle md:hidden">
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center p-1 rounded-md hover:bg-surface-container-high transition-colors focus:outline-none focus:ring-1 focus:ring-secondary">
+<span class="material-symbols-outlined text-primary text-[24px]" style="font-variation-settings: 'wght' 300;">menu</span>
+</button>
+<div class="font-headline-md text-headline-md font-bold text-primary tracking-tight" style="font-size: 20px; line-height: 28px;">
+                Fugu
+            </div>
+</div>
+<div class="flex items-center gap-4">
+<button class="relative flex items-center justify-center p-1 rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-primary text-[24px]">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-accent-magenta rounded-full"></span>
+</button>
+<div class="w-8 h-8 rounded-full border border-border-subtle overflow-hidden bg-surface-container">
+<img alt="User Avatar" class="w-full h-full object-cover" data-alt="A professional corporate headshot of a developer in a modern, brightly lit white studio setting. The lighting is crisp and even, highlighting a clean, high-contrast aesthetic suitable for an enterprise platform avatar." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrI-JRwqZFKeCiYj7EeR94Ey6zsp3065p7Y0PqOtJbaT1IWbL9ZY5DfuQUs5DPcucMSKY_kc8GlgspyphRS65FuMndiDdulkG8CCgH4m4WVxo0C3nnGKgJfQuZ2pZtBTigiz4FwpzPcnojBjMD5g4JU6Ru-cUSF81ZfMHvuYVEKYQd0NOSJILBnEUvwAoG-sGVVC4eb2Iy-OylxIApL9m7zr1DNtg-kLNwmpkviV2xwNMNwsPJ1Tt5"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 w-full px-margin-mobile py-6 flex flex-col gap-6 md:hidden">
+<!-- Header -->
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary mb-1">Overview</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Your RAG infrastructure at a glance.</p>
+</div>
+<!-- Stacked Summary Cards -->
+<div class="flex flex-col gap-4">
+<!-- Tokens Card -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-lg p-5 flex flex-col relative overflow-hidden group">
+<div class="absolute top-0 left-0 bottom-0 w-1 gradient-primary opacity-80"></div>
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Total Tokens</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">data_usage</span>
+</div>
+<div class="font-headline-lg text-headline-lg font-bold text-primary mb-1">
+                    2.4M
+                </div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-[16px]">trending_up</span>
+<span class="font-code-sm text-code-sm text-secondary font-semibold">+14.2%</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant ml-1">vs last week</span>
+</div>
+</div>
+<!-- Queries Card -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-lg p-5 flex flex-col">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Active Queries</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">search</span>
+</div>
+<div class="font-headline-lg text-headline-lg font-bold text-primary mb-1">
+                    84,092
+                </div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-[16px]">trending_up</span>
+<span class="font-code-sm text-code-sm text-secondary font-semibold">+5.1%</span>
+</div>
+</div>
+<!-- Latency Card -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-lg p-5 flex flex-col">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">P99 Latency</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">speed</span>
+</div>
+<div class="font-headline-lg text-headline-lg font-bold text-primary mb-1">
+                    42ms
+                </div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-accent-magenta text-[16px] rotate-180">trending_up</span>
+<span class="font-code-sm text-code-sm text-accent-magenta font-semibold">-2.4ms</span>
+</div>
+</div>
+</div>
+<!-- Simplified Line Chart Section -->
+<section class="bg-surface-container-lowest border border-border-subtle rounded-lg flex flex-col overflow-hidden">
+<div class="bg-background-alt border-b border-border-subtle px-4 py-3 flex justify-between items-center">
+<h2 class="font-body-sm text-body-sm font-semibold text-primary">Traffic Volume</h2>
+<button class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1">
+                    24h <span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+</div>
+<div class="p-4 h-48 relative w-full">
+<!-- Background Grid Lines -->
+<div class="absolute inset-x-4 inset-y-4 flex flex-col justify-between z-0 pointer-events-none border-t border-b border-surface-variant">
+<div class="border-b border-surface-variant w-full h-1/2"></div>
+</div>
+<!-- SVG Line Chart Mockup -->
+<div class="relative w-full h-full z-10">
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 100 100">
+<!-- Area Fill -->
+<path d="M0,80 L15,65 L30,70 L45,40 L60,50 L75,20 L90,30 L100,10 L100,100 L0,100 Z" fill="url(#chartGradient)" opacity="0.15"></path>
+<!-- Line -->
+<path d="M0,80 L15,65 L30,70 L45,40 L60,50 L75,20 L90,30 L100,10" fill="none" stroke="#4a46d5" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" vector-effect="non-scaling-stroke"></path>
+<defs>
+<lineargradient id="chartGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#7B2FF7" stop-opacity="1"></stop>
+<stop offset="100%" stop-color="#4a46d5" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+</svg>
+</div>
+</div>
+</section>
+</main>
+</body></html>

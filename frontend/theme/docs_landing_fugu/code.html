@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RAGFlow Pro Documentation</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600&amp;family=Inter:wght@600;700&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "inverse-surface": "#2f3038",
+                      "on-secondary-container": "#fffbff",
+                      "background-alt": "#FAFAFA",
+                      "outline-variant": "#c4c7c7",
+                      "on-tertiary-container": "#868381",
+                      "on-secondary-fixed": "#0c006a",
+                      "on-surface-variant": "#444748",
+                      "on-error-container": "#93000a",
+                      "on-tertiary-fixed-variant": "#484645",
+                      "error": "#ba1a1a",
+                      "border-subtle": "#18181B",
+                      "accent-teal-glow": "#3FFFC0",
+                      "on-tertiary-fixed": "#1d1b1a",
+                      "outline": "#747878",
+                      "secondary-container": "#6462ef",
+                      "surface-dim": "#dad9e4",
+                      "surface-container-low": "#f4f2fd",
+                      "accent-magenta": "#FF2E9A",
+                      "surface": "#fbf8ff",
+                      "inverse-on-surface": "#f1effa",
+                      "on-primary-container": "#858383",
+                      "error-container": "#ffdad6",
+                      "tertiary-fixed": "#e6e1df",
+                      "primary-fixed-dim": "#c9c6c5",
+                      "background": "#fbf8ff",
+                      "secondary-fixed": "#e2dfff",
+                      "surface-container": "#efecf8",
+                      "surface-bright": "#fbf8ff",
+                      "accent-violet": "#7B2FF7",
+                      "tertiary-fixed-dim": "#cac6c3",
+                      "on-tertiary": "#ffffff",
+                      "on-primary-fixed-variant": "#474646",
+                      "primary": "#000000",
+                      "on-surface": "#1a1b23",
+                      "on-secondary": "#ffffff",
+                      "secondary": "#4a46d5",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "inverse-primary": "#c9c6c5",
+                      "surface-tint": "#5f5e5e",
+                      "on-primary-fixed": "#1c1b1b",
+                      "primary-container": "#1c1b1b",
+                      "primary-fixed": "#e5e2e1",
+                      "surface-container-highest": "#e3e1ec",
+                      "surface-variant": "#e3e1ec",
+                      "on-error": "#ffffff",
+                      "secondary-fixed-dim": "#c2c1ff",
+                      "on-secondary-fixed-variant": "#332bbf",
+                      "tertiary-container": "#1d1b1a",
+                      "on-background": "#1a1b23",
+                      "tertiary": "#000000",
+                      "surface-container-high": "#e9e7f2"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "48px",
+                      "unit": "8px",
+                      "gutter": "24px",
+                      "max-width": "1440px",
+                      "margin-mobile": "16px"
+              },
+              "fontFamily": {
+                      "body-sm": [
+                              "Geist"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "code-sm": [
+                              "JetBrains Mono"
+                      ],
+                      "code-md": [
+                              "JetBrains Mono"
+                      ],
+                      "headline-xl": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Geist"
+                      ],
+                      "label-caps": [
+                              "JetBrains Mono"
+                      ],
+                      "body-md": [
+                              "Geist"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "code-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "18px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "code-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "22px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-xl": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-caps": [
+                              "11px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .brand-gradient {
+            background: linear-gradient(135deg, #7B2FF7 0%, #FF2E9A 100%);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #7B2FF7 0%, #FF2E9A 100%);
+            position: relative;
+            box-shadow: 0 0 10px rgba(123, 47, 247, 0.15);
+            transition: all 0.2s ease-in-out;
+        }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.1), transparent);
+            border-radius: inherit;
+            pointer-events: none;
+        }
+        .btn-primary:hover {
+            box-shadow: inset 0 0 0 1px #3FFFC0, 0 0 15px rgba(123, 47, 247, 0.25);
+        }
+        .code-block {
+            background-color: #0A0A0A;
+            color: #E4E4E7;
+        }
+        .syntax-keyword { color: #FF2E9A; }
+        .syntax-string { color: #3FFFC0; }
+        .syntax-function { color: #7B2FF7; }
+        .syntax-comment { color: #71717A; }
+    </style>
+</head>
+<body class="bg-background-alt text-on-surface font-body-md h-screen flex overflow-hidden">
+<!-- SideNavBar (Shared Component) -->
+<nav class="h-screen w-64 fixed left-0 top-0 bg-surface-container-lowest border-r border-outline-variant flex flex-col z-20">
+<!-- Header -->
+<div class="p-6 border-b border-outline-variant">
+<div class="flex items-center gap-3 mb-6">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary" style="font-variation-settings: 'FILL' 1;">widgets</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary tracking-tighter">RAGFlow Pro</h1>
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Enterprise Tier</p>
+</div>
+</div>
+<button class="w-full btn-primary text-on-primary font-body-sm text-body-sm py-2 px-4 rounded-lg flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                New Pipeline
+            </button>
+</div>
+<!-- Navigation Tabs -->
+<div class="flex-1 overflow-y-auto py-4">
+<div class="px-4 mb-2">
+<p class="font-label-caps text-label-caps text-on-tertiary-container uppercase px-4 mb-2">Getting Started</p>
+<a class="flex items-center gap-3 bg-surface-container-low text-primary border-l-4 border-secondary-container py-2 px-4 font-bold rounded-r-lg mb-1" href="#">
+<span class="material-symbols-outlined text-[20px]">rocket_launch</span>
+<span class="font-body-sm text-body-sm">Quickstart</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container transition-all py-2 px-4 rounded-lg mb-1" href="#">
+<span class="material-symbols-outlined text-[20px]">integration_instructions</span>
+<span class="font-body-sm text-body-sm">SDKs</span>
+</a>
+</div>
+<div class="px-4 mb-2 mt-6">
+<p class="font-label-caps text-label-caps text-on-tertiary-container uppercase px-4 mb-2">Core Platform</p>
+<!-- JSON Tabs Mapping -->
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container transition-all py-2 px-4 rounded-lg mb-1" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="font-body-sm text-body-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container transition-all py-2 px-4 rounded-lg mb-1" href="#">
+<span class="material-symbols-outlined text-[20px]">account_tree</span>
+<span class="font-body-sm text-body-sm">Workflows</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container transition-all py-2 px-4 rounded-lg mb-1" href="#">
+<span class="material-symbols-outlined text-[20px]">database</span>
+<span class="font-body-sm text-body-sm">Knowledge Base</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container transition-all py-2 px-4 rounded-lg mb-1" href="#">
+<span class="material-symbols-outlined text-[20px]">router</span>
+<span class="font-body-sm text-body-sm">Routing Rules</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container transition-all py-2 px-4 rounded-lg mb-1" href="#">
+<span class="material-symbols-outlined text-[20px]">monitoring</span>
+<span class="font-body-sm text-body-sm">Analytics</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container transition-all py-2 px-4 rounded-lg mb-1" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-body-sm text-body-sm">Settings</span>
+</a>
+</div>
+<div class="px-4 mb-2 mt-6">
+<p class="font-label-caps text-label-caps text-on-tertiary-container uppercase px-4 mb-2">Reference</p>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container transition-all py-2 px-4 rounded-lg mb-1" href="#">
+<span class="material-symbols-outlined text-[20px]">api</span>
+<span class="font-body-sm text-body-sm">API Reference</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container transition-all py-2 px-4 rounded-lg mb-1" href="#">
+<span class="material-symbols-outlined text-[20px]">menu_book</span>
+<span class="font-body-sm text-body-sm">Guides</span>
+</a>
+</div>
+</div>
+<!-- Footer Tabs -->
+<div class="p-4 border-t border-outline-variant">
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container transition-all py-2 px-4 rounded-lg mb-1" href="#">
+<span class="material-symbols-outlined text-[20px]">help</span>
+<span class="font-body-sm text-body-sm">Support</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container transition-all py-2 px-4 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">code</span>
+<span class="font-body-sm text-body-sm">API Docs</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="ml-64 flex-1 flex flex-col h-screen overflow-hidden bg-background-alt relative">
+<!-- Decorative Ambient Background -->
+<div class="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-bl from-surface-container-low via-transparent to-transparent pointer-events-none opacity-50 z-0 rounded-full blur-3xl"></div>
+<!-- Top Search Bar -->
+<header class="h-16 bg-surface-container-lowest border-b border-outline-variant flex items-center px-8 z-10 sticky top-0 justify-between">
+<div class="relative w-96">
+<span class="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full bg-surface-container-lowest border border-border-subtle rounded-lg py-2 pl-10 pr-4 font-body-sm text-body-sm text-primary placeholder:text-on-tertiary-container focus:outline-none focus:border-secondary-container focus:ring-1 focus:ring-secondary-container transition-colors" placeholder="Search documentation... (Press '/')" type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2">
+<span class="font-body-sm text-body-sm">v2.4.0</span>
+<span class="material-symbols-outlined text-[16px]">expand_more</span>
+</button>
+<div class="w-px h-6 bg-outline-variant"></div>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant overflow-hidden flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="A small generic user avatar image featuring a highly stylized, abstract geometric representation of a human face using deep blacks, pristine whites, and a touch of vibrant magenta. The aesthetic is clean, modern, and corporate." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlQJ-jB1YHz9ARkmliug497N8B9GxpwpzygWEnbZjCN24pkZCwr00iwRtSI-nB3KYCkAdegpWeeK6TN6-75pY1l8E495KOOI6224Z12O5XSi2IJojI3-3Ns8FJECXgfpiSEAZM1w4eNfOPfFDst_4CNuOPfjMteCR3H5cRzLtU9Gc7ubSOTJrf-DbvZ4veZD7rySJUP-OdCMo5fu2bqDwuE_1xGvsDn7uQXWuLz3B-wAidPSx4zq4j"/>
+</div>
+</div>
+</header>
+<!-- Scrollable Canvas -->
+<main class="flex-1 overflow-y-auto z-10">
+<div class="max-w-4xl mx-auto px-12 py-12">
+<!-- Page Header -->
+<div class="mb-12">
+<div class="flex items-center gap-2 text-on-tertiary-container font-body-sm text-body-sm mb-4">
+<span>Docs</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-medium">Quickstart</span>
+</div>
+<h2 class="font-headline-xl text-headline-xl text-primary mb-4">Quickstart Guide</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                        Get up and running with RAGFlow Pro in minutes. Learn how to initialize the client, connect your first data source, and execute a basic semantic search query.
+                    </p>
+</div>
+<!-- Callout Card (Bento Style) -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl p-6 mb-12 flex items-start gap-6 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-accent-violet opacity-5 rounded-bl-full pointer-events-none"></div>
+<div class="w-12 h-12 rounded-lg bg-surface-container-low border border-outline-variant flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary-container text-[24px]">bolt</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-primary mb-2">Before you begin</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">
+                            Ensure you have an active API key from the RAGFlow developer dashboard. You will need this to authenticate your client requests.
+                        </p>
+<button class="bg-surface-container-lowest border border-border-subtle text-primary font-body-sm text-body-sm px-4 py-2 rounded-lg hover:bg-surface-container transition-colors flex items-center gap-2">
+                            Get API Key
+                            <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Section: Installation -->
+<div class="mb-12">
+<h3 class="font-headline-lg text-headline-lg text-primary mb-6 border-b border-outline-variant pb-2">1. Installation</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">
+                        Install the official SDK using your preferred package manager. The SDK is currently available for Node.js and Python.
+                    </p>
+<!-- Code Block Terminal Style -->
+<div class="rounded-xl overflow-hidden border border-border-subtle mb-4">
+<div class="bg-background-alt border-b border-border-subtle px-4 py-2 flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-outline-variant"></div>
+<div class="w-3 h-3 rounded-full bg-outline-variant"></div>
+<div class="w-3 h-3 rounded-full bg-outline-variant"></div>
+<span class="ml-2 font-label-caps text-label-caps text-on-tertiary-container uppercase">Terminal</span>
+</div>
+<div class="code-block p-4 font-code-md text-code-md">
+<span class="syntax-comment"># Using npm</span><br/>
+<span class="text-white">npm install</span> <span class="syntax-string">@ragflow/client</span><br/><br/>
+<span class="syntax-comment"># Using yarn</span><br/>
+<span class="text-white">yarn add</span> <span class="syntax-string">@ragflow/client</span>
+</div>
+</div>
+</div>
+<!-- Section: Initialization -->
+<div class="mb-12">
+<h3 class="font-headline-lg text-headline-lg text-primary mb-6 border-b border-outline-variant pb-2">2. Initialize Client</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">
+                        Initialize the client with your project API key. We recommend storing this as an environment variable.
+                    </p>
+<!-- Code Block IDE Style -->
+<div class="rounded-xl overflow-hidden border border-border-subtle">
+<div class="bg-[#FAFAFA] border-b border-border-subtle px-4 py-2 flex items-center gap-4">
+<span class="font-label-caps text-label-caps text-primary border-b-2 border-primary pb-1">index.ts</span>
+<span class="font-label-caps text-label-caps text-on-tertiary-container hover:text-primary cursor-pointer pb-1">main.py</span>
+</div>
+<div class="code-block p-4 font-code-md text-code-md">
+<span class="syntax-keyword">import</span> { <span class="syntax-function">RAGClient</span> } <span class="syntax-keyword">from</span> <span class="syntax-string">'@ragflow/client'</span>;<br/><br/>
+<span class="syntax-comment">// Initialize with your API key</span><br/>
+<span class="syntax-keyword">const</span> client = <span class="syntax-keyword">new</span> <span class="syntax-function">RAGClient</span>({<br/>
+                              apiKey: process.env.<span class="text-white">RAGFLOW_API_KEY</span>,<br/>
+                              environment: <span class="syntax-string">'production'</span><br/>
+                            });
+                        </div>
+</div>
+</div>
+<!-- Next Steps Bento Grid -->
+<div class="mb-24">
+<h3 class="font-headline-md text-headline-md text-primary mb-6">Next Steps</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl p-6 hover:border-secondary-container transition-colors cursor-pointer group flex flex-col justify-between">
+<div>
+<div class="w-10 h-10 rounded bg-surface-container-low border border-outline-variant flex items-center justify-center mb-4 group-hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-primary text-[20px]">dataset</span>
+</div>
+<h4 class="font-body-lg text-body-lg font-semibold text-primary mb-2">Connect Data Sources</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Learn how to ingest documents, databases, and APIs into your knowledge base.</p>
+</div>
+<div class="mt-4 flex justify-end">
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">arrow_forward</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-xl p-6 hover:border-secondary-container transition-colors cursor-pointer group flex flex-col justify-between">
+<div>
+<div class="w-10 h-10 rounded bg-surface-container-low border border-outline-variant flex items-center justify-center mb-4 group-hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-primary text-[20px]">psychology</span>
+</div>
+<h4 class="font-body-lg text-body-lg font-semibold text-primary mb-2">Configure Routing</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Set up semantic routing rules to direct queries to the optimal models.</p>
+</div>
+<div class="mt-4 flex justify-end">
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors">arrow_forward</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer (Shared Component Template modified for main content area) -->
+<footer class="w-full py-12 border-t border-outline-variant bg-surface-container-lowest px-12">
+<div class="max-w-max-width mx-auto flex flex-col md:flex-row justify-between items-center gap-gutter">
+<div class="font-headline-sm text-headline-sm font-bold text-primary">RAGFlow AI</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant flex gap-6">
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-primary transition-colors" href="#">Security</a>
+<a class="hover:text-primary transition-colors" href="#">Status</a>
+</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">
+                        © 2024 RAGFlow AI. All rights reserved.
+                    </div>
+</div>
+</footer>
+</main>
+</div>
+</body></html>

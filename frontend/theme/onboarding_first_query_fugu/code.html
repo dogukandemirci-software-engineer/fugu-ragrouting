@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Onboarding - Run Your First Query - Fugu Enterprise</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600&amp;family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary": "#ffffff",
+                        "primary": "#000000",
+                        "on-surface": "#1a1b23",
+                        "on-primary-fixed-variant": "#474646",
+                        "primary-container": "#1c1b1b",
+                        "inverse-primary": "#c9c6c5",
+                        "surface-tint": "#5f5e5e",
+                        "on-primary-fixed": "#1c1b1b",
+                        "secondary": "#4a46d5",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed-variant": "#332bbf",
+                        "secondary-fixed-dim": "#c2c1ff",
+                        "surface-variant": "#e3e1ec",
+                        "on-error": "#ffffff",
+                        "primary-fixed": "#e5e2e1",
+                        "surface-container-highest": "#e3e1ec",
+                        "surface-container-high": "#e9e7f2",
+                        "tertiary": "#000000",
+                        "tertiary-container": "#1d1b1a",
+                        "on-background": "#1a1b23",
+                        "on-surface-variant": "#444748",
+                        "on-error-container": "#93000a",
+                        "outline-variant": "#c4c7c7",
+                        "on-tertiary-container": "#868381",
+                        "on-secondary-fixed": "#0c006a",
+                        "inverse-surface": "#2f3038",
+                        "on-secondary-container": "#fffbff",
+                        "background-alt": "#FAFAFA",
+                        "secondary-container": "#6462ef",
+                        "surface-dim": "#dad9e4",
+                        "surface-container-low": "#f4f2fd",
+                        "accent-magenta": "#FF2E9A",
+                        "accent-teal-glow": "#3FFFC0",
+                        "on-tertiary-fixed": "#1d1b1a",
+                        "outline": "#747878",
+                        "border-subtle": "#18181B",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#e6e1df",
+                        "on-primary-container": "#858383",
+                        "error-container": "#ffdad6",
+                        "surface": "#fbf8ff",
+                        "inverse-on-surface": "#f1effa",
+                        "surface-bright": "#fbf8ff",
+                        "accent-violet": "#7B2FF7",
+                        "tertiary-fixed-dim": "#cac6c3",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed": "#e2dfff",
+                        "surface-container": "#efecf8",
+                        "background": "#fbf8ff",
+                        "primary-fixed-dim": "#c9c6c5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "unit": "8px",
+                        "margin-desktop": "48px",
+                        "max-width": "1440px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Geist"],
+                        "headline-xl": ["Inter"],
+                        "code-md": ["JetBrains Mono"],
+                        "code-sm": ["JetBrains Mono"],
+                        "headline-md": ["Inter"],
+                        "body-sm": ["Geist"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Geist"],
+                        "label-caps": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "code-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+                        "code-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-caps": ["11px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .brand-gradient-bg {
+            background: linear-gradient(135deg, #7B2FF7 0%, #4a46d5 100%);
+        }
+        .glossy-btn {
+            background: linear-gradient(135deg, #7B2FF7 0%, #4a46d5 100%);
+            position: relative;
+            box-shadow: 0 0 10px rgba(123, 47, 247, 0.15);
+        }
+        .glossy-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            border-radius: inherit;
+            pointer-events: none;
+        }
+        .glossy-btn:hover {
+            box-shadow: inset 0 0 0 1px #3FFFC0, 0 0 15px rgba(123, 47, 247, 0.25);
+        }
+        .code-block-bg {
+            background-color: #0A0A0A;
+        }
+        .syntax-violet { color: #7B2FF7; }
+        .syntax-teal { color: #3FFFC0; }
+        .syntax-string { color: #c9c6c5; }
+        .syntax-key { color: #ffffff; }
+    </style>
+</head>
+<body class="bg-background-alt text-on-surface font-body-md h-screen w-full overflow-hidden flex justify-center items-center">
+<!-- Main Container - Suppressing global nav for focused onboarding journey -->
+<main class="w-full max-w-4xl mx-auto px-margin-mobile md:px-gutter flex flex-col items-center">
+<!-- Onboarding Header -->
+<div class="w-full text-center mb-8">
+<h1 class="font-headline-lg text-headline-lg text-primary mb-2">Run your first query</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Test your connection and see how fast Fugu retrieves data.</p>
+</div>
+<!-- Progress Indicator -->
+<div class="w-full max-w-md mb-8 flex items-center justify-between">
+<div class="flex-1 h-1 bg-surface-variant rounded-full overflow-hidden mr-2">
+<div class="h-full bg-secondary w-full"></div>
+</div>
+<div class="flex-1 h-1 bg-surface-variant rounded-full overflow-hidden mx-2">
+<div class="h-full bg-secondary w-full"></div>
+</div>
+<div class="flex-1 h-1 bg-surface-variant rounded-full overflow-hidden mx-2">
+<div class="h-full brand-gradient-bg w-full"></div>
+</div>
+<div class="flex-1 h-1 bg-surface-variant rounded-full overflow-hidden ml-2">
+<div class="h-full bg-transparent w-full"></div>
+</div>
+<span class="ml-4 font-label-caps text-label-caps text-on-surface-variant">STEP 3 OF 4</span>
+</div>
+<!-- Bento Grid Layout for Query Editor & Results -->
+<div class="w-full grid grid-cols-1 md:grid-cols-2 gap-gutter mb-8">
+<!-- Left Panel: Query Editor -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-lg flex flex-col h-96">
+<div class="bg-background-alt border-b border-border-subtle px-4 py-3 flex items-center justify-between rounded-t-lg">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant" style="font-size: 18px;">terminal</span>
+<span class="font-label-caps text-label-caps text-primary">QUERY EDITOR</span>
+</div>
+</div>
+<div class="flex-1 p-4 bg-primary-container text-on-primary code-block-bg font-code-md text-code-md overflow-y-auto rounded-b-lg">
+<pre><code><span class="syntax-violet">POST</span> /v1/query
+<span class="syntax-teal">Content-Type</span>: application/json
+
+{
+  <span class="syntax-key">"query"</span>: <span class="syntax-string">"What are the latest security protocols?"</span>,
+  <span class="syntax-key">"namespace"</span>: <span class="syntax-string">"prod-docs-v2"</span>,
+  <span class="syntax-key">"top_k"</span>: <span class="syntax-teal">3</span>,
+  <span class="syntax-key">"include_metadata"</span>: <span class="syntax-teal">true</span>
+}</code></pre>
+</div>
+<div class="p-4 border-t border-border-subtle bg-surface-container-lowest flex justify-end">
+<button class="glossy-btn text-on-primary font-body-sm text-body-sm px-4 py-2 rounded-[10px] flex items-center gap-2 transition-all">
+<span class="material-symbols-outlined" style="font-size: 18px;">play_arrow</span>
+                        Run Query
+                    </button>
+</div>
+</div>
+<!-- Right Panel: Results Preview -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-lg flex flex-col h-96">
+<div class="bg-background-alt border-b border-border-subtle px-4 py-3 flex items-center justify-between rounded-t-lg">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant" style="font-size: 18px;">data_object</span>
+<span class="font-label-caps text-label-caps text-primary">RESPONSE</span>
+</div>
+<span class="font-code-sm text-code-sm text-on-surface-variant">24ms</span>
+</div>
+<div class="flex-1 p-4 bg-primary-container text-on-primary code-block-bg font-code-md text-code-md overflow-y-auto rounded-b-lg opacity-50 flex items-center justify-center relative">
+<!-- Awaiting State -->
+<div class="absolute inset-0 flex flex-col items-center justify-center text-on-surface-variant z-10" id="awaiting-state">
+<span class="material-symbols-outlined mb-2" style="font-size: 32px;">hourglass_empty</span>
+<p class="font-body-sm text-body-sm">Awaiting query execution...</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="w-full flex justify-between items-center mt-4">
+<button class="text-on-surface-variant font-body-sm text-body-sm hover:text-primary transition-colors">
+                Skip for now
+            </button>
+<div class="flex gap-4">
+<button class="px-6 py-2 bg-surface-container-lowest border border-border-subtle text-primary font-body-sm text-body-sm rounded-lg hover:bg-surface-variant transition-colors">
+                    Back
+                </button>
+<button class="glossy-btn text-on-primary font-body-sm text-body-sm px-6 py-2 rounded-[10px] transition-all">
+                    Continue
+                </button>
+</div>
+</div>
+</main>
+</body></html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Usage &amp; Billing | Fugu Enterprise</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Geist:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed-variant": "#332bbf",
+                    "primary": "#000000",
+                    "on-primary-fixed": "#1c1b1b",
+                    "tertiary": "#000000",
+                    "inverse-on-surface": "#f1effa",
+                    "on-error": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "primary-container": "#1c1b1b",
+                    "secondary-container": "#6462ef",
+                    "accent-violet": "#7B2FF7",
+                    "surface-container-highest": "#e3e1ec",
+                    "outline-variant": "#c4c7c7",
+                    "surface-variant": "#e3e1ec",
+                    "on-primary": "#ffffff",
+                    "on-surface": "#1a1b23",
+                    "on-primary-fixed-variant": "#474646",
+                    "surface-tint": "#5f5e5e",
+                    "outline": "#747878",
+                    "error": "#ba1a1a",
+                    "primary-fixed": "#e5e2e1",
+                    "secondary": "#4a46d5",
+                    "surface-bright": "#fbf8ff",
+                    "tertiary-fixed-dim": "#cac6c3",
+                    "tertiary-fixed": "#e6e1df",
+                    "inverse-surface": "#2f3038",
+                    "background": "#fbf8ff",
+                    "on-surface-variant": "#444748",
+                    "surface-dim": "#dad9e4",
+                    "secondary-fixed": "#e2dfff",
+                    "on-tertiary-fixed": "#1d1b1a",
+                    "on-background": "#1a1b23",
+                    "background-alt": "#FAFAFA",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-container": "#fffbff",
+                    "error-container": "#ffdad6",
+                    "surface-container-low": "#f4f2fd",
+                    "secondary-fixed-dim": "#c2c1ff",
+                    "primary-fixed-dim": "#c9c6c5",
+                    "accent-teal-glow": "#3FFFC0",
+                    "surface-container": "#efecf8",
+                    "on-secondary-fixed": "#0c006a",
+                    "on-primary-container": "#858383",
+                    "on-tertiary-container": "#868381",
+                    "surface": "#fbf8ff",
+                    "accent-magenta": "#FF2E9A",
+                    "inverse-primary": "#c9c6c5",
+                    "tertiary-container": "#1d1b1a",
+                    "surface-container-high": "#e9e7f2",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#484645",
+                    "border-subtle": "#18181B"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "8px",
+                    "gutter": "24px",
+                    "margin-desktop": "48px",
+                    "max-width": "1440px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "body-sm": ["Geist"],
+                    "headline-xl": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-lg": ["Geist"],
+                    "body-md": ["Geist"],
+                    "code-sm": ["JetBrains Mono"],
+                    "label-caps": ["JetBrains Mono"],
+                    "headline-lg": ["Inter"],
+                    "code-md": ["JetBrains Mono"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { font-family: 'Geist', sans-serif; }
+        .brand-gradient { background: linear-gradient(135deg, #7B2FF7 0%, #2A1FB8 100%); }
+        .accent-border { 
+            position: relative;
+            background: #ffffff;
+        }
+        .accent-border::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: -1px; right: -1px; bottom: -1px;
+            background: linear-gradient(135deg, #7B2FF7, #3FFFC0);
+            border-radius: 11px;
+            z-index: -1;
+        }
+        .primary-glow {
+            box-shadow: 0 0 10px rgba(123, 47, 247, 0.15);
+        }
+        .primary-glow:hover {
+            box-shadow: 0 0 15px rgba(123, 47, 247, 0.25);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- Fixed SideNavBar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col h-screen w-64 border-r border-border-subtle bg-surface dark:bg-background z-50">
+<div class="p-6 flex flex-col gap-1">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg brand-gradient flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">phishing</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-on-primary-fixed">Fugu Enterprise</h1>
+<p class="text-[10px] font-label-caps uppercase tracking-widest text-on-surface-variant">RAG Infrastructure</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 mt-4 px-2 space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined group-hover:text-primary">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-body-md text-body-md">Documents</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined">search_check</span>
+<span class="font-body-md text-body-md">Query Explorer</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined">vpn_key</span>
+<span class="font-body-md text-body-md">API Keys</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-body-md text-body-md">Team</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-primary font-bold border-l-2 border-secondary bg-surface-container-low" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bar_chart</span>
+<span class="font-body-md text-body-md">Usage</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors rounded-lg group" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</nav>
+<div class="p-4 mt-auto">
+<button class="w-full brand-gradient text-white font-body-md text-body-md py-3 rounded-[10px] primary-glow transition-all active:scale-[0.98]">
+                Upgrade Plan
+            </button>
+<div class="mt-6 flex items-center gap-3 px-2">
+<div class="w-10 h-10 rounded-full border border-border-subtle bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional studio portrait of a high-tech software architect with a clean minimalist background. The lighting is soft and neutral, typical of a corporate modern aesthetic. The subject wears a dark turtleneck, reflecting a sophisticated developer persona in a high-key, bright light-mode interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHIRq7joB8qBj9HhoNh_H9E-AAr2jlPxtsMI4k1qNEVgF3LnIHgZpKe3eEAuOjV85rutd6tbZe2GhT_cDqn8shx-wOATeqelPXZ314CGObkMusTk3EBXZxMeqT7T6wh880RTO5Hghbk3KHM1nVt4sQf1KyuL_C1sjQtv-XyxgQHOhPT8Q7oNEyphSDKnZIlVcWt_8sNpvAawZXX03Ki_etwzjYHp4aWcJDMPGpsrDpSPqWp9xuTqoS"/>
+</div>
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-bold">Alex Rivera</span>
+<span class="text-[10px] text-on-surface-variant">Admin</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="sticky top-0 z-40 flex items-center justify-between px-margin-desktop w-full ml-64 max-w-[calc(100%-16rem)] h-16 border-b border-border-subtle bg-surface dark:bg-background">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">search</span>
+<input class="w-full h-10 pl-10 pr-4 bg-surface border border-border-subtle rounded-lg font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-secondary transition-all" placeholder="Search usage logs, invoices..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 p-margin-desktop max-w-6xl">
+<div class="mb-10">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2">Usage &amp; Billing</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Manage your workspace subscription, monitor data consumption, and view transaction history.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-12">
+<!-- Current Plan Card -->
+<div class="accent-border rounded-[10px] p-6 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="px-3 py-1 bg-surface-container-low text-secondary font-label-caps rounded-full">CURRENT PLAN</span>
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">stars</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-1">Growth Plan</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">$199.00 / month</p>
+</div>
+<div class="mt-8">
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">Next billing date: <span class="font-bold text-primary">Dec 14, 2024</span></p>
+<button class="w-full py-2 border border-border-subtle rounded-lg font-body-sm text-body-sm hover:bg-surface-container-low transition-colors">Manage Plan</button>
+</div>
+</div>
+<!-- Stats Card 1 -->
+<div class="bg-white border border-border-subtle rounded-[10px] p-6">
+<div class="flex items-center gap-2 text-on-surface-variant mb-4">
+<span class="material-symbols-outlined">bolt</span>
+<span class="font-label-caps">QUERIES THIS MONTH</span>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-bold text-primary">128.4k</span>
+<span class="text-on-surface-variant font-body-sm">/ 250k</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full mt-4 overflow-hidden">
+<div class="brand-gradient h-full w-[51%] rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Stats Card 2 -->
+<div class="bg-white border border-border-subtle rounded-[10px] p-6">
+<div class="flex items-center gap-2 text-on-surface-variant mb-4">
+<span class="material-symbols-outlined">storage</span>
+<span class="font-label-caps">STORAGE CAPACITY</span>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-bold text-primary">42.8 GB</span>
+<span class="text-on-surface-variant font-body-sm">/ 100 GB</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full mt-4 overflow-hidden">
+<div class="brand-gradient h-full w-[43%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Token Usage Detail Section -->
+<section class="mb-12">
+<div class="flex items-center justify-between mb-6">
+<h4 class="font-headline-md text-headline-md text-primary">Token Consumption</h4>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 border border-border-subtle rounded-lg font-body-sm text-body-sm hover:bg-surface-container-low transition-colors">Daily</button>
+<button class="px-3 py-1.5 bg-primary text-white border border-primary rounded-lg font-body-sm text-body-sm">Monthly</button>
+</div>
+</div>
+<div class="bg-white border border-border-subtle rounded-xl overflow-hidden">
+<div class="p-8">
+<div class="flex items-center justify-between mb-4">
+<div>
+<p class="font-label-caps text-on-surface-variant">TOTAL TOKENS USED</p>
+<h3 class="text-4xl font-bold text-primary mt-2">8,429,102</h3>
+</div>
+<div class="text-right">
+<p class="font-label-caps text-on-surface-variant">PLAN LIMIT</p>
+<h3 class="text-xl font-semibold text-on-surface-variant mt-2">20,000,000</h3>
+</div>
+</div>
+<div class="w-full bg-surface-container-high h-4 rounded-full overflow-hidden relative">
+<div class="brand-gradient h-full w-[42%] rounded-full shadow-[0_0_15px_rgba(123,47,247,0.3)]"></div>
+</div>
+<div class="flex justify-between mt-3 text-on-surface-variant font-code-sm">
+<span>42.1% utilized</span>
+<span>11.5M tokens remaining</span>
+</div>
+</div>
+<div class="bg-background-alt border-t border-border-subtle p-4 px-8 flex items-center justify-between">
+<p class="font-body-sm text-body-sm text-on-surface-variant">Usage resets in 12 days (Dec 14)</p>
+<a class="text-secondary font-body-sm font-bold flex items-center gap-1 hover:underline" href="#">
+                        View usage limits
+                        <span class="material-symbols-outlined text-[18px]">arrow_outward</span>
+</a>
+</div>
+</div>
+</section>
+<!-- Billing History -->
+<section class="mb-12">
+<div class="flex items-center justify-between mb-6">
+<h4 class="font-headline-md text-headline-md text-primary">Billing History</h4>
+<a class="text-on-surface-variant font-body-sm flex items-center gap-2 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">credit_card</span>
+                    Update Payment Method via Stripe
+                </a>
+</div>
+<div class="bg-white border border-border-subtle rounded-xl overflow-hidden">
+<table class="w-full border-collapse">
+<thead class="bg-background-alt border-b border-border-subtle">
+<tr>
+<th class="text-left px-6 py-4 font-label-caps text-on-surface-variant">INVOICE #</th>
+<th class="text-left px-6 py-4 font-label-caps text-on-surface-variant">DATE</th>
+<th class="text-left px-6 py-4 font-label-caps text-on-surface-variant">AMOUNT</th>
+<th class="text-left px-6 py-4 font-label-caps text-on-surface-variant">STATUS</th>
+<th class="text-right px-6 py-4 font-label-caps text-on-surface-variant">ACTION</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-4 font-code-md text-primary">INV-2024-0012</td>
+<td class="px-6 py-4 font-body-sm text-on-surface-variant">Nov 14, 2024</td>
+<td class="px-6 py-4 font-body-sm font-bold text-primary">$199.00</td>
+<td class="px-6 py-4">
+<span class="px-2 py-0.5 bg-[#ECFDF5] text-[#059669] text-[12px] font-bold rounded-md flex items-center gap-1 w-fit">
+<span class="w-1.5 h-1.5 rounded-full bg-[#059669]"></span>
+                                    PAID
+                                </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined">download</span></button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-4 font-code-md text-primary">INV-2024-0011</td>
+<td class="px-6 py-4 font-body-sm text-on-surface-variant">Oct 14, 2024</td>
+<td class="px-6 py-4 font-body-sm font-bold text-primary">$199.00</td>
+<td class="px-6 py-4">
+<span class="px-2 py-0.5 bg-[#ECFDF5] text-[#059669] text-[12px] font-bold rounded-md flex items-center gap-1 w-fit">
+<span class="w-1.5 h-1.5 rounded-full bg-[#059669]"></span>
+                                    PAID
+                                </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined">download</span></button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-4 font-code-md text-primary">INV-2024-0010</td>
+<td class="px-6 py-4 font-body-sm text-on-surface-variant">Sep 14, 2024</td>
+<td class="px-6 py-4 font-body-sm font-bold text-primary">$199.00</td>
+<td class="px-6 py-4">
+<span class="px-2 py-0.5 bg-[#ECFDF5] text-[#059669] text-[12px] font-bold rounded-md flex items-center gap-1 w-fit">
+<span class="w-1.5 h-1.5 rounded-full bg-[#059669]"></span>
+                                    PAID
+                                </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined">download</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="mt-4 flex justify-center">
+<button class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary flex items-center gap-1">
+                    Load more history
+                    <span class="material-symbols-outlined text-[18px]">keyboard_arrow_down</span>
+</button>
+</div>
+</section>
+<!-- Upsell Banner -->
+<div class="relative bg-primary text-white rounded-xl p-10 overflow-hidden group">
+
+<div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+<div class="max-w-xl">
+<h3 class="font-headline-lg text-headline-lg mb-4">Scale beyond limits with Scale Plan</h3>
+<p class="font-body-lg text-body-lg opacity-80 mb-6">Unlimited tokens, dedicated infrastructure, and 24/7 technical support for high-throughput enterprise applications.</p>
+<ul class="space-y-2 mb-8">
+<li class="flex items-center gap-3 font-body-md text-body-md">
+<span class="material-symbols-outlined text-accent-teal-glow">check_circle</span>
+                            Dedicated VPC Deployment
+                        </li>
+<li class="flex items-center gap-3 font-body-md text-body-md">
+<span class="material-symbols-outlined text-accent-teal-glow">check_circle</span>
+                            Custom RAG Pipeline Fine-tuning
+                        </li>
+</ul>
+</div>
+<div class="shrink-0">
+<button class="brand-gradient px-8 py-4 rounded-[10px] font-headline-md text-headline-md font-bold primary-glow hover:scale-[1.02] transition-transform active:scale-[0.98]">
+                        Contact Sales
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="flex justify-between items-center px-margin-desktop py-8 mt-auto ml-64 border-t border-border-subtle bg-surface-container-lowest">
+<div class="flex items-center gap-4">
+<span class="font-label-caps text-label-caps text-primary">FUGU SYSTEMS</span>
+<span class="font-code-sm text-code-sm text-on-surface-variant">© 2024 Fugu Systems Inc.</span>
+</div>
+<div class="flex items-center gap-8">
+<a class="font-code-sm text-code-sm text-on-surface-variant hover:underline hover:text-primary opacity-80 hover:opacity-100 transition-colors" href="#">Documentation</a>
+<a class="font-code-sm text-code-sm text-on-surface-variant hover:underline hover:text-primary opacity-80 hover:opacity-100 transition-colors" href="#">API Status</a>
+<a class="font-code-sm text-code-sm text-on-surface-variant hover:underline hover:text-primary opacity-80 hover:opacity-100 transition-colors" href="#">Privacy Policy</a>
+</div>
+</footer>
+<script>
+        // Simple interaction for the search bar
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('scale-[1.01]');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('scale-[1.01]');
+        });
+
+        // Add hover effects for buttons
+        const primaryButtons = document.querySelectorAll('.brand-gradient');
+        primaryButtons.forEach(btn => {
+            btn.addEventListener('mouseover', () => {
+                btn.style.filter = 'brightness(1.1)';
+            });
+            btn.addEventListener('mouseout', () => {
+                btn.style.filter = 'brightness(1.0)';
+            });
+        });
+    </script>
+</body></html>

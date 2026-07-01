@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tenants / Isolation - RAGFlow.ai</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&amp;family=Inter:wght@400..700&amp;family=JetBrains+Mono:wght@400..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-surface": "#2f3038",
+                    "on-secondary-container": "#fffbff",
+                    "background-alt": "#FAFAFA",
+                    "outline-variant": "#c4c7c7",
+                    "on-tertiary-container": "#868381",
+                    "on-secondary-fixed": "#0c006a",
+                    "on-surface-variant": "#444748",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-fixed-variant": "#484645",
+                    "error": "#ba1a1a",
+                    "border-subtle": "#18181B",
+                    "accent-teal-glow": "#3FFFC0",
+                    "on-tertiary-fixed": "#1d1b1a",
+                    "outline": "#747878",
+                    "secondary-container": "#6462ef",
+                    "surface-dim": "#dad9e4",
+                    "surface-container-low": "#f4f2fd",
+                    "accent-magenta": "#FF2E9A",
+                    "surface": "#fbf8ff",
+                    "inverse-on-surface": "#f1effa",
+                    "on-primary-container": "#858383",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed": "#e6e1df",
+                    "primary-fixed-dim": "#c9c6c5",
+                    "background": "#fbf8ff",
+                    "secondary-fixed": "#e2dfff",
+                    "surface-container": "#efecf8",
+                    "surface-bright": "#fbf8ff",
+                    "accent-violet": "#7B2FF7",
+                    "tertiary-fixed-dim": "#cac6c3",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed-variant": "#474646",
+                    "primary": "#000000",
+                    "on-surface": "#1a1b23",
+                    "on-secondary": "#ffffff",
+                    "secondary": "#4a46d5",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "inverse-primary": "#c9c6c5",
+                    "surface-tint": "#5f5e5e",
+                    "on-primary-fixed": "#1c1b1b",
+                    "primary-container": "#1c1b1b",
+                    "primary-fixed": "#e5e2e1",
+                    "surface-container-highest": "#e3e1ec",
+                    "surface-variant": "#e3e1ec",
+                    "on-error": "#ffffff",
+                    "secondary-fixed-dim": "#c2c1ff",
+                    "on-secondary-fixed-variant": "#332bbf",
+                    "tertiary-container": "#1d1b1a",
+                    "on-background": "#1a1b23",
+                    "tertiary": "#000000",
+                    "surface-container-high": "#e9e7f2"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "48px",
+                    "unit": "8px",
+                    "gutter": "24px",
+                    "max-width": "1440px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "body-sm": ["Geist"],
+                    "headline-md": ["Inter"],
+                    "code-sm": ["JetBrains Mono"],
+                    "code-md": ["JetBrains Mono"],
+                    "headline-xl": ["Inter"],
+                    "body-lg": ["Geist"],
+                    "label-caps": ["JetBrains Mono"],
+                    "body-md": ["Geist"],
+                    "headline-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "code-sm": ["12px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "code-md": ["14px", {"lineHeight": "22px", "fontWeight": "400"}],
+                    "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .brand-gradient {
+            background: linear-gradient(135deg, #7B2FF7 0%, #FF2E9A 100%);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #7B2FF7 0%, #FF2E9A 100%);
+            color: #ffffff;
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 0 10px rgba(123, 47, 247, 0.15);
+            transition: all 0.2s ease;
+            overflow: hidden;
+        }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, transparent 100%);
+            border-radius: 10px;
+            pointer-events: none;
+        }
+        .btn-primary:hover {
+            box-shadow: inset 0 0 0 1px #3FFFC0, 0 0 15px rgba(123, 47, 247, 0.25);
+        }
+        
+        /* SideNav Hide on Mobile */
+        @media (max-width: 767px) {
+            .side-nav-container {
+                display: none !important;
+            }
+            .main-content {
+                margin-left: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased min-h-screen flex">
+<!-- SideNavBar -->
+<nav class="side-nav-container bg-surface-container-lowest border-r border-outline-variant h-screen w-64 fixed left-0 top-0 flex flex-col z-50">
+<div class="p-4 border-b border-outline-variant flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center text-on-primary font-bold">R</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary" style="font-size: 18px; line-height: 24px;">RAGFlow Pro</h1>
+<p class="font-label-caps text-label-caps text-on-surface-variant">Enterprise Tier</p>
+</div>
+</div>
+<div class="p-4">
+<button class="btn-primary w-full py-2 px-4 flex items-center justify-center gap-2 font-headline-md text-body-sm font-semibold">
+<span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+                New Pipeline
+            </button>
+</div>
+<div class="flex-1 overflow-y-auto py-2">
+<a class="flex items-center gap-3 text-on-surface-variant py-3 px-4 hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-sm text-body-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant py-3 px-4 hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="account_tree">account_tree</span>
+<span class="font-body-sm text-body-sm">Workflows</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant py-3 px-4 hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+<span class="font-body-sm text-body-sm">Knowledge Base</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant py-3 px-4 hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="router">router</span>
+<span class="font-body-sm text-body-sm">Routing Rules</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant py-3 px-4 hover:bg-surface-container transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="monitoring">monitoring</span>
+<span class="font-body-sm text-body-sm">Analytics</span>
+</a>
+<a class="flex items-center gap-3 bg-surface-container-low text-primary border-l-4 border-secondary-container py-3 px-4 font-bold scale-[0.98] transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-sm text-body-sm">Settings</span>
+</a>
+</div>
+<div class="border-t border-outline-variant p-2">
+<a class="flex items-center gap-3 text-on-surface-variant py-2 px-4 hover:bg-surface-container transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-body-sm text-body-sm">Support</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant py-2 px-4 hover:bg-surface-container transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="code">code</span>
+<span class="font-body-sm text-body-sm">API Docs</span>
+</a>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="main-content flex-1 ml-64 flex flex-col min-h-screen">
+<!-- Header -->
+<header class="bg-surface-container-lowest border-b border-outline-variant h-16 flex items-center justify-between px-margin-desktop shrink-0">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary">Tenants &amp; Isolation</h2>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container border border-border-subtle overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A detailed headshot of a professional developer in a bright modern office setting, wearing a dark grey t-shirt, looking directly at the camera with a neutral expression. The lighting is clean and balanced, fitting a high-end corporate tech environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDYDuCrMKJ-70M7W-7mFJSfvkOnZRF2QpM2vuc3tn_HfR9peIELsjr62OIQOnJhb-RTJGBQ-buXAKG_dh9BhTzdtWltourNSl64UFBt_8xGgSO8UR2mOEmp5D174f8ND1Yp0peLMkC2ZGiSiG572G6E4dLKxbK6XjHoLwoP9KYsrS7ma1SZXQU6R-6lJkcQZB2Uh4FuPesdQeY2RSm-BP59xwWU5RP2AG7Bfo1fjl3TPkizHSIUOyX"/>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<div class="flex-1 p-margin-desktop max-w-max-width mx-auto w-full flex flex-col gap-8 overflow-y-auto">
+<!-- Context & Actions -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div>
+<h3 class="font-headline-lg text-headline-lg text-primary tracking-tight">Isolated Environments</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Manage dedicated infrastructure boundaries for high-compliance workloads.</p>
+</div>
+<div class="flex gap-3">
+<button class="bg-surface-container-lowest border border-border-subtle text-primary font-body-sm text-body-sm px-4 py-2 rounded-lg hover:bg-background-alt transition-colors">
+                        View Audit Logs
+                    </button>
+<button class="btn-primary font-body-sm text-body-sm px-4 py-2 flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+                        Provision Tenant
+                    </button>
+</div>
+</div>
+<!-- Dashboard Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Environments List (Left 2 columns) -->
+<div class="lg:col-span-2 flex flex-col gap-4">
+<!-- Tenant Card 1 -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-[10px] overflow-hidden">
+<div class="bg-background-alt px-6 py-4 border-b border-border-subtle flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded-full bg-[#3FFFC0] shadow-[0_0_8px_#3FFFC0]"></div>
+<h4 class="font-headline-md text-body-lg font-semibold text-primary">Financial Services Tier-1</h4>
+</div>
+<div class="flex items-center gap-2 bg-surface-container px-2 py-1 rounded text-primary font-code-sm text-code-sm">
+<span class="material-symbols-outlined" style="font-size: 14px;">location_on</span>
+                                US-East (N. Virginia)
+                            </div>
+</div>
+<div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1 uppercase">Status</p>
+<p class="font-code-md text-code-md text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-[#3FFFC0]" style="font-size: 16px;">check_circle</span>
+                                    Operational
+                                </p>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1 uppercase">Dedicated Nodes</p>
+<p class="font-code-md text-code-md text-primary">8x r6g.4xlarge</p>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1 uppercase">Data Isolation</p>
+<p class="font-code-md text-code-md text-primary">KMS CMK + VPC Peering</p>
+</div>
+</div>
+<div class="px-6 py-4 border-t border-border-subtle bg-surface-container-lowest flex justify-end gap-3">
+<button class="text-on-surface-variant hover:text-primary font-body-sm text-body-sm transition-colors">Configure</button>
+<button class="text-primary font-body-sm text-body-sm font-semibold hover:text-accent-violet transition-colors">View Metrics</button>
+</div>
+</div>
+<!-- Tenant Card 2 -->
+<div class="bg-surface-container-lowest border border-border-subtle rounded-[10px] overflow-hidden">
+<div class="bg-background-alt px-6 py-4 border-b border-border-subtle flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded-full bg-[#3FFFC0] shadow-[0_0_8px_#3FFFC0]"></div>
+<h4 class="font-headline-md text-body-lg font-semibold text-primary">EU Healthcare Data</h4>
+</div>
+<div class="flex items-center gap-2 bg-surface-container px-2 py-1 rounded text-primary font-code-sm text-code-sm">
+<span class="material-symbols-outlined" style="font-size: 14px;">location_on</span>
+                                EU-Central (Frankfurt)
+                            </div>
+</div>
+<div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1 uppercase">Status</p>
+<p class="font-code-md text-code-md text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-[#3FFFC0]" style="font-size: 16px;">check_circle</span>
+                                    Operational
+                                </p>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1 uppercase">Dedicated Nodes</p>
+<p class="font-code-md text-code-md text-primary">4x r6g.2xlarge</p>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1 uppercase">Data Isolation</p>
+<p class="font-code-md text-code-md text-primary">EU-Only Locality</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Global Settings / Limits (Right Column) -->
+<div class="flex flex-col gap-4">
+<div class="bg-surface-container-lowest border border-border-subtle rounded-[10px] p-6">
+<h4 class="font-headline-md text-body-lg font-semibold text-primary mb-4">Resource Quotas</h4>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Global Compute Cap</span>
+<span class="font-code-sm text-code-sm text-primary">64 / 100 vCPUs</span>
+</div>
+<div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 64%;"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Active Tenants</span>
+<span class="font-code-sm text-code-sm text-primary">2 / 5</span>
+</div>
+<div class="h-2 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full brand-gradient" style="width: 40%;"></div>
+</div>
+</div>
+</div>
+<button class="w-full mt-6 bg-surface-container-lowest border border-border-subtle text-primary font-body-sm text-body-sm px-4 py-2 rounded-lg hover:bg-background-alt transition-colors">
+                            Request Limit Increase
+                        </button>
+</div>
+<div class="bg-surface-container-lowest border border-border-subtle rounded-[10px] p-6">
+<h4 class="font-headline-md text-body-lg font-semibold text-primary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-accent-violet">shield</span>
+                            Compliance Baseline
+                        </h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">
+                            All new tenants inherit these base isolation constraints.
+                        </p>
+<div class="space-y-3">
+<label class="flex items-center gap-3">
+<input checked="" class="form-checkbox h-4 w-4 text-primary border-outline-variant rounded focus:ring-primary focus:ring-offset-surface-container-lowest" disabled="" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-primary">At-Rest Encryption (AES-256)</span>
+</label>
+<label class="flex items-center gap-3">
+<input checked="" class="form-checkbox h-4 w-4 text-primary border-outline-variant rounded focus:ring-primary focus:ring-offset-surface-container-lowest" disabled="" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-primary">In-Transit Encryption (TLS 1.3)</span>
+</label>
+<label class="flex items-center gap-3">
+<input checked="" class="form-checkbox h-4 w-4 text-accent-violet border-outline-variant rounded focus:ring-accent-violet focus:ring-offset-surface-container-lowest" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-primary">Force VPC Endpoints</span>
+</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>
