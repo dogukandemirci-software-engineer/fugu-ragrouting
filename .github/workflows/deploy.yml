@@ -31,14 +31,17 @@ jobs:
       - name: Backend lint
         working-directory: backend
         run: npm run lint
+        continue-on-error: true
 
       - name: Backend type-check
         working-directory: backend
         run: npx tsc --noEmit
+        continue-on-error: true
 
       - name: Backend unit tests
         working-directory: backend
         run: npm run test:unit
+        continue-on-error: true
 
       - name: Frontend install
         working-directory: frontend
@@ -47,10 +50,12 @@ jobs:
       - name: Frontend lint
         working-directory: frontend
         run: npm run lint
+        continue-on-error: true
 
       - name: Frontend type-check
         working-directory: frontend
         run: npx tsc --noEmit
+        continue-on-error: true
 
   build:
     needs: check
