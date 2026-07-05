@@ -1,8 +1,6 @@
 services:
   postgres:
-    build:
-      context: ./backend
-      dockerfile: docker/postgres.Dockerfile
+    image: ${DOCKERHUB_USERNAME}/fugu-postgres:${IMAGE_TAG:-latest}
     container_name: fugu-postgres
     restart: unless-stopped
     environment:
