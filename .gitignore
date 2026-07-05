@@ -9,3 +9,8 @@ coverage/
 uploads/
 postgres_data/
 redis_data/
+
+# Secrets — never commit
+deployment/
+*.pem
+git-token.txt

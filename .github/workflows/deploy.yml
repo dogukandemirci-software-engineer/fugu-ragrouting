@@ -1,0 +1,154 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+env:
+  BACKEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/fugu-backend
+  FRONTEND_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/fugu-frontend
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Backend install
+        working-directory: backend
+        run: npm ci
+
+      - name: Backend audit
+        working-directory: backend
+        run: npm audit --audit-level=high
+        continue-on-error: true
+
+      - name: Backend lint
+        working-directory: backend
+        run: npm run lint
+
+      - name: Backend type-check
+        working-directory: backend
+        run: npx tsc --noEmit
+
+      - name: Backend unit tests
+        working-directory: backend
+        run: npm run test:unit
+
+      - name: Frontend install
+        working-directory: frontend
+        run: npm ci
+
+      - name: Frontend lint
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Frontend type-check
+        working-directory: frontend
+        run: npx tsc --noEmit
+
+  build:
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          file: ./backend/docker/Dockerfile.prod
+          push: true
+          tags: |
+            ${{ env.BACKEND_IMAGE }}:${{ github.sha }}
+            ${{ env.BACKEND_IMAGE }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile.prod
+          push: true
+          tags: |
+            ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
+            ${{ env.FRONTEND_IMAGE }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy docker-compose.prod.yml to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: 'docker-compose.prod.yml'
+          target: '/home/ubuntu/fugu'
+          overwrite: true
+
+      - name: Deploy on EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: DOCKERHUB_USERNAME
+          script: |
+            set -e
+            cd /home/ubuntu/fugu
+            export IMAGE_TAG=${{ github.sha }}
+            export DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+            echo "IMAGE_TAG=${{ github.sha }}" > .env.deploy
+            echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> .env.deploy
+            echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env.deploy
+            echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env.deploy
+            echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env.deploy
+            echo "DATABASE_URL=postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@postgres:5432/${{ secrets.POSTGRES_DB }}" >> .env.deploy
+            echo "REDIS_URL=redis://redis:6379" >> .env.deploy
+            echo "JWT_ACCESS_SECRET=${{ secrets.JWT_ACCESS_SECRET }}" >> .env.deploy
+            echo "JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}" >> .env.deploy
+            echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env.deploy
+            echo "SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" >> .env.deploy
+            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" >> .env.deploy
+            echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}" >> .env.deploy
+            echo "STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }}" >> .env.deploy
+            echo "STRIPE_PRICE_PRO_MONTHLY=${{ secrets.STRIPE_PRICE_PRO_MONTHLY }}" >> .env.deploy
+            echo "STRIPE_PRICE_ENTERPRISE_MONTHLY=${{ secrets.STRIPE_PRICE_ENTERPRISE_MONTHLY }}" >> .env.deploy
+            echo "SMTP_HOST=${{ secrets.SMTP_HOST }}" >> .env.deploy
+            echo "SMTP_PORT=${{ secrets.SMTP_PORT }}" >> .env.deploy
+            echo "SMTP_FROM=${{ secrets.SMTP_FROM }}" >> .env.deploy
+            echo "SMTP_USER=${{ secrets.SMTP_USER }}" >> .env.deploy
+            echo "SMTP_PASS=${{ secrets.SMTP_PASS }}" >> .env.deploy
+            echo "SMTP_SECURE=${{ secrets.SMTP_SECURE }}" >> .env.deploy
+            echo "EMAIL_ENABLED=${{ secrets.EMAIL_ENABLED }}" >> .env.deploy
+            echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env.deploy
+            echo "OPENROUTER_API_KEY=${{ secrets.OPENROUTER_API_KEY }}" >> .env.deploy
+            echo "COHERE_API_KEY=${{ secrets.COHERE_API_KEY }}" >> .env.deploy
+            echo "ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}" >> .env.deploy
+            echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env.deploy
+            echo "FRONTEND_URL=${{ secrets.FRONTEND_URL }}" >> .env.deploy
+            chmod 600 .env.deploy
+            docker compose -f docker-compose.prod.yml --env-file .env.deploy pull
+            docker compose -f docker-compose.prod.yml --env-file .env.deploy up -d
+            docker image prune -f
