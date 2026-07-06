@@ -4,6 +4,7 @@ import { AuditLogService } from './audit-log.service';
 import { AUDIT_ACTIONS } from '../config/constants';
 import { env } from '../config/env';
 import { logger } from '../utils/logger';
+import { ValidationError } from '../utils/errors';
 
 const subRepo = new SubscriptionRepository();
 
@@ -12,10 +13,11 @@ const stripe = env.STRIPE_SECRET_KEY
   ? new Stripe(env.STRIPE_SECRET_KEY, { apiVersion: '2023-10-16' as const })
   : null;
 
-const PRICE_IDS: Record<string, string> = {
-  // TODO: replace with actual Stripe price IDs from dashboard
-  pro_monthly: 'price_pro_monthly',
-  enterprise_monthly: 'price_enterprise_monthly',
+// Populated from env so checkout works once a real Stripe account is wired up —
+// price IDs are account-specific and can't be hardcoded here.
+const PRICE_IDS: Record<string, string | undefined> = {
+  pro_monthly: env.STRIPE_PRICE_PRO_MONTHLY,
+  enterprise_monthly: env.STRIPE_PRICE_ENTERPRISE_MONTHLY,
 };
 
 export const BillingService = {
@@ -35,8 +37,10 @@ export const BillingService = {
     cancelUrl: string;
   }): Promise<string> {
     if (!stripe) throw new Error('Stripe not configured');
+    const priceId = PRICE_IDS[`${params.tier}_monthly`];
+    if (!priceId) throw new Error(`No Stripe price ID configured for tier "${params.tier}"`);
 
-    let sub = await subRepo.findByOrgId(params.orgId);
+    const sub = await subRepo.findByOrgId(params.orgId);
     let customerId = sub?.stripe_customer_id;
 
     if (!customerId) {
@@ -50,7 +54,7 @@ export const BillingService = {
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       mode: 'subscription',
-      line_items: [{ price: PRICE_IDS[`${params.tier}_monthly`], quantity: 1 }],
+      line_items: [{ price: priceId, quantity: 1 }],
       success_url: params.successUrl,
       cancel_url: params.cancelUrl,
       metadata: { organization_id: params.orgId, user_id: params.userId },
@@ -59,14 +63,19 @@ export const BillingService = {
     return session.url!;
   },
 
-  async handleStripeWebhook(rawBody: Buffer, signature: string): Promise<void> {
+  async handleStripeWebhook(
+    rawBody: Buffer,
+    signature: string,
+    ip?: string | null,
+    userAgent?: string | null
+  ): Promise<void> {
     if (!stripe || !env.STRIPE_WEBHOOK_SECRET) return;
 
     let event: Stripe.Event;
     try {
       event = stripe.webhooks.constructEvent(rawBody, signature, env.STRIPE_WEBHOOK_SECRET);
     } catch {
-      throw new Error('Invalid Stripe webhook signature');
+      throw new ValidationError('Invalid Stripe webhook signature');
     }
 
     switch (event.type) {
@@ -85,16 +94,12 @@ export const BillingService = {
           monthly_query_limit: tier === 'enterprise' ? 100_000 : 10_000,
         });
 
-        await AuditLogService.log({
-          organization_id: orgId,
-          actor_user_id: null,
-          actor_api_key_id: null,
-          action: AUDIT_ACTIONS.SUBSCRIPTION_CHANGED,
-          resource_type: 'subscription',
-          resource_id: null,
+        await AuditLogService.logAudit(AUDIT_ACTIONS.SUBSCRIPTION_CHANGED, {
+          orgId,
+          resourceType: 'subscription',
           metadata: { tier, status: stripeSub.status },
-          ip_address: null,
-          user_agent: null,
+          ip,
+          userAgent,
         });
         break;
       }

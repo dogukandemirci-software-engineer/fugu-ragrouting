@@ -9,7 +9,8 @@ import { rateLimitMiddleware } from '../middlewares/rate-limit.middleware';
 const router = Router();
 
 // Dashboard query explorer: JWT auth
-router.post('/execute', requireAuth, validateDto(QueryDto), QueryController.execute);
+router.post('/execute', requireAuth, rateLimitMiddleware, validateDto(QueryDto), QueryController.execute);
+router.post('/stream', requireAuth, rateLimitMiddleware, validateDto(QueryDto), QueryController.stream);
 router.get('/logs', requireAuth, QueryController.listLogs);
 router.get('/logs/:id', requireAuth, QueryController.getLog);
 

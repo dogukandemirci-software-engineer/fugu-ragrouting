@@ -1,9 +1,10 @@
 ﻿import { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ProtectedRoute, PublicRoute } from './ProtectedRoute';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { AuthLayout } from '../components/layout/AuthLayout';
 import { SkeletonLoader } from '../components/ui/SkeletonLoader';
+import { CookieConsentBanner } from '../components/features/CookieConsentBanner/CookieConsentBanner';
 
 const LoadingFallback = () => (
   <div className="p-8"><SkeletonLoader lines={5} /></div>
@@ -13,6 +14,7 @@ const LoadingFallback = () => (
 const LogInPage = lazy(() => import('../pages/auth/LogInPage').then(m => ({ default: m.LogInPage })));
 const SignUpPage = lazy(() => import('../pages/auth/SignUpPage').then(m => ({ default: m.SignUpPage })));
 const ForgotPasswordPage = lazy(() => import('../pages/auth/ForgotPasswordPage').then(m => ({ default: m.ForgotPasswordPage })));
+const ResetPasswordPage = lazy(() => import('../pages/auth/ResetPasswordPage').then(m => ({ default: m.ResetPasswordPage })));
 const CheckYourEmailPage = lazy(() => import('../pages/auth/CheckYourEmailPage').then(m => ({ default: m.CheckYourEmailPage })));
 const VerifyEmailPage = lazy(() => import('../pages/auth/VerifyEmailPage').then(m => ({ default: m.VerifyEmailPage })));
 
@@ -32,6 +34,11 @@ const SecuritySettingsPage = lazy(() => import('../pages/dashboard/SecuritySetti
 const SupportHelpPage = lazy(() => import('../pages/dashboard/SupportHelpPage').then(m => ({ default: m.SupportHelpPage })));
 const TenantIsolationPage = lazy(() => import('../pages/dashboard/TenantIsolationPage').then(m => ({ default: m.TenantIsolationPage })));
 
+// Landing
+const LandingPage = lazy(() => import('../pages/LandingPage').then(m => ({ default: m.LandingPage })));
+const PrivacyPolicyPage = lazy(() => import('../pages/PrivacyPolicyPage').then(m => ({ default: m.PrivacyPolicyPage })));
+const DocsPage = lazy(() => import('../pages/DocsPage').then(m => ({ default: m.DocsPage })));
+
 // System
 const NotFoundPage = lazy(() => import('../pages/system/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
 const ServerErrorPage = lazy(() => import('../pages/system/ServerErrorPage').then(m => ({ default: m.ServerErrorPage })));
@@ -42,8 +49,10 @@ export function AppRouter() {
     <BrowserRouter>
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
-          {/* Root redirect */}
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          {/* Landing page */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/docs" element={<DocsPage />} />
 
           {/* Auth routes (redirect to dashboard if already logged in) */}
           <Route element={<PublicRoute />}>
@@ -51,6 +60,7 @@ export function AppRouter() {
               <Route path="/log-in" element={<LogInPage />} />
               <Route path="/sign-up" element={<SignUpPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/check-your-email" element={<CheckYourEmailPage />} />
             </Route>
           </Route>
@@ -82,6 +92,7 @@ export function AppRouter() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
+      <CookieConsentBanner />
     </BrowserRouter>
   );
 }

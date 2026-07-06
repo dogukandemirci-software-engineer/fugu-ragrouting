@@ -45,6 +45,7 @@ export class VectorRepository extends BaseRepository implements IVectorRepositor
          dc.metadata
        FROM document_chunks dc
        WHERE dc.organization_id = $2
+         AND dc.embedding IS NOT NULL
          AND 1 - (dc.embedding <=> $1::vector) >= $3
        ORDER BY dc.embedding <=> $1::vector
        LIMIT $4`,
@@ -52,7 +53,26 @@ export class VectorRepository extends BaseRepository implements IVectorRepositor
     );
   }
 
-  async deleteByDocumentId(document_id: string): Promise<void> {
-    await this.query('DELETE FROM document_chunks WHERE document_id = $1', [document_id]);
+  async findByIds(ids: string[], organization_id: string): Promise<VectorSearchResult[]> {
+    if (ids.length === 0) return [];
+    return this.query<VectorSearchResult>(
+      `SELECT
+         dc.id as chunk_id,
+         dc.document_id,
+         dc.content,
+         1 as similarity,
+         dc.metadata
+       FROM document_chunks dc
+       WHERE dc.id = ANY($1::uuid[])
+         AND dc.organization_id = $2`,
+      [ids, organization_id]
+    );
+  }
+
+  async deleteByDocumentId(document_id: string, organization_id: string): Promise<void> {
+    await this.query(
+      'DELETE FROM document_chunks WHERE document_id = $1 AND organization_id = $2',
+      [document_id, organization_id]
+    );
   }
 }

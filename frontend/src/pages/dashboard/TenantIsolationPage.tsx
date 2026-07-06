@@ -27,7 +27,7 @@ export function TenantIsolationPage() {
               </p>
             </div>
           </div>
-          <div className="bg-surface-container-low rounded-lg p-3 font-code text-code-sm text-on-surface-variant">
+          <div className="bg-surface-container-low rounded-lg p-3 font-code text-code-sm text-on-surface-variant break-all">
             <span className="text-on-surface-variant/60">Organization ID:</span>{' '}
             <span className="text-on-surface">{organizationId ?? 'loading...'}</span>
           </div>
@@ -61,14 +61,14 @@ export function TenantIsolationPage() {
         </div>
 
         <Card>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h3 className="text-body-sm font-semibold text-on-surface mb-1">Dedicated infrastructure</h3>
               <p className="text-body-sm text-on-surface-variant">
                 Dedicated database cluster, VPC, and encryption keys per tenant.
               </p>
             </div>
-            <Badge variant="neutral">Enterprise only</Badge>
+            <Badge variant="neutral" className="self-start sm:self-auto shrink-0">Enterprise only</Badge>
           </div>
         </Card>
       </div>

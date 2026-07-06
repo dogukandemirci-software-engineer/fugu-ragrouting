@@ -3,18 +3,15 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { SkeletonLoader } from '../../components/ui/SkeletonLoader';
-import { useGetSubscriptionQuery, useCreateCheckoutMutation } from '../../store/api/billingApi';
+import { RadialGauge } from '../../components/ui/RadialGauge';
+import { useGetSubscriptionQuery, useCreateCheckoutMutation, useListPlansQuery } from '../../store/api/billingApi';
 import toast from 'react-hot-toast';
-
-const PLANS = [
-  { tier: 'free' as const, label: 'Free', price: '$0', queries: '1,000', features: ['1,000 queries/month', 'Vector routing', '5 documents'] },
-  { tier: 'pro' as const, label: 'Pro', price: '$49', queries: '10,000', features: ['10,000 queries/month', 'Vector + Graph routing', 'Unlimited documents', 'Webhooks', 'Priority support'] },
-  { tier: 'enterprise' as const, label: 'Enterprise', price: 'Custom', queries: '100,000+', features: ['Unlimited queries', 'All Pro features', 'SSO/SAML (coming soon)', 'SLA', 'Dedicated support'] },
-];
 
 export function UsageBillingPage() {
   const { data, isLoading } = useGetSubscriptionQuery();
+  const { data: plansData } = useListPlansQuery();
   const [createCheckout, { isLoading: checkoutLoading }] = useCreateCheckoutMutation();
+  const PLANS = plansData?.plans ?? [];
 
   const sub = data?.subscription;
   const usage = data?.usage;
@@ -58,25 +55,22 @@ export function UsageBillingPage() {
                 )}
               </div>
 
-              {/* Usage bar */}
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span className="text-body-sm text-on-surface-variant">Monthly queries</span>
-                  <span className="text-body-sm font-medium text-on-surface">
-                    {usage?.query_count.toLocaleString() ?? 0} / {usage?.monthly_query_limit.toLocaleString() ?? 1000}
-                  </span>
+              {/* Usage gauge */}
+              <div className="flex items-center gap-6">
+                <RadialGauge percent={percent} danger={percent >= 80} size={104} strokeWidth={8} />
+                <div className="flex-1">
+                  <div className="flex justify-between mb-1">
+                    <span className="text-body-sm text-on-surface-variant">Monthly queries</span>
+                    <span className="text-body-sm font-medium text-on-surface">
+                      {usage?.query_count.toLocaleString() ?? 0} / {usage?.monthly_query_limit.toLocaleString() ?? 1000}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-on-surface-variant">
+                    {percent >= 80
+                      ? 'Approaching your monthly limit — consider upgrading to avoid interruptions.'
+                      : 'Usage resets at the start of each billing period.'}
+                  </p>
                 </div>
-                <div className="h-3 bg-surface-container-high rounded-full overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all duration-700"
-                    style={{
-                      width: `${percent}%`,
-                      background: percent >= 80 ? '#ba1a1a' : 'linear-gradient(90deg, #7B2FF7, #3FFFC0)',
-                      boxShadow: percent < 80 ? '0 0 15px rgba(123,47,247,0.3)' : undefined,
-                    }}
-                  />
-                </div>
-                <p className="text-[11px] text-on-surface-variant mt-1">{percent.toFixed(0)}% used this month</p>
               </div>
             </Card>
 

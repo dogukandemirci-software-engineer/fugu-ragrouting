@@ -47,15 +47,43 @@ export const DocumentParserService = {
   },
 };
 
+// PDF fonts often embed ligatures (fi, fl, ti, tt, ffi...) at font-specific glyph
+// codepoints that pdf-parse cannot map back to standard Unicode, so they surface
+// as mis-decoded characters. Built via charCode to avoid raw-literal source encoding issues.
+const LIGATURE_MAP: Record<string, string> = {
+  [String.fromCharCode(0xfb00)]: 'ff',
+  [String.fromCharCode(0xfb01)]: 'fi',
+  [String.fromCharCode(0xfb02)]: 'fl',
+  [String.fromCharCode(0xfb03)]: 'ffi',
+  [String.fromCharCode(0xfb04)]: 'ffl',
+  [String.fromCharCode(0xfb05)]: 'st',
+  [String.fromCharCode(0xfb06)]: 'st',
+  [String.fromCharCode(0x014c)]: 'ti',
+  [String.fromCharCode(0x013f)]: 'fi',
+  [String.fromCharCode(0x01ab)]: 'tt',
+};
+
+const PRIVATE_USE_AREA_RE = /[-]/g;
+
+function normalizePdfText(text: string): string {
+  let out = text;
+  for (const [bad, good] of Object.entries(LIGATURE_MAP)) {
+    out = out.split(bad).join(good);
+  }
+  // Strip any remaining stray private-use-area glyphs pdf-parse could not map
+  return out.replace(PRIVATE_USE_AREA_RE, '');
+}
+
 async function parsePdf(buffer: Buffer): Promise<ParseResult> {
   // Dynamic import so startup is not blocked if pdf-parse is missing
-  // pdf-parse exports vary by bundler; handle both default and named export
-  const mod = await import('pdf-parse');
-  const pdfParse: (buf: Buffer) => Promise<{ text: string; numpages: number; info: unknown }> =
-    (mod as any).default ?? mod;
-  const result = await pdfParse(buffer);
+  // pdf-parse v1 exports the function directly via CJS; dynamic import wraps it in { default }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mod: any = await import('pdf-parse');
+  const pdfParseFn = typeof mod.default === 'function' ? mod.default : mod;
+  if (typeof pdfParseFn !== 'function') throw new Error('pdf-parse: no callable export found');
+  const result = await pdfParseFn(buffer);
   return {
-    text: result.text,
+    text: normalizePdfText(result.text),
     metadata: {
       parser: 'pdf-parse',
       pages: result.numpages,

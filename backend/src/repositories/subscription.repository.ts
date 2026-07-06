@@ -60,4 +60,30 @@ export class SubscriptionRepository extends BaseRepository {
       [orgId]
     );
   }
+
+  // Permanently raises an org's monthly query limit — used for one-time
+  // referral bonuses. Simple additive bump rather than a separate ledger
+  // table since referral bonuses never expire or need to be reversed.
+  async grantReferralBonus(orgId: string, bonusQueries: number): Promise<void> {
+    await this.query(
+      `UPDATE subscriptions SET monthly_query_limit = monthly_query_limit + $2
+       WHERE organization_id = $1`,
+      [orgId, bonusQueries]
+    );
+  }
+
+  // Atomically claims the "send quota warning email" slot for the current
+  // period — returns true only for the caller that flips the flag, so
+  // concurrent requests crossing 80% at once don't all send an email.
+  async claimQuotaWarningEmail(orgId: string): Promise<boolean> {
+    const result = await this.queryOne<{ id: string }>(
+      `UPDATE usage_counters SET warning_email_sent = TRUE
+       WHERE organization_id = $1
+         AND period_start = DATE_TRUNC('month', NOW())::date
+         AND warning_email_sent = FALSE
+       RETURNING id`,
+      [orgId]
+    );
+    return !!result;
+  }
 }

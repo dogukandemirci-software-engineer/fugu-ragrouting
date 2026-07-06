@@ -1,9 +1,7 @@
 ﻿import { Lock, Shield } from 'lucide-react';
 import { TopBar } from '../../components/layout/TopBar';
 import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
-import toast from 'react-hot-toast';
 
 export function SecuritySettingsPage() {
   return (
@@ -16,28 +14,28 @@ export function SecuritySettingsPage() {
         </div>
 
         <Card>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-start gap-3">
-              <Lock size={18} className="text-accent-violet mt-0.5" />
+              <Lock size={18} className="text-accent-violet mt-0.5 shrink-0" />
               <div>
                 <h3 className="text-body-sm font-semibold text-on-surface">Two-factor authentication</h3>
                 <p className="text-body-sm text-on-surface-variant mt-0.5">Require 2FA for all team members</p>
               </div>
             </div>
-            <Button variant="secondary" onClick={() => toast('2FA configuration coming soon')}>Configure</Button>
+            <Badge variant="neutral" className="self-start sm:self-auto shrink-0">Not yet available</Badge>
           </div>
         </Card>
 
         <Card>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-start gap-3">
-              <Shield size={18} className="text-accent-violet mt-0.5" />
+              <Shield size={18} className="text-accent-violet mt-0.5 shrink-0" />
               <div>
                 <h3 className="text-body-sm font-semibold text-on-surface">SSO / SAML</h3>
                 <p className="text-body-sm text-on-surface-variant mt-0.5">Single sign-on with your identity provider</p>
               </div>
             </div>
-            <Badge variant="neutral">Enterprise only</Badge>
+            <Badge variant="neutral" className="self-start sm:self-auto shrink-0">Enterprise only</Badge>
           </div>
         </Card>
 

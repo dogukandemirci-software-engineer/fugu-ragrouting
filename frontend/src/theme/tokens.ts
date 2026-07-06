@@ -1,102 +1,115 @@
-// Design tokens extracted from Stitch HTML sources (Phase 0)
-// Source of truth: frontend/theme/*/code.html
+// ============================================================================
+// FUGU DESIGN TOKENS — single source of truth for the whole app's palette.
+//
+// To re-theme the entire product, edit ONLY the hex values in `colors` below
+// (and `gradients`/`shadows` if the brand hues change). `tailwind.config.ts`
+// imports this file directly, so every `bg-background`, `text-on-surface`,
+// `bg-brand-primary`, etc. utility class across the app updates automatically.
+// Never hardcode a hex color or `rgba(...)` in a page/component — use the
+// Tailwind class for the matching token instead (see README note at bottom).
+// ============================================================================
 
 export const colors = {
-  // Brand / Accent
-  accentViolet: '#7B2FF7',
-  accentTealGlow: '#3FFFC0',
-  accentMagenta: '#FF2E9A',
-  secondary: '#4a46d5',
-  secondaryContainer: '#6462ef',
+  // Brand / Accent — terracotta / gold / rust (warm, distinct from generic
+  // violet-teal AI-startup palettes)
+  'accent-violet': '#C15F3C',   // primary accent (terracotta) — key name kept for backward compat
+  'accent-teal-glow': '#D4A24E', // secondary accent (warm gold)
+  'accent-magenta': '#8B3A2B',   // tertiary accent (deep rust)
+  secondary: '#5B4B3A',
+  'secondary-container': '#7A6650',
 
-  // Primary / Surface
-  primary: '#000000',
-  onPrimary: '#ffffff',
-  primaryContainer: '#1c1b1b',
-  onPrimaryContainer: '#858383',
-  primaryFixed: '#e5e2e1',
-  primaryFixedDim: '#c9c6c5',
-  onPrimaryFixed: '#1c1b1b',
-  onPrimaryFixedVariant: '#474646',
-  inversePrimary: '#c9c6c5',
+  // Primary surfaces (dark ink — used for the auth side-panel, docs, sidebar dark accents)
+  primary: '#1C1917',
+  'on-primary': '#F7F3EC',
+  'primary-container': '#292420',
+  'on-primary-container': '#B8AFA3',
+  'primary-fixed': '#EDE7DB',
+  'primary-fixed-dim': '#D9D0C0',
+  'on-primary-fixed': '#1C1917',
+  'on-primary-fixed-variant': '#5A5248',
+  'inverse-primary': '#D9D0C0',
 
-  // Background / Surface hierarchy
-  background: '#fbf8ff',
-  backgroundAlt: '#FAFAFA',
-  surface: '#fbf8ff',
-  surfaceBright: '#fbf8ff',
-  surfaceDim: '#dad9e4',
-  surfaceVariant: '#e3e1ec',
-  surfaceContainerLowest: '#ffffff',
-  surfaceContainerLow: '#f4f2fd',
-  surfaceContainer: '#efecf8',
-  surfaceContainerHigh: '#e9e7f2',
-  surfaceContainerHighest: '#e3e1ec',
-  surfaceTint: '#5f5e5e',
-  inverseSurface: '#2f3038',
+  // Background / Surface hierarchy — warm paper/kraft
+  background: '#F7F3EC',
+  'background-alt': '#F2ECE0',
+  surface: '#FBF9F4',
+  'surface-bright': '#FFFFFF',
+  'surface-dim': '#E8E1D3',
+  'surface-variant': '#EDE6D8',
+  'surface-container-lowest': '#FFFFFF',
+  'surface-container-low': '#F5F0E6',
+  'surface-container': '#EFE8DA',
+  'surface-container-high': '#E9E1D0',
+  'surface-container-highest': '#E2D9C6',
+  'surface-tint': '#6B5D4B',
+  'inverse-surface': '#292420',
 
   // On-Surface / Text
-  onSurface: '#1a1b23',
-  onSurfaceVariant: '#444748',
-  onBackground: '#1a1b23',
-  inverseOnSurface: '#f1effa',
+  'on-surface': '#1F1B16',
+  'on-surface-variant': '#5C5348',
+  'on-background': '#1F1B16',
+  'inverse-on-surface': '#F2ECE0',
 
-  // Secondary / Indigo
-  onSecondary: '#ffffff',
-  secondaryFixed: '#e2dfff',
-  secondaryFixedDim: '#c2c1ff',
-  onSecondaryFixed: '#0c006a',
-  onSecondaryFixedVariant: '#332bbf',
-  onSecondaryContainer: '#fffbff',
+  // Secondary / warm neutral
+  'on-secondary': '#ffffff',
+  'secondary-fixed': '#EDE2D2',
+  'secondary-fixed-dim': '#D4C4AC',
+  'on-secondary-fixed': '#3A2E1F',
+  'on-secondary-fixed-variant': '#5B4B3A',
+  'on-secondary-container': '#FBF9F4',
 
-  // Tertiary / Neutral
-  tertiary: '#000000',
-  tertiaryContainer: '#1d1b1a',
-  tertiaryFixed: '#e6e1df',
-  tertiaryFixedDim: '#cac6c3',
-  onTertiary: '#ffffff',
-  onTertiaryContainer: '#868381',
-  onTertiaryFixed: '#1d1b1a',
-  onTertiaryFixedVariant: '#484645',
+  // Tertiary / deep ink (dark dashboard/marketing surfaces)
+  tertiary: '#1C1917',
+  'tertiary-container': '#292420',
+  'tertiary-fixed': '#E6E1DF',
+  'tertiary-fixed-dim': '#CAC6C3',
+  'on-tertiary': '#F7F3EC',
+  'on-tertiary-container': '#B8AFA3',
+  'on-tertiary-fixed': '#1C1917',
+  'on-tertiary-fixed-variant': '#484645',
 
   // Borders
-  borderSubtle: '#18181B',
-  outline: '#747878',
-  outlineVariant: '#c4c7c7',
+  'border-subtle': '#E2D9C6',
+  outline: '#8A7D6A',
+  'outline-variant': '#DDD3C0',
 
   // Error / Semantic
-  error: '#ba1a1a',
-  onError: '#ffffff',
-  errorContainer: '#ffdad6',
-  onErrorContainer: '#93000a',
+  error: '#B3261E',
+  'on-error': '#ffffff',
+  'error-container': '#F9DEDC',
+  'on-error-container': '#410E0B',
 
-  // Status (not in token palette, used as inline values)
-  successGreen: '#059669',
-  successGreenBg: '#ECFDF5',
-  destructiveRed: '#DC2626',
+  // Status
+  'success-green': '#3F6B3C',
+  'success-green-bg': '#EBF3E8',
+  'destructive-red': '#B3261E',
+
+  // Dark-panel variants — for standalone dark surfaces (auth side panel, docs
+  // page, privacy page) so those pages read from tokens too instead of raw hex.
+  'ink-dark': '#1C1917',
+  'ink-dark-hover': '#292420',
+  'on-ink-dark': '#F7F3EC',
+  'on-ink-dark-variant': 'rgba(247, 243, 236, 0.6)',
+  'on-ink-dark-subtle': 'rgba(247, 243, 236, 0.4)',
+  'ink-dark-border': 'rgba(247, 243, 236, 0.1)',
 } as const;
 
 export const gradients = {
-  // Three-stop brand gradient: violet → indigo → magenta
-  brandPrimary: 'linear-gradient(135deg, #7B2FF7 0%, #2A1FB8 50%, #FF2E9A 100%)',
-  // Two-stop: violet → indigo (simpler CTA variant)
-  brandIndigo: 'linear-gradient(135deg, #7B2FF7 0%, #2A1FB8 100%)',
-  // Two-stop: violet → teal (logo, charts, progress)
-  brandTeal: 'linear-gradient(135deg, #7B2FF7 0%, #3FFFC0 100%)',
-  // Three-stop gradient text: violet → teal → magenta
-  brandText: 'linear-gradient(135deg, #7B2FF7, #3FFFC0, #FF2E9A)',
-  // Ambient background glow
-  ambientGlow: 'linear-gradient(to top right, rgba(123,47,247,0.1), rgba(255,46,154,0.05), rgba(63,255,192,0.1))',
+  'brand-primary': 'linear-gradient(135deg, #C15F3C 0%, #9B4A30 50%, #8B3A2B 100%)',
+  'brand-indigo': 'linear-gradient(135deg, #C15F3C 0%, #9B4A30 100%)',
+  'brand-teal': 'linear-gradient(135deg, #C15F3C 0%, #D4A24E 100%)',
+  'brand-text': 'linear-gradient(135deg, #C15F3C, #D4A24E, #8B3A2B)',
+  'ambient-glow': 'linear-gradient(to top right, rgba(193,95,60,0.08), rgba(139,58,43,0.04), rgba(212,162,78,0.08))',
 } as const;
 
 export const shadows = {
-  accentSm: '0 4px 20px -2px rgba(123, 47, 247, 0.15)',
-  accentMd: '0 4px 10px -2px rgba(123, 47, 247, 0.15)',
-  accentGlow: '0 0 15px rgba(123, 47, 247, 0.25)',
-  accentGlowStrong: '0 0 15px rgba(123, 47, 247, 0.4)',
-  tealGlow: '0 0 15px rgba(63, 255, 192, 0.3)',
-  greenDot: '0 0 8px rgba(34, 197, 94, 0.6)',
-  progressGlow: '0 0 15px rgba(123,47,247,0.3)',
+  'accent-sm': '0 4px 20px -2px rgba(193, 95, 60, 0.15)',
+  'accent-md': '0 4px 10px -2px rgba(193, 95, 60, 0.15)',
+  'accent-glow': '0 0 15px rgba(193, 95, 60, 0.2)',
+  'accent-glow-strong': '0 0 15px rgba(193, 95, 60, 0.35)',
+  'teal-glow': '0 0 15px rgba(212, 162, 78, 0.25)',
+  'green-dot': '0 0 8px rgba(63, 107, 60, 0.5)',
+  'progress-glow': '0 0 15px rgba(193,95,60,0.25)',
 } as const;
 
 export const borderRadius = {
@@ -110,27 +123,27 @@ export const borderRadius = {
 } as const;
 
 export const fontFamily = {
-  headline: ['Inter', 'sans-serif'],
-  body: ['Geist', 'Inter', 'sans-serif'],
+  headline: ['Fraunces', 'Georgia', 'serif'],
+  body: ['Inter', 'sans-serif'],
   code: ['JetBrains Mono', 'monospace'],
 } as const;
 
 export const fontSize = {
-  headlineXl: ['48px', { lineHeight: '56px', letterSpacing: '-0.02em', fontWeight: '700' }],
-  headlineLg: ['32px', { lineHeight: '40px', letterSpacing: '-0.01em', fontWeight: '600' }],
-  headlineMd: ['24px', { lineHeight: '32px', fontWeight: '600' }],
-  bodyLg: ['18px', { lineHeight: '28px', fontWeight: '400' }],
-  bodyMd: ['16px', { lineHeight: '24px', fontWeight: '400' }],
-  bodySm: ['14px', { lineHeight: '20px', fontWeight: '400' }],
-  codeMd: ['14px', { lineHeight: '22px', fontWeight: '400' }],
-  codeSm: ['12px', { lineHeight: '18px', fontWeight: '400' }],
-  labelCaps: ['11px', { lineHeight: '16px', letterSpacing: '0.05em', fontWeight: '600' }],
+  'headline-xl': ['52px', { lineHeight: '58px', letterSpacing: '-0.02em', fontWeight: '600' }],
+  'headline-lg': ['34px', { lineHeight: '42px', letterSpacing: '-0.01em', fontWeight: '600' }],
+  'headline-md': ['25px', { lineHeight: '33px', fontWeight: '600' }],
+  'body-lg': ['19px', { lineHeight: '29px', fontWeight: '400' }],
+  'body-md': ['16px', { lineHeight: '25px', fontWeight: '400' }],
+  'body-sm': ['14px', { lineHeight: '21px', fontWeight: '400' }],
+  'code-md': ['14px', { lineHeight: '22px', fontWeight: '400' }],
+  'code-sm': ['12px', { lineHeight: '18px', fontWeight: '400' }],
+  'label-caps': ['11px', { lineHeight: '16px', letterSpacing: '0.05em', fontWeight: '600' }],
 } as const;
 
 export const spacing = {
   unit: '8px',
   gutter: '24px',
-  marginMobile: '16px',
-  marginDesktop: '48px',
-  maxWidth: '1440px',
+  'margin-mobile': '16px',
+  'margin-desktop': '48px',
+  'max-width': '1440px',
 } as const;

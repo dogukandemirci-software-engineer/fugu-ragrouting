@@ -18,8 +18,13 @@ export function errorHandler(
     return;
   }
 
-  // Unexpected errors
-  logger.error('Unexpected error', { err, path: req.path });
+  // Unexpected errors — Error.message/stack are non-enumerable, so logging
+  // the raw object (as `err`) serializes to `{}` and loses the actual cause.
+  logger.error('Unexpected error', {
+    message: err instanceof Error ? err.message : String(err),
+    stack: err instanceof Error ? err.stack : undefined,
+    path: req.path,
+  });
   res.status(500).json({
     error: { code: 'INTERNAL_ERROR', message: 'An unexpected error occurred' },
   });

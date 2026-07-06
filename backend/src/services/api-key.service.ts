@@ -20,6 +20,8 @@ export const ApiKeyService = {
     name: string;
     permissions: string[];
     expires_at?: string;
+    ip?: string | null;
+    userAgent?: string | null;
   }): Promise<{ key: ApiKeyPublic; raw_key: string }> {
     const { raw, prefix } = generateApiKey();
     const key_hash = hashToken(raw);
@@ -43,15 +45,21 @@ export const ApiKeyService = {
       resource_type: 'api_key',
       resource_id: apiKey.id,
       metadata: { name: params.name },
-      ip_address: null,
-      user_agent: null,
+      ip_address: params.ip ?? null,
+      user_agent: params.userAgent ?? null,
     });
 
     const { key_hash: _, ...keyPublic } = apiKey;
     return { key: keyPublic, raw_key: raw };
   },
 
-  async revoke(params: { id: string; orgId: string; userId: string }): Promise<void> {
+  async revoke(params: {
+    id: string;
+    orgId: string;
+    userId: string;
+    ip?: string | null;
+    userAgent?: string | null;
+  }): Promise<void> {
     const keys = await repo.listByOrg(params.orgId);
     const target = keys.find((k) => k.id === params.id);
     if (!target) throw new NotFoundError('API key');
@@ -66,8 +74,8 @@ export const ApiKeyService = {
       resource_type: 'api_key',
       resource_id: params.id,
       metadata: { name: target.name },
-      ip_address: null,
-      user_agent: null,
+      ip_address: params.ip ?? null,
+      user_agent: params.userAgent ?? null,
     });
   },
 

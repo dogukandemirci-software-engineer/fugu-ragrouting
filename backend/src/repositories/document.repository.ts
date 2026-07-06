@@ -39,17 +39,24 @@ export class DocumentRepository extends BaseRepository {
     return doc!;
   }
 
-  async updateStatus(id: string, status: Document['status'], errorMessage?: string): Promise<void> {
+  async updateStatus(id: string, orgId: string, status: Document['status'], errorMessage?: string): Promise<void> {
     await this.query(
-      `UPDATE documents SET status = $1, error_message = $2, updated_at = NOW() WHERE id = $3`,
-      [status, errorMessage ?? null, id]
+      `UPDATE documents SET status = $1, error_message = $2, updated_at = NOW() WHERE id = $3 AND organization_id = $4`,
+      [status, errorMessage ?? null, id, orgId]
     );
   }
 
-  async updateChunkCount(id: string, count: number): Promise<void> {
+  async updateMetadata(id: string, orgId: string, metadata: Record<string, unknown>): Promise<void> {
     await this.query(
-      'UPDATE documents SET chunk_count = $1, updated_at = NOW() WHERE id = $2',
-      [count, id]
+      'UPDATE documents SET metadata = $1, updated_at = NOW() WHERE id = $2 AND organization_id = $3',
+      [JSON.stringify(metadata), id, orgId]
+    );
+  }
+
+  async updateChunkCount(id: string, orgId: string, count: number): Promise<void> {
+    await this.query(
+      'UPDATE documents SET chunk_count = $1, updated_at = NOW() WHERE id = $2 AND organization_id = $3',
+      [count, id, orgId]
     );
   }
 

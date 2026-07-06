@@ -24,5 +24,7 @@ export interface IVectorRepository {
     min_similarity?: number;
   }): Promise<VectorSearchResult[]>;
 
-  deleteByDocumentId(document_id: string): Promise<void>;
+  findByIds(ids: string[], organization_id: string): Promise<VectorSearchResult[]>;
+
+  deleteByDocumentId(document_id: string, organization_id: string): Promise<void>;
 }

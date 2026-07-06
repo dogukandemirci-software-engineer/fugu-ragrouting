@@ -5,6 +5,7 @@ import type { IGraphRepository, GraphSearchResult } from '../../interfaces/i-gra
 const mockVector: IVectorRepository = {
   insertChunk: jest.fn(),
   deleteByDocumentId: jest.fn(),
+  findByIds: jest.fn().mockResolvedValue([]),
   similaritySearch: jest.fn().mockResolvedValue([
     { chunk_id: 'c1', document_id: 'd1', content: 'test content', similarity: 0.9, metadata: {} },
   ] as VectorSearchResult[]),

@@ -5,7 +5,7 @@ export function ServerErrorPage() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-background px-6 text-center">
       <div
         className="text-[120px] font-headline font-bold leading-none mb-6"
-        style={{ background: 'linear-gradient(135deg, #ba1a1a, #FF2E9A)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
+        style={{ background: 'linear-gradient(135deg, #ba1a1a, #8B3A2B)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
       >
         500
       </div>

@@ -21,16 +21,28 @@ const envSchema = z.object({
 
   STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
+  STRIPE_PRICE_PRO_MONTHLY: z.string().optional(),
+  STRIPE_PRICE_ENTERPRISE_MONTHLY: z.string().optional(),
 
   SMTP_HOST: z.string().default('localhost'),
 
   SMTP_PORT: z.coerce.number().default(54325),
   SMTP_FROM: z.string().email().default('noreply@fugu.ai'),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
+  SMTP_SECURE: z.coerce.boolean().default(false),
+  // When false (default in dev), emails are logged instead of sent so local
+  // signup/reset flows work without a real SMTP server. Set true in production.
+  EMAIL_ENABLED: z.coerce.boolean().default(false),
 
   // Embedding
   EMBEDDING_PROVIDER: z.enum(['openai', 'openrouter', 'cohere', 'ollama']).default('openai'),
   EMBEDDING_MODEL: z.string().default('text-embedding-3-small'),
   EMBEDDING_DIMENSIONS: z.coerce.number().default(1536),
+  // In-process cache for single-text embeddings (identical queries re-embedded
+  // on every request otherwise). 0 size disables it.
+  EMBEDDING_CACHE_SIZE: z.coerce.number().default(1000),
+  EMBEDDING_CACHE_TTL_MS: z.coerce.number().default(3600000),
 
   OPENAI_API_KEY: z.string().optional(),
 
@@ -47,9 +59,26 @@ const envSchema = z.object({
   // Anthropic Claude (for LLM classifier)
   ANTHROPIC_API_KEY: z.string().optional(),
 
-  // LLM Classifier provider (openai | anthropic | openrouter)
-  LLM_CLASSIFIER_PROVIDER: z.enum(['openai', 'anthropic', 'openrouter']).default('openai'),
+  // LLM Classifier provider (openai | anthropic | openrouter | ollama)
+  LLM_CLASSIFIER_PROVIDER: z.enum(['openai', 'anthropic', 'openrouter', 'ollama']).default('openai'),
   LLM_CLASSIFIER_MODEL: z.string().optional(),
+
+  // LLM Synthesis (answer generation from retrieved context)
+  LLM_SYNTHESIS_PROVIDER: z.enum(['openai', 'anthropic', 'openrouter', 'ollama']).default('openrouter'),
+  LLM_SYNTHESIS_MODEL: z.string().optional(),
+  LLM_SYNTHESIS_MAX_TOKENS: z.coerce.number().default(1024),
+  LLM_SYNTHESIS_TIMEOUT_MS: z.coerce.number().default(20000),
+
+  // Entity extraction for graph ingestion
+  ENTITY_EXTRACTION_ENABLED: z.coerce.boolean().default(true),
+  ENTITY_EXTRACTION_PROVIDER: z.enum(['openai', 'anthropic', 'openrouter', 'ollama']).default('openrouter'),
+  ENTITY_EXTRACTION_MODEL: z.string().optional(),
+  ENTITY_EXTRACTION_MAX_TOKENS: z.coerce.number().default(512),
+
+  // Ingestion queue (Redpanda / Kafka-compatible)
+  INGESTION_QUEUE_ENABLED: z.coerce.boolean().default(true),
+  KAFKA_BROKERS: z.string().default('localhost:9092'),
+  INGESTION_MAX_ATTEMPTS: z.coerce.number().default(3),
 
   // Google OAuth
   GOOGLE_CLIENT_ID: z.string().optional(),

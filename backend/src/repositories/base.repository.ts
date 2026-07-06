@@ -1,14 +1,21 @@
 import { pool } from '../config/database';
+import { getScopedClient } from '../config/request-context';
 import type { PoolClient } from 'pg';
 
 export abstract class BaseRepository {
+  // Uses the current request's org-scoped connection when one is active
+  // (set by orgScopeMiddleware via AsyncLocalStorage) so RLS policies apply
+  // transparently; falls back to the shared pool outside a request context
+  // (background workers, migrations, scripts).
   protected async query<T>(sql: string, values?: unknown[]): Promise<T[]> {
-    const result = await pool.query(sql, values);
+    const client = getScopedClient();
+    const result = client ? await client.query(sql, values) : await pool.query(sql, values);
     return result.rows as T[];
   }
 
   protected async queryOne<T>(sql: string, values?: unknown[]): Promise<T | null> {
-    const result = await pool.query(sql, values);
+    const client = getScopedClient();
+    const result = client ? await client.query(sql, values) : await pool.query(sql, values);
     return (result.rows[0] as T) ?? null;
   }
 

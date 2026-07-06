@@ -6,6 +6,7 @@ import queryRoutes from './query.routes';
 import teamRoutes from './team.routes';
 import billingRoutes from './billing.routes';
 import webhookRoutes from './webhook.routes';
+import accountRoutes from './account.routes';
 import { requireAuth } from '../middlewares/auth.middleware';
 import { AuditLogService } from '../services/audit-log.service';
 import { auditLogMiddleware } from '../middlewares/audit-log.middleware';
@@ -20,6 +21,7 @@ router.use('/queries', queryRoutes);
 router.use('/team', auditLogMiddleware as any, teamRoutes);
 router.use('/billing', billingRoutes);
 router.use('/webhooks', auditLogMiddleware as any, webhookRoutes);
+router.use('/account', auditLogMiddleware as any, accountRoutes);
 
 // Audit logs — read-only
 router.get('/audit-logs', requireAuth, async (req: any, res, next) => {
@@ -39,8 +41,11 @@ router.get('/audit-logs', requireAuth, async (req: any, res, next) => {
 router.get('/notifications', requireAuth, async (req: any, res, next) => {
   try {
     const rows = await dbQuery(
-      `SELECT id, action, metadata, created_at FROM audit_logs
-       WHERE organization_id = $1 ORDER BY created_at DESC LIMIT 20`,
+      `SELECT al.id, al.action, al.metadata, al.created_at,
+              u.full_name AS actor_full_name, u.email AS actor_email
+       FROM audit_logs al
+       LEFT JOIN users u ON u.id = al.actor_user_id
+       WHERE al.organization_id = $1 ORDER BY al.created_at DESC LIMIT 20`,
       [req.user!.orgId]
     );
     res.json({ notifications: rows });

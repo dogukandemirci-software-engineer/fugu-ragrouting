@@ -20,7 +20,7 @@ export function CodeBlock({ code, language, showCopy = true, className }: CodeBl
   return (
     <div className={`relative rounded-card overflow-hidden ${className ?? ''}`}>
       {/* Window chrome */}
-      <div className="flex items-center gap-1.5 px-4 py-2.5 bg-[#18181B] border-b border-[#27272A]">
+      <div className="flex items-center gap-1.5 px-4 py-2.5 bg-ink-dark border-b border-ink-dark-border">
         <span className="w-3 h-3 rounded-full bg-[#FF5F56]" />
         <span className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
         <span className="w-3 h-3 rounded-full bg-[#27C93F]" />
@@ -36,7 +36,7 @@ export function CodeBlock({ code, language, showCopy = true, className }: CodeBl
           </button>
         )}
       </div>
-      <pre className="bg-[#0A0A0A] p-4 overflow-x-auto text-code-md font-code text-on-primary-container leading-relaxed">
+      <pre className="bg-ink-dark-hover p-4 overflow-x-auto text-code-md font-code text-on-primary-container leading-relaxed">
         <code>{code}</code>
       </pre>
     </div>

@@ -11,6 +11,8 @@ export interface QueryLog {
   response_time_ms: number;
   explain_data: Record<string, unknown>;
   created_at: string;
+  user_full_name?: string | null;
+  user_email?: string | null;
 }
 
 export interface QueryResult {
@@ -22,6 +24,9 @@ export interface QueryResult {
 }
 
 export interface QueryResponse {
+  answer: string;
+  citations: string[];
+  answer_degraded: boolean;
   results: QueryResult[];
   explain: Record<string, unknown>;
   quota: { used: number; limit: number; percent: number; warn: boolean };
@@ -37,7 +42,7 @@ export const queryApi = createApi({
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
         const { data } = await queryFulfilled;
         // Signal graph unavailable if explain data indicates fallback
-        const graphAvail = (data.explain as any)?.graph_available;
+        const graphAvail = data.explain?.graph_available;
         if (graphAvail === false) dispatch(setGraphUnavailable(true));
       },
     }),

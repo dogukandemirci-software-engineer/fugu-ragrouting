@@ -18,16 +18,11 @@ export function auditLogMiddleware(req: AuthRequest, res: Response, next: NextFu
 
   (res as any).end = function (chunk: unknown, ...args: unknown[]) {
     if (res.statusCode < 400 && req.user) {
-      AuditLogService.log({
-        organization_id: req.user.orgId,
-        actor_user_id: req.user.id !== 'api_key' ? req.user.id : null,
-        actor_api_key_id: null,
-        action: inferAction(req.method, req.path),
-        resource_type: null,
-        resource_id: null,
-        metadata: {},
-        ip_address: req.ip ?? null,
-        user_agent: req.get('user-agent') ?? null,
+      AuditLogService.logAudit(inferAction(req.method, req.path), {
+        orgId: req.user.orgId,
+        actorUserId: req.user.id !== 'api_key' ? req.user.id : null,
+        ip: req.ip ?? null,
+        userAgent: req.get('user-agent') ?? null,
       }).catch(() => {});
     }
     return originalEnd(chunk, ...(args as Parameters<typeof originalEnd>).slice(1));

@@ -4,6 +4,7 @@ import { UserRepository } from '../repositories/user.repository';
 import { OrganizationRepository } from '../repositories/organization.repository';
 import { SubscriptionRepository } from '../repositories/subscription.repository';
 import { pool } from '../config/database';
+import { requestContext } from '../config/request-context';
 import {
   signAccessToken,
   signRefreshToken,
@@ -20,10 +21,16 @@ import {
 import { verifyGoogleIdToken } from './google-auth.service';
 import { UserPublic } from '../entities/user.entity';
 import { query } from '../config/database';
+import { AuditLogService } from './audit-log.service';
+import { EmailService } from './email.service';
+import { AUDIT_ACTIONS } from '../config/constants';
 
 const userRepo = new UserRepository();
 const orgRepo = new OrganizationRepository();
 const subRepo = new SubscriptionRepository();
+
+// One-time bonus queries granted to both sides of a successful referral signup.
+const REFERRAL_BONUS_QUERIES = 500;
 
 export interface AuthTokens {
   access_token: string;
@@ -42,33 +49,61 @@ export const AuthService = {
     password: string;
     full_name: string;
     organization_name: string;
+    referral_code?: string;
   }): Promise<AuthResult> {
     const existing = await userRepo.findByEmail(data.email);
     if (existing) {
       throw new ConflictError('An account with this email already exists. Please log in.');
     }
 
+    // Referral bonus: both the referring org and the new org get one-time
+    // extra monthly queries. Looked up before the transaction so a bad/unknown
+    // code never blocks signup — it's a growth nudge, not a requirement.
+    const referrer = data.referral_code ? await orgRepo.findBySlug(data.referral_code) : null;
+
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
 
-      const password_hash = await bcrypt.hash(data.password, 12);
-      const user = await userRepo.create({
-        email: data.email,
-        password_hash,
-        full_name: data.full_name,
-        avatar_url: null,
-        email_verified_at: null,
-      });
+      // Run the rest of signup through this transaction's own client (via
+      // AsyncLocalStorage, same mechanism orgScopeMiddleware uses per-request)
+      // so every repository call here is part of the same transaction — and,
+      // once the org exists, subject to the same RLS policy the app enforces
+      // everywhere else instead of running on the unscoped pool.
+      const { user, org } = await requestContext.run({ client }, async () => {
+        const password_hash = await bcrypt.hash(data.password, 12);
+        const user = await userRepo.create({
+          email: data.email,
+          password_hash,
+          full_name: data.full_name,
+          avatar_url: null,
+          email_verified_at: null,
+        });
 
-      const slug = await orgRepo.generateUniqueSlug(data.organization_name);
-      const org = await orgRepo.create({
-        name: data.organization_name,
-        slug,
-        owner_user_id: user.id,
-      });
+        const slug = await orgRepo.generateUniqueSlug(data.organization_name);
+        const org = await orgRepo.create({
+          name: data.organization_name,
+          slug,
+          owner_user_id: user.id,
+        });
 
-      await subRepo.create(org.id);
+        // subscriptions is RLS-protected; current_org_id() must be set before
+        // this insert or FORCE ROW LEVEL SECURITY rejects it (WITH CHECK sees
+        // organization_id = NULL).
+        await client.query(`SET LOCAL app.current_org_id = '${org.id}'`);
+        await subRepo.create(org.id);
+
+        if (referrer) {
+          await subRepo.grantReferralBonus(org.id, REFERRAL_BONUS_QUERIES);
+          // Switch RLS scope to the referrer's own org before touching its row —
+          // current_org_id() is still set to the new org from above otherwise.
+          await client.query(`SET LOCAL app.current_org_id = '${referrer.id}'`);
+          await subRepo.grantReferralBonus(referrer.id, REFERRAL_BONUS_QUERIES);
+          await client.query(`SET LOCAL app.current_org_id = '${org.id}'`);
+        }
+
+        return { user, org };
+      });
 
       await client.query('COMMIT');
 
@@ -86,7 +121,7 @@ export const AuthService = {
     }
   },
 
-  async logIn(data: { email: string; password: string }): Promise<AuthResult> {
+  async logIn(data: { email: string; password: string; ip?: string | null; userAgent?: string | null }): Promise<AuthResult> {
     const user = await userRepo.findByEmail(data.email);
     if (!user || !user.password_hash) {
       throw new UnauthorizedError('Invalid email or password');
@@ -94,6 +129,18 @@ export const AuthService = {
 
     const valid = await bcrypt.compare(data.password, user.password_hash);
     if (!valid) {
+      const orgs = await orgRepo.getUserOrganizations(user.id);
+      if (orgs.length > 0) {
+        await AuditLogService.logAudit(AUDIT_ACTIONS.AUTH_LOGIN_FAILED, {
+          orgId: orgs[0].id,
+          actorUserId: user.id,
+          resourceType: 'user',
+          resourceId: user.id,
+          metadata: { email: data.email },
+          ip: data.ip,
+          userAgent: data.userAgent,
+        });
+      }
       throw new UnauthorizedError('Invalid email or password');
     }
 
@@ -109,7 +156,7 @@ export const AuthService = {
     return { tokens, user: userPublic, organization_id: org.id };
   },
 
-  async refresh(refreshToken: string): Promise<AuthTokens> {
+  async refresh(refreshToken: string, ip?: string | null, userAgent?: string | null): Promise<AuthTokens> {
     let payload: { sub: string; jti: string };
     try {
       payload = verifyRefreshToken(refreshToken);
@@ -124,6 +171,17 @@ export const AuthService = {
     );
 
     if (!stored.length || stored[0].revoked_at) {
+      const orgs = await orgRepo.getUserOrganizations(payload.sub);
+      if (orgs.length > 0) {
+        await AuditLogService.logAudit(AUDIT_ACTIONS.AUTH_REFRESH_FAILED, {
+          orgId: orgs[0].id,
+          actorUserId: payload.sub,
+          resourceType: 'refresh_token',
+          metadata: { reused_or_expired: true },
+          ip,
+          userAgent,
+        });
+      }
       throw new UnauthorizedError('Refresh token revoked or expired');
     }
 
@@ -140,6 +198,27 @@ export const AuthService = {
     return AuthService._issueTokens(user.id, org.id, member?.role ?? 'member', user.email);
   },
 
+  async listMyOrganizations(userId: string) {
+    return orgRepo.getUserOrganizations(userId);
+  },
+
+  // Login/refresh always default to the user's oldest org (orgs[0]) — a user
+  // who belongs to multiple orgs (e.g. just accepted a team invite to a
+  // newer org) has no other way to get a JWT scoped to that org otherwise.
+  async switchOrg(userId: string, orgId: string): Promise<AuthResult> {
+    const member = await orgRepo.getMember(orgId, userId);
+    if (!member || !member.joined_at) {
+      throw new UnauthorizedError('Not a member of this organization');
+    }
+
+    const user = await userRepo.findById(userId);
+    if (!user) throw new UnauthorizedError('User not found');
+
+    const tokens = await AuthService._issueTokens(userId, orgId, member.role, user.email);
+    const { password_hash: _, ...userPublic } = user;
+    return { tokens, user: userPublic, organization_id: orgId };
+  },
+
   async logout(refreshToken: string): Promise<void> {
     const tokenHash = hashToken(refreshToken);
     await query('UPDATE refresh_tokens SET revoked_at = NOW() WHERE token_hash = $1', [tokenHash]);
@@ -153,8 +232,7 @@ export const AuthService = {
        VALUES ($1, $2, NOW() + INTERVAL '24 hours')`,
       [userId, tokenHash]
     );
-    // TODO: call email service (nodemailer / Supabase transactional email)
-    // In dev mode, Supabase Inbucket catches this at localhost:54325
+    await EmailService.sendVerification(email, token);
   },
 
   async verifyEmail(token: string): Promise<void> {
@@ -170,7 +248,7 @@ export const AuthService = {
     await userRepo.markEmailVerified(rows[0].user_id);
   },
 
-  async forgotPassword(email: string): Promise<void> {
+  async forgotPassword(email: string, ip?: string | null, userAgent?: string | null): Promise<void> {
     const user = await userRepo.findByEmail(email);
     // Always return success to prevent email enumeration
     if (!user) return;
@@ -182,7 +260,19 @@ export const AuthService = {
        VALUES ($1, $2, NOW() + INTERVAL '1 hour')`,
       [user.id, tokenHash]
     );
-    // TODO: send reset email
+
+    const orgs = await orgRepo.getUserOrganizations(user.id);
+    if (orgs.length > 0) {
+      await AuditLogService.logAudit(AUDIT_ACTIONS.AUTH_PASSWORD_RESET_REQUESTED, {
+        orgId: orgs[0].id,
+        actorUserId: user.id,
+        resourceType: 'user',
+        resourceId: user.id,
+        ip,
+        userAgent,
+      });
+    }
+    await EmailService.sendPasswordReset(email, token);
   },
 
   async resetPassword(token: string, newPassword: string): Promise<void> {

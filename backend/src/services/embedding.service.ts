@@ -9,7 +9,21 @@
  *   ollama      — Local Ollama (nomic-embed-text, mxbai-embed-large, etc.) — free, no API key
  */
 import { env } from '../config/env';
-import { logger } from '../utils/logger';
+import { mapWithConcurrency } from '../utils/concurrency';
+import { LRUCache } from '../utils/lru-cache';
+
+// Query embeddings are the hot path: the same question re-asked (or the same
+// text embedded during ingestion of near-duplicate chunks) would otherwise hit
+// the provider every time. Cache keyed by provider+model+text so a config
+// change never serves a stale-dimension vector.
+const embeddingCache =
+  env.EMBEDDING_CACHE_SIZE > 0
+    ? new LRUCache<number[]>(env.EMBEDDING_CACHE_SIZE, env.EMBEDDING_CACHE_TTL_MS)
+    : null;
+
+function cacheKey(text: string): string {
+  return `${env.EMBEDDING_PROVIDER}:${env.EMBEDDING_MODEL}:${text}`;
+}
 
 export type EmbeddingProvider = 'openai' | 'openrouter' | 'cohere' | 'ollama';
 
@@ -63,9 +77,9 @@ async function embedOllama(texts: string[]): Promise<number[][]> {
   const model = env.EMBEDDING_MODEL.includes('/') ? env.EMBEDDING_MODEL : `nomic-embed-text`;
   const baseUrl = env.OLLAMA_URL ?? 'http://localhost:11434';
 
-  // Ollama processes one text at a time
-  const results: number[][] = [];
-  for (const text of texts) {
+  // Ollama's HTTP API takes one prompt per request — bound concurrency so we
+  // don't flood a single local model server with hundreds of simultaneous requests.
+  return mapWithConcurrency(texts, 4, async (text) => {
     const res = await fetch(`${baseUrl}/api/embeddings`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -73,42 +87,55 @@ async function embedOllama(texts: string[]): Promise<number[][]> {
     });
     if (!res.ok) throw new Error(`Ollama embedding error ${res.status}: ${await res.text()}`);
     const data = await res.json() as { embedding: number[] };
-    results.push(data.embedding);
-  }
-  return results;
-}
-
-function zeroEmbeddings(texts: string[]): number[][] {
-  logger.warn('No embedding provider configured — returning zero vectors (dev mode)');
-  return texts.map(() => new Array(env.EMBEDDING_DIMENSIONS).fill(0));
+    return data.embedding;
+  });
 }
 
 export async function embedBatch(texts: string[]): Promise<number[][]> {
   const provider: EmbeddingProvider = (env.EMBEDDING_PROVIDER as EmbeddingProvider) ?? 'openai';
 
+  let vectors: number[][];
   switch (provider) {
     case 'openai':
-      if (!env.OPENAI_API_KEY) return zeroEmbeddings(texts);
-      return embedOpenAI(texts);
+      if (!env.OPENAI_API_KEY) throw new Error('OPENAI_API_KEY is not configured');
+      vectors = await embedOpenAI(texts);
+      break;
 
     case 'openrouter':
-      if (!env.OPENROUTER_API_KEY) return zeroEmbeddings(texts);
-      return embedOpenRouter(texts);
+      if (!env.OPENROUTER_API_KEY) throw new Error('OPENROUTER_API_KEY is not configured');
+      vectors = await embedOpenRouter(texts);
+      break;
 
     case 'cohere':
-      if (!env.COHERE_API_KEY) return zeroEmbeddings(texts);
-      return embedCohere(texts);
+      if (!env.COHERE_API_KEY) throw new Error('COHERE_API_KEY is not configured');
+      vectors = await embedCohere(texts);
+      break;
 
     case 'ollama':
-      return embedOllama(texts);
+      vectors = await embedOllama(texts);
+      break;
 
     default:
-      logger.warn(`Unknown EMBEDDING_PROVIDER "${provider}", falling back to zero vectors`);
-      return zeroEmbeddings(texts);
+      throw new Error(`Unknown EMBEDDING_PROVIDER "${provider}"`);
   }
+
+  // A zero-magnitude vector produces NaN/null similarity in pgvector's cosine
+  // distance operator, silently poisoning search results — fail loudly instead.
+  vectors.forEach((v, i) => {
+    if (v.every((x) => x === 0)) {
+      throw new Error(`Embedding provider "${provider}" returned a zero vector for text at index ${i}`);
+    }
+  });
+
+  return vectors;
 }
 
 export async function embedSingle(text: string): Promise<number[]> {
+  const key = cacheKey(text);
+  const cached = embeddingCache?.get(key);
+  if (cached) return cached;
+
   const [vec] = await embedBatch([text]);
+  embeddingCache?.set(key, vec);
   return vec;
 }

@@ -2,6 +2,8 @@ import crypto from 'crypto';
 import { BaseRepository } from '../repositories/base.repository';
 import { Webhook, WebhookPublic } from '../entities/webhook.entity';
 import { hashToken, generateSecureToken } from '../utils/token.util';
+import { assertPublicHostname } from '../utils/ssrf-guard.util';
+import { ValidationError } from '../utils/errors';
 import { logger } from '../utils/logger';
 
 class WebhookRepository extends BaseRepository {
@@ -57,6 +59,12 @@ export const WebhookService = {
   },
 
   async create(params: { orgId: string; userId: string; name: string; url: string; events: string[] }): Promise<{ webhook: WebhookPublic; raw_secret: string }> {
+    try {
+      await assertPublicHostname(params.url);
+    } catch (err) {
+      throw new ValidationError(err instanceof Error ? err.message : 'Invalid webhook URL');
+    }
+
     const raw_secret = generateSecureToken(24);
     const secret_hash = hashToken(raw_secret);
 
@@ -88,6 +96,10 @@ export const WebhookService = {
         .digest('hex');
 
       try {
+        // Re-check on every dispatch, not just at creation — DNS records can
+        // change between creation and delivery (DNS rebinding).
+        await assertPublicHostname(wh.url);
+
         const res = await fetch(wh.url, {
           method: 'POST',
           headers: {
@@ -96,6 +108,7 @@ export const WebhookService = {
             'X-Fugu-Event': event,
           },
           body,
+          redirect: 'manual', // a redirect to an internal host would bypass the hostname check above
           signal: AbortSignal.timeout(10_000),
         });
 

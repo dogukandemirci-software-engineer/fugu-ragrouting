@@ -5,6 +5,7 @@ import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { SkeletonLoader } from '../../components/ui/SkeletonLoader';
+import { ErrorState } from '../../components/ui/ErrorState';
 import { useGetDocumentQuery, useRetryDocumentMutation } from '../../store/api/documentApi';
 
 const statusVariant: Record<string, 'success' | 'error' | 'warning' | 'neutral'> = {
@@ -21,7 +22,7 @@ function formatBytes(bytes: number): string {
 
 export function DocumentDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { data, isLoading } = useGetDocumentQuery(id!);
+  const { data, isLoading, isError, refetch } = useGetDocumentQuery(id!);
   const [retry] = useRetryDocumentMutation();
   const doc = data?.document;
 
@@ -37,6 +38,10 @@ export function DocumentDetailPage() {
         </div>
 
         {isLoading && <SkeletonLoader lines={6} />}
+
+        {!isLoading && isError && (
+          <ErrorState title="Couldn't load document" description="Something went wrong while fetching this document." onRetry={refetch} />
+        )}
 
         {doc && (
           <div className="space-y-4">

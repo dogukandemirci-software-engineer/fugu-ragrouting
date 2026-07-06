@@ -1,43 +1,36 @@
 import { Response, NextFunction } from 'express';
 import { AuthRequest } from '../middlewares/auth.middleware';
 import { ApiKeyService } from '../services/api-key.service';
+import { asyncHandler } from '../middlewares/async-handler';
 
 export const ApiKeyController = {
-  async list(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const keys = await ApiKeyService.list(req.user!.orgId);
-      res.json({ keys });
-    } catch (err) {
-      next(err);
-    }
-  },
+  list: asyncHandler(async (req: AuthRequest, res: Response, _next: NextFunction) => {
+    const keys = await ApiKeyService.list(req.user!.orgId);
+    res.json({ keys });
+  }),
 
-  async create(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const result = await ApiKeyService.create({
-        orgId: req.user!.orgId,
-        userId: req.user!.id,
-        name: req.body.name,
-        permissions: req.body.permissions,
-        expires_at: req.body.expires_at,
-      });
-      // Raw key only returned once at creation — not stored
-      res.status(201).json(result);
-    } catch (err) {
-      next(err);
-    }
-  },
+  create: asyncHandler(async (req: AuthRequest, res: Response, _next: NextFunction) => {
+    const result = await ApiKeyService.create({
+      orgId: req.user!.orgId,
+      userId: req.user!.id,
+      name: req.body.name,
+      permissions: req.body.permissions,
+      expires_at: req.body.expires_at,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'],
+    });
+    // Raw key only returned once at creation — not stored
+    res.status(201).json(result);
+  }),
 
-  async revoke(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
-    try {
-      await ApiKeyService.revoke({
-        id: req.params.id,
-        orgId: req.user!.orgId,
-        userId: req.user!.id,
-      });
-      res.status(204).end();
-    } catch (err) {
-      next(err);
-    }
-  },
+  revoke: asyncHandler(async (req: AuthRequest, res: Response, _next: NextFunction) => {
+    await ApiKeyService.revoke({
+      id: req.params.id,
+      orgId: req.user!.orgId,
+      userId: req.user!.id,
+      ip: req.ip,
+      userAgent: req.headers['user-agent'],
+    });
+    res.status(204).end();
+  }),
 };

@@ -9,6 +9,7 @@ coverage/
 uploads/
 postgres_data/
 redis_data/
+backend/storage/
 
 # Secrets — never commit
 deployment/

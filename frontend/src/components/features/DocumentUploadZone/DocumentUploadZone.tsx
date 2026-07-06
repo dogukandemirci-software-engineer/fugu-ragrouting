@@ -15,8 +15,9 @@ export function DocumentUploadZone() {
     try {
       await upload(form).unwrap();
       toast.success(`"${file.name}" uploaded — processing started`);
-    } catch {
-      toast.error('Upload failed. Only PDF, TXT, Markdown, and JSON files are supported.');
+    } catch (err: any) {
+      const msg = err?.data?.error?.message ?? err?.error ?? 'Upload failed. Please try again.';
+      toast.error(msg);
     }
   };
 
@@ -29,12 +30,21 @@ export function DocumentUploadZone() {
 
   return (
     <div
+      role="button"
+      tabIndex={0}
+      aria-label="Upload a document — click or press Enter to browse, or drag and drop a file here"
       onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
       onDragLeave={() => setDragging(false)}
       onDrop={handleDrop}
       onClick={() => inputRef.current?.click()}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          inputRef.current?.click();
+        }
+      }}
       className={clsx(
-        'flex flex-col items-center justify-center gap-4 p-12 border-2 border-dashed rounded-card cursor-pointer transition-all duration-150',
+        'flex flex-col items-center justify-center gap-4 p-12 border-2 border-dashed rounded-card cursor-pointer transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-violet',
         dragging
           ? 'border-accent-violet bg-accent-violet/5'
           : 'border-outline-variant hover:border-accent-violet/50 hover:bg-surface-container-low',
@@ -44,7 +54,7 @@ export function DocumentUploadZone() {
       <input
         ref={inputRef}
         type="file"
-        accept=".pdf,.txt,.md,.json"
+        accept=".pdf,.txt,.md,.markdown,.json,.csv,.docx,.xlsx,.xls"
         className="hidden"
         onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
       />
@@ -60,7 +70,7 @@ export function DocumentUploadZone() {
           {isLoading ? 'Uploading...' : 'Drop your document here'}
         </p>
         <p className="text-body-sm text-on-surface-variant">
-          or <span className="text-accent-violet font-medium">browse</span> — PDF, TXT, Markdown, JSON (max 50MB)
+          or <span className="text-accent-violet font-medium">browse</span> — PDF, DOCX, TXT, MD, CSV, XLSX, JSON (max 50 MB)
         </p>
       </div>
     </div>

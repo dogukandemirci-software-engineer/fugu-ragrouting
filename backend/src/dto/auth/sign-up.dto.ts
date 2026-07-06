@@ -1,4 +1,4 @@
-import { IsEmail, IsString, MinLength, MaxLength } from 'class-validator';
+import { IsEmail, IsString, MinLength, MaxLength, IsOptional } from 'class-validator';
 
 export class SignUpDto {
   @IsEmail()
@@ -18,4 +18,9 @@ export class SignUpDto {
   @MinLength(1)
   @MaxLength(80)
   organization_name!: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(80)
+  referral_code?: string;
 }

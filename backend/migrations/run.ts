@@ -1,6 +1,17 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { pool } from '../src/config/database';
+import * as dotenv from 'dotenv';
+import { Pool } from 'pg';
+
+dotenv.config();
+
+// Migrations run as the superuser (CREATE ROLE, ALTER DEFAULT PRIVILEGES
+// require it), not the app's RLS-scoped fugu_app role — see database.ts and
+// 002_row_level_security.sql. Falls back to DATABASE_URL if unset so this
+// still works before migration 002 introduces the split.
+const migrationsPool = new Pool({
+  connectionString: process.env.MIGRATIONS_DATABASE_URL ?? process.env.DATABASE_URL,
+});
 
 async function runMigrations(): Promise<void> {
   const migrationsDir = path.join(__dirname);
@@ -9,7 +20,7 @@ async function runMigrations(): Promise<void> {
     .filter((f) => f.endsWith('.sql'))
     .sort();
 
-  const client = await pool.connect();
+  const client = await migrationsPool.connect();
   try {
     await client.query(`
       CREATE TABLE IF NOT EXISTS schema_migrations (
@@ -46,7 +57,7 @@ async function runMigrations(): Promise<void> {
     process.exit(1);
   } finally {
     client.release();
-    await pool.end();
+    await migrationsPool.end();
   }
 }
 

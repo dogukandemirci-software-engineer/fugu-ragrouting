@@ -37,6 +37,33 @@ export class OrganizationRepository extends BaseRepository {
     );
   }
 
+  async listPendingInvitations(userId: string): Promise<(OrganizationMember & { org_name: string; invited_by_email: string | null })[]> {
+    return this.query(
+      `SELECT om.*, o.name AS org_name, inviter.email AS invited_by_email
+       FROM organization_members om
+       JOIN organizations o ON o.id = om.organization_id AND o.deleted_at IS NULL
+       LEFT JOIN users inviter ON inviter.id = om.invited_by
+       WHERE om.user_id = $1 AND om.joined_at IS NULL
+       ORDER BY om.invited_at DESC`,
+      [userId]
+    );
+  }
+
+  async acceptInvitation(orgId: string, userId: string): Promise<void> {
+    await this.query(
+      `UPDATE organization_members SET joined_at = NOW()
+       WHERE organization_id = $1 AND user_id = $2 AND joined_at IS NULL`,
+      [orgId, userId]
+    );
+  }
+
+  async declineInvitation(orgId: string, userId: string): Promise<void> {
+    await this.query(
+      `DELETE FROM organization_members WHERE organization_id = $1 AND user_id = $2 AND joined_at IS NULL`,
+      [orgId, userId]
+    );
+  }
+
   async listMembers(orgId: string): Promise<(OrganizationMember & { email: string; full_name: string; avatar_url: string | null })[]> {
     return this.query(
       `SELECT om.*, u.email, u.full_name, u.avatar_url
@@ -48,6 +75,10 @@ export class OrganizationRepository extends BaseRepository {
     );
   }
 
+  // joined_at is left NULL: the row is a pending invitation until the invited
+  // user explicitly accepts it (see acceptInvitation). getUserOrganizations
+  // only returns orgs where joined_at IS NOT NULL, so a pending invite grants
+  // no access on its own.
   async addMember(data: { org_id: string; user_id: string; role: string; invited_by: string }): Promise<OrganizationMember> {
     const member = await this.queryOne<OrganizationMember>(
       `INSERT INTO organization_members (organization_id, user_id, role, invited_by)
@@ -77,10 +108,10 @@ export class OrganizationRepository extends BaseRepository {
     await this.query(
       `UPDATE organizations
        SET deleted_at = NOW(),
-           delete_after = NOW() + INTERVAL '${deleteAfterDays} days',
+           delete_after = NOW() + make_interval(days => $2),
            updated_at = NOW()
        WHERE id = $1`,
-      [orgId]
+      [orgId, deleteAfterDays]
     );
   }
 
@@ -88,7 +119,7 @@ export class OrganizationRepository extends BaseRepository {
     return this.query<Organization>(
       `SELECT o.* FROM organizations o
        JOIN organization_members om ON om.organization_id = o.id
-       WHERE om.user_id = $1 AND o.deleted_at IS NULL
+       WHERE om.user_id = $1 AND om.joined_at IS NOT NULL AND o.deleted_at IS NULL
        ORDER BY o.created_at ASC`,
       [userId]
     );

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import multer from 'multer';
 import { DocumentController } from '../controllers/document.controller';
 import { requireAuth } from '../middlewares/auth.middleware';
+import { rateLimitMiddleware } from '../middlewares/rate-limit.middleware';
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -29,7 +30,7 @@ router.use(requireAuth);
 
 router.get('/', DocumentController.list);
 router.get('/:id', DocumentController.getById);
-router.post('/', upload.single('file'), DocumentController.upload);
+router.post('/', rateLimitMiddleware, upload.single('file'), DocumentController.upload);
 router.delete('/:id', DocumentController.delete);
 router.post('/:id/retry', DocumentController.retry);
 

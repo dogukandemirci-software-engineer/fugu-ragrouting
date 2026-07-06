@@ -8,6 +8,8 @@ import { queryApi } from './api/queryApi';
 import { billingApi } from './api/billingApi';
 import { teamApi } from './api/teamApi';
 import { webhookApi } from './api/webhookApi';
+import { auditApi } from './api/auditApi';
+import { accountApi } from './api/accountApi';
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +22,8 @@ export const store = configureStore({
     [billingApi.reducerPath]: billingApi.reducer,
     [teamApi.reducerPath]: teamApi.reducer,
     [webhookApi.reducerPath]: webhookApi.reducer,
+    [auditApi.reducerPath]: auditApi.reducer,
+    [accountApi.reducerPath]: accountApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -29,7 +33,9 @@ export const store = configureStore({
       queryApi.middleware,
       billingApi.middleware,
       teamApi.middleware,
-      webhookApi.middleware
+      webhookApi.middleware,
+      auditApi.middleware,
+      accountApi.middleware
     ),
 });
 

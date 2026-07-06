@@ -11,10 +11,19 @@ export interface TeamMember {
   joined_at: string | null;
 }
 
+export interface PendingInvitation {
+  id: string;
+  organization_id: string;
+  role: 'owner' | 'admin' | 'member' | 'viewer';
+  invited_at: string;
+  org_name: string;
+  invited_by_email: string | null;
+}
+
 export const teamApi = createApi({
   reducerPath: 'teamApi',
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['Team'],
+  tagTypes: ['Team', 'Invitations'],
   endpoints: (builder) => ({
     listTeam: builder.query<{ members: TeamMember[] }, void>({
       query: () => '/team',
@@ -32,7 +41,27 @@ export const teamApi = createApi({
       query: (memberId) => ({ url: `/team/${memberId}`, method: 'DELETE' }),
       invalidatesTags: ['Team'],
     }),
+    listPendingInvitations: builder.query<{ invitations: PendingInvitation[] }, void>({
+      query: () => '/account/invitations',
+      providesTags: ['Invitations'],
+    }),
+    acceptInvitation: builder.mutation<{ message: string }, string>({
+      query: (orgId) => ({ url: `/account/invitations/${orgId}/accept`, method: 'POST' }),
+      invalidatesTags: ['Invitations'],
+    }),
+    declineInvitation: builder.mutation<{ message: string }, string>({
+      query: (orgId) => ({ url: `/account/invitations/${orgId}/decline`, method: 'POST' }),
+      invalidatesTags: ['Invitations'],
+    }),
   }),
 });
 
-export const { useListTeamQuery, useInviteMemberMutation, useUpdateMemberRoleMutation, useRemoveMemberMutation } = teamApi;
+export const {
+  useListTeamQuery,
+  useInviteMemberMutation,
+  useUpdateMemberRoleMutation,
+  useRemoveMemberMutation,
+  useListPendingInvitationsQuery,
+  useAcceptInvitationMutation,
+  useDeclineInvitationMutation,
+} = teamApi;

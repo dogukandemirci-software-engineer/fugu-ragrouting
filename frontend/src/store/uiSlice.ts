@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface UIState {
   sidebarCollapsed: boolean;
+  mobileSidebarOpen: boolean;
   quotaWarningDismissed: boolean;
   graphUnavailableBannerVisible: boolean;
   paymentFailedBannerVisible: boolean;
@@ -9,6 +10,7 @@ interface UIState {
 
 const initialState: UIState = {
   sidebarCollapsed: false,
+  mobileSidebarOpen: false,
   quotaWarningDismissed: false,
   graphUnavailableBannerVisible: false,
   paymentFailedBannerVisible: false,
@@ -20,6 +22,12 @@ const uiSlice = createSlice({
   reducers: {
     toggleSidebar(state) {
       state.sidebarCollapsed = !state.sidebarCollapsed;
+    },
+    toggleMobileSidebar(state) {
+      state.mobileSidebarOpen = !state.mobileSidebarOpen;
+    },
+    closeMobileSidebar(state) {
+      state.mobileSidebarOpen = false;
     },
     dismissQuotaWarning(state) {
       state.quotaWarningDismissed = true;
@@ -38,6 +46,8 @@ const uiSlice = createSlice({
 
 export const {
   toggleSidebar,
+  toggleMobileSidebar,
+  closeMobileSidebar,
   dismissQuotaWarning,
   resetQuotaWarning,
   setGraphUnavailable,

@@ -1,5 +1,6 @@
 import { Pool } from 'pg';
 import { env } from './env';
+import { getScopedClient } from './request-context';
 
 export const pool = new Pool({
   connectionString: env.DATABASE_URL,
@@ -12,11 +13,15 @@ pool.on('error', (err) => {
   console.error('Unexpected DB pool error:', err);
 });
 
+// Prefers the current request's org-scoped connection (see
+// org-scope.middleware.ts) so RLS policies apply; falls back to the shared
+// pool outside a request context.
 export async function query<T = Record<string, unknown>>(
   sql: string,
   values?: unknown[]
 ): Promise<T[]> {
-  const result = await pool.query(sql, values);
+  const client = getScopedClient();
+  const result = client ? await client.query(sql, values) : await pool.query(sql, values);
   return result.rows as T[];
 }
 
@@ -24,7 +29,8 @@ export async function queryOne<T = Record<string, unknown>>(
   sql: string,
   values?: unknown[]
 ): Promise<T | null> {
-  const result = await pool.query(sql, values);
+  const client = getScopedClient();
+  const result = client ? await client.query(sql, values) : await pool.query(sql, values);
   return (result.rows[0] as T) ?? null;
 }
 

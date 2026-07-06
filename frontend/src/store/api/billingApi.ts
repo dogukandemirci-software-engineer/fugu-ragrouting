@@ -7,6 +7,19 @@ export const billingApi = createApi({
   baseQuery: baseQueryWithReauth,
   tagTypes: ['Billing'],
   endpoints: (builder) => ({
+    listPlans: builder.query<{
+      plans: Array<{
+        tier: 'free' | 'pro' | 'enterprise';
+        label: string;
+        price: string;
+        queries: string;
+        monthlyQueryLimit: number;
+        features: string[];
+        highlighted?: boolean;
+      }>;
+    }, void>({
+      query: () => '/billing/plans',
+    }),
     getSubscription: builder.query<{
       subscription: { tier: string; status: string; monthly_query_limit: number; current_period_end: string | null } | null;
       usage: { query_count: number; monthly_query_limit: number };
@@ -26,4 +39,4 @@ export const billingApi = createApi({
   }),
 });
 
-export const { useGetSubscriptionQuery, useCreateCheckoutMutation } = billingApi;
+export const { useListPlansQuery, useGetSubscriptionQuery, useCreateCheckoutMutation } = billingApi;

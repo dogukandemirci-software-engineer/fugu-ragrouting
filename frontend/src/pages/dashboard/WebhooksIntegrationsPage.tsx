@@ -7,6 +7,9 @@ import { Badge } from '../../components/ui/Badge';
 import { Modal } from '../../components/ui/Modal';
 import { Input } from '../../components/ui/Input';
 import { SkeletonLoader } from '../../components/ui/SkeletonLoader';
+import { EmptyState } from '../../components/ui/EmptyState';
+import { ErrorState } from '../../components/ui/ErrorState';
+import { Webhook } from 'lucide-react';
 import { useListWebhooksQuery, useCreateWebhookMutation, useDeleteWebhookMutation } from '../../store/api/webhookApi';
 import toast from 'react-hot-toast';
 
@@ -18,7 +21,7 @@ export function WebhooksIntegrationsPage() {
   const [showSecret, setShowSecret] = useState(false);
   const [form, setForm] = useState({ name: '', url: '', events: [] as string[] });
 
-  const { data, isLoading } = useListWebhooksQuery();
+  const { data, isLoading, isError, refetch } = useListWebhooksQuery();
   const [create, { isLoading: creating }] = useCreateWebhookMutation();
   const [del] = useDeleteWebhookMutation();
 
@@ -37,32 +40,43 @@ export function WebhooksIntegrationsPage() {
     <div className="flex flex-col h-full">
       <TopBar title="Webhooks & Integrations" />
       <div className="flex-1 p-6 space-y-6 overflow-y-auto">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h1 className="text-headline-lg font-headline font-bold text-on-surface">Webhooks</h1>
             <p className="text-body-md text-on-surface-variant mt-1">Receive real-time event notifications to your endpoints.</p>
           </div>
-          <Button variant="brand" onClick={() => setCreateOpen(true)}>
+          <Button variant="brand" onClick={() => setCreateOpen(true)} className="self-start sm:self-auto">
             <Plus size={16} /> Add webhook
           </Button>
         </div>
 
         {isLoading && <SkeletonLoader lines={4} />}
 
-        {!isLoading && (data?.webhooks.length ?? 0) === 0 && (
-          <div className="text-center py-16">
-            <p className="text-body-md text-on-surface-variant">No webhooks yet. Add one to start receiving events.</p>
-          </div>
+        {!isLoading && isError && (
+          <ErrorState title="Couldn't load webhooks" description="Something went wrong while fetching your webhooks." onRetry={refetch} />
         )}
 
-        {!isLoading && (data?.webhooks ?? []).length > 0 && (
+        {!isLoading && !isError && (data?.webhooks.length ?? 0) === 0 && (
+          <EmptyState
+            icon={Webhook}
+            title="No webhooks yet"
+            description="Add a webhook to start receiving real-time event notifications."
+            action={
+              <Button variant="brand" onClick={() => setCreateOpen(true)}>
+                <Plus size={16} /> Add webhook
+              </Button>
+            }
+          />
+        )}
+
+        {!isLoading && !isError && (data?.webhooks ?? []).length > 0 && (
           <div className="space-y-3">
             {data!.webhooks.map((wh) => (
               <Card key={wh.id}>
-                <div className="flex items-start justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-1">
-                      <h3 className="text-body-sm font-medium text-on-surface">{wh.name}</h3>
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <h3 className="text-body-sm font-medium text-on-surface truncate max-w-full">{wh.name}</h3>
                       <Badge variant={wh.active ? 'success' : 'neutral'}>{wh.active ? 'Active' : 'Inactive'}</Badge>
                       {wh.failure_count > 0 && <Badge variant="error">{wh.failure_count} failures</Badge>}
                     </div>
@@ -71,7 +85,7 @@ export function WebhooksIntegrationsPage() {
                       {wh.events.map(e => <Badge key={e} variant="neutral">{e}</Badge>)}
                     </div>
                   </div>
-                  <Button variant="destructive" size="sm" onClick={async () => { await del(wh.id); toast.success('Webhook deleted'); }}>
+                  <Button variant="destructive" size="sm" onClick={async () => { await del(wh.id); toast.success('Webhook deleted'); }} className="self-start sm:self-auto shrink-0">
                     <Trash2 size={13} />
                   </Button>
                 </div>
@@ -88,7 +102,7 @@ export function WebhooksIntegrationsPage() {
           <Input label="URL" type="url" value={form.url} onChange={e => setForm(f => ({ ...f, url: e.target.value }))} placeholder="https://your-server.com/webhook" />
           <div>
             <p className="text-body-sm font-medium text-on-surface mb-2">Events</p>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {EVENTS.map(e => (
                 <label key={e} className="flex items-center gap-2 text-body-sm text-on-surface cursor-pointer">
                   <input
@@ -119,7 +133,7 @@ export function WebhooksIntegrationsPage() {
             <div className="font-code text-body-sm bg-surface-container p-3 rounded-lg break-all">
               {showSecret ? rawSecret : '••••••••••••••••••••••••••••••••'}
             </div>
-            <button onClick={() => setShowSecret(!showSecret)} className="absolute right-2 top-2 p-1.5 hover:bg-surface-container-high rounded text-on-surface-variant">
+            <button onClick={() => setShowSecret(!showSecret)} aria-label={showSecret ? 'Hide secret' : 'Show secret'} className="absolute right-2 top-2 p-1.5 hover:bg-surface-container-high rounded text-on-surface-variant">
               {showSecret ? <EyeOff size={14} /> : <Eye size={14} />}
             </button>
           </div>

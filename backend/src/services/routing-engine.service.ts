@@ -5,6 +5,7 @@ import { IGraphRepository, GraphSearchResult } from '../interfaces/i-graph-repos
 import { ROUTING_STRATEGY } from '../config/constants';
 import { logger } from '../utils/logger';
 import { env } from '../config/env';
+import { callChatLLM } from '../utils/llm-client';
 
 // ─── Classifier Strategy (OCP: new strategies without modifying this file) ───
 
@@ -70,92 +71,47 @@ Rules:
 
 Reply with ONLY valid JSON: {"strategy":"vector_only"|"graph_only"|"hybrid","confidence":0.0-1.0}`;
 
+const CLASSIFIER_DEFAULT_MODELS: Record<string, string> = {
+  anthropic: 'claude-haiku-4-5-20251001',
+  openrouter: 'anthropic/claude-haiku-4-5',
+  openai: 'gpt-4o-mini',
+  ollama: 'qwen2.5:0.5b',
+};
+
 class LLMClassifier implements ClassifierStrategy {
   async classify(query: string): Promise<ClassificationResult> {
     const provider = env.LLM_CLASSIFIER_PROVIDER ?? 'openai';
     logger.debug('LLM classifier invoked', { provider, query: query.substring(0, 50) });
 
     try {
-      const raw = await this._callLLM(provider, query);
+      const raw = await callChatLLM({
+        provider,
+        model: env.LLM_CLASSIFIER_MODEL ?? CLASSIFIER_DEFAULT_MODELS[provider],
+        systemPrompt: CLASSIFIER_PROMPT,
+        userMessage: query,
+        maxTokens: 64,
+      });
       // Extract JSON object from response (handles markdown fences and trailing text)
       const jsonMatch = raw.match(/\{[^}]+\}/);
       if (!jsonMatch) throw new Error(`No JSON object found in LLM response: ${raw.substring(0, 100)}`);
-      const parsed = JSON.parse(jsonMatch[0]) as { strategy: 'vector_only' | 'graph_only' | 'hybrid'; confidence: number };
-      return { strategy: parsed.strategy, confidence: parsed.confidence, classifier: `llm_${provider}` };
+      const parsed = JSON.parse(jsonMatch[0]) as { strategy?: unknown; confidence?: unknown };
+      // Small/local models sometimes emit valid JSON with the wrong shape
+      // (missing key, wrong casing, extra text) — validate the enum instead
+      // of trusting it, or a bad response silently becomes a NULL DB write.
+      const VALID_STRATEGIES = ['vector_only', 'graph_only', 'hybrid'];
+      if (typeof parsed.strategy !== 'string' || !VALID_STRATEGIES.includes(parsed.strategy)) {
+        throw new Error(`LLM classifier returned invalid strategy: ${JSON.stringify(parsed)}`);
+      }
+      const confidence = typeof parsed.confidence === 'number' ? parsed.confidence : 0.5;
+      return {
+        strategy: parsed.strategy as 'vector_only' | 'graph_only' | 'hybrid',
+        confidence,
+        classifier: `llm_${provider}`,
+      };
     } catch (err) {
       logger.warn('LLM classifier failed, falling back to hybrid', { err: (err as Error).message });
       return { strategy: 'hybrid', confidence: 0.5, classifier: 'llm_fallback' };
     }
-  }
-
-  private async _callLLM(provider: string, query: string): Promise<string> {
-    if (provider === 'anthropic') {
-      if (!env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY not set');
-      const model = env.LLM_CLASSIFIER_MODEL ?? 'claude-haiku-4-5-20251001';
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'x-api-key': env.ANTHROPIC_API_KEY,
-          'anthropic-version': '2023-06-01',
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify({
-          model,
-          max_tokens: 64,
-          system: CLASSIFIER_PROMPT,
-          messages: [{ role: 'user', content: query }],
-        }),
-      });
-      if (!res.ok) throw new Error(`Anthropic error ${res.status}`);
-      const data = await res.json() as { content: Array<{ text: string }> };
-      return data.content[0].text.trim();
-    }
-
-    if (provider === 'openrouter') {
-      if (!env.OPENROUTER_API_KEY) throw new Error('OPENROUTER_API_KEY not set');
-      const model = env.LLM_CLASSIFIER_MODEL ?? 'anthropic/claude-haiku-4-5';
-      const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${env.OPENROUTER_API_KEY}`,
-          'Content-Type': 'application/json',
-          'HTTP-Referer': env.FRONTEND_URL,
-        },
-        body: JSON.stringify({
-          model,
-          max_tokens: 64,
-          messages: [
-            { role: 'system', content: CLASSIFIER_PROMPT },
-            { role: 'user', content: query },
-          ],
-        }),
-      });
-      if (!res.ok) throw new Error(`OpenRouter error ${res.status}`);
-      const data = await res.json() as { choices: Array<{ message: { content: string } }> };
-      return data.choices[0].message.content.trim();
-    }
-
-    // Default: OpenAI
-    if (!env.OPENAI_API_KEY) throw new Error('OPENAI_API_KEY not set');
-    const model = env.LLM_CLASSIFIER_MODEL ?? 'gpt-4o-mini';
-    const res = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${env.OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model,
-        max_tokens: 64,
-        messages: [
-          { role: 'system', content: CLASSIFIER_PROMPT },
-          { role: 'user', content: query },
-        ],
-      }),
-    });
-    if (!res.ok) throw new Error(`OpenAI error ${res.status}`);
-    const data = await res.json() as { choices: Array<{ message: { content: string } }> };
-    return data.choices[0].message.content.trim();
   }
 }
 
@@ -242,6 +198,18 @@ export class RoutingEngineService {
         // Graceful fallback: graph unavailable → continue with vector results
         graphAvailable = false;
         logger.warn('Graph backend unavailable, falling back to vector-only', { err });
+      }
+
+      // Classifier can mis-route to graph_only when the graph has no matching
+      // entities yet (small/local classifiers, sparse graphs). Rather than
+      // surface an empty answer, fall back to vector search.
+      if (strategy === ROUTING_STRATEGY.GRAPH_ONLY && graphResults.length === 0) {
+        vectorResults = await this.vectorRepo.similaritySearch({
+          organization_id: params.org_id,
+          query_embedding: params.query_embedding,
+          top_k: topK,
+        });
+        graphAvailable = false;
       }
     }
 

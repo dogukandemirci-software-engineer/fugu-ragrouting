@@ -18,6 +18,8 @@ export const TeamService = {
     invitedByRole: string;
     email: string;
     role: string;
+    ip?: string | null;
+    userAgent?: string | null;
   }) {
     if (params.invitedByRole === 'viewer' || params.invitedByRole === 'member') {
       throw new ForbiddenError('Only admins and owners can invite members');
@@ -42,17 +44,40 @@ export const TeamService = {
       invited_by: params.invitedByUserId,
     });
 
-    await AuditLogService.log({
-      organization_id: params.orgId,
-      actor_user_id: params.invitedByUserId,
-      actor_api_key_id: null,
-      action: AUDIT_ACTIONS.TEAM_MEMBER_INVITED,
-      resource_type: 'user',
-      resource_id: user.id,
+    await AuditLogService.logAudit(AUDIT_ACTIONS.TEAM_MEMBER_INVITED, {
+      orgId: params.orgId,
+      actorUserId: params.invitedByUserId,
+      resourceType: 'user',
+      resourceId: user.id,
       metadata: { email: params.email, role: params.role },
-      ip_address: null,
-      user_agent: null,
+      ip: params.ip,
+      userAgent: params.userAgent,
     });
+  },
+
+  async listPendingInvitations(userId: string) {
+    return orgRepo.listPendingInvitations(userId);
+  },
+
+  // No audit log write here: the request's RLS session is scoped to the
+  // caller's *current* org (set at auth time), not the org being joined/left,
+  // so an INSERT with organization_id = the target org fails RLS's WITH CHECK
+  // and aborts the whole transaction — silently undoing the membership
+  // update too, since AuditLogService.log swallows its own errors. The
+  // organization_members.joined_at change (or row deletion) is itself the
+  // durable record of this event.
+  async acceptInvitation(params: { orgId: string; userId: string }) {
+    const invite = await orgRepo.getMember(params.orgId, params.userId);
+    if (!invite || invite.joined_at) throw new NotFoundError('Invitation not found');
+
+    await orgRepo.acceptInvitation(params.orgId, params.userId);
+  },
+
+  async declineInvitation(params: { orgId: string; userId: string }) {
+    const invite = await orgRepo.getMember(params.orgId, params.userId);
+    if (!invite || invite.joined_at) throw new NotFoundError('Invitation not found');
+
+    await orgRepo.declineInvitation(params.orgId, params.userId);
   },
 
   async updateRole(params: { orgId: string; actorRole: string; memberId: string; newRole: string }) {
@@ -62,7 +87,14 @@ export const TeamService = {
     await orgRepo.updateMemberRole(params.orgId, params.memberId, params.newRole);
   },
 
-  async removeMember(params: { orgId: string; actorRole: string; actorId: string; memberId: string }) {
+  async removeMember(params: {
+    orgId: string;
+    actorRole: string;
+    actorId: string;
+    memberId: string;
+    ip?: string | null;
+    userAgent?: string | null;
+  }) {
     if (params.actorRole !== 'owner' && params.actorRole !== 'admin') {
       throw new ForbiddenError('Only owners and admins can remove members');
     }
@@ -71,16 +103,13 @@ export const TeamService = {
     }
     await orgRepo.removeMember(params.orgId, params.memberId);
 
-    await AuditLogService.log({
-      organization_id: params.orgId,
-      actor_user_id: params.actorId,
-      actor_api_key_id: null,
-      action: AUDIT_ACTIONS.TEAM_MEMBER_REMOVED,
-      resource_type: 'user',
-      resource_id: params.memberId,
-      metadata: {},
-      ip_address: null,
-      user_agent: null,
+    await AuditLogService.logAudit(AUDIT_ACTIONS.TEAM_MEMBER_REMOVED, {
+      orgId: params.orgId,
+      actorUserId: params.actorId,
+      resourceType: 'user',
+      resourceId: params.memberId,
+      ip: params.ip,
+      userAgent: params.userAgent,
     });
   },
 };

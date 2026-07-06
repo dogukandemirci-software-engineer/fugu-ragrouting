@@ -2,7 +2,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
@@ -22,6 +22,8 @@ type FormData = z.infer<typeof schema>;
 export function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const referralCode = searchParams.get('ref') ?? undefined;
   const [signUp, { isLoading }] = useSignUpMutation();
 
   const { register, handleSubmit, formState: { errors }, setError } = useForm<FormData>({
@@ -30,7 +32,7 @@ export function SignUpPage() {
 
   const onSubmit = async (data: FormData) => {
     try {
-      await signUp(data).unwrap();
+      await signUp({ ...data, referral_code: referralCode }).unwrap();
       navigate('/dashboard');
       toast.success('Account created! Check your email to verify.');
     } catch (err: any) {
@@ -46,7 +48,13 @@ export function SignUpPage() {
   return (
     <div>
       <h1 className="text-headline-lg font-headline font-bold text-on-surface mb-2">Create your account</h1>
-      <p className="text-body-md text-on-surface-variant mb-8">Start routing queries with AI precision</p>
+      <p className="text-body-md text-on-surface-variant mb-2">Start routing queries with AI precision</p>
+      {referralCode && (
+        <p className="text-body-sm text-accent-violet mb-6">
+          You were invited by a FUGU user — you'll both get bonus queries once you sign up.
+        </p>
+      )}
+      {!referralCode && <div className="mb-8" />}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Input {...register('full_name')} label="Full name" placeholder="Jane Smith" error={errors.full_name?.message} />

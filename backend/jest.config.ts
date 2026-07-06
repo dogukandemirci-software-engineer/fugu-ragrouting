@@ -10,6 +10,7 @@ const config: Config = {
   },
   testTimeout: 15000,
   forceExit: true,
+  setupFiles: ['<rootDir>/jest.setup.ts'],
   transform: {
     '^.+\\.tsx?$': ['ts-jest', {
       tsconfig: { module: 'CommonJS' },
