@@ -41,7 +41,16 @@ async function runMigrations(): Promise<void> {
       }
 
       console.log(`▶  Applying ${version}...`);
-      const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf-8');
+      let sql = fs.readFileSync(path.join(migrationsDir, file), 'utf-8');
+      if (sql.includes('__FUGU_APP_DB_PASSWORD__')) {
+        const pw = process.env.FUGU_APP_DB_PASSWORD;
+        if (!pw) {
+          throw new Error(
+            `${version} requires FUGU_APP_DB_PASSWORD to be set — refusing to create fugu_app with a placeholder password`
+          );
+        }
+        sql = sql.replaceAll('__FUGU_APP_DB_PASSWORD__', pw.replaceAll("'", "''"));
+      }
       await client.query('BEGIN');
       await client.query(sql);
       await client.query(
