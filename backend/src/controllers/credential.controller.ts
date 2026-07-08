@@ -1,9 +1,12 @@
 import { Response, NextFunction } from 'express';
 import { AuthRequest } from '../middlewares/auth.middleware';
 import { CredentialService } from '../services/credential.service';
+import { ModelCatalogService } from '../services/model-catalog.service';
 import { asyncHandler } from '../middlewares/async-handler';
-import { isValidLLMCredential } from '../config/llm-credential-models';
 import { ValidationError } from '../utils/errors';
+import { LLMCredentialProvider } from '../entities/credential.entity';
+
+const VALID_PROVIDERS: LLMCredentialProvider[] = ['anthropic', 'openai', 'gemini', 'openrouter'];
 
 export const CredentialController = {
   get: asyncHandler(async (req: AuthRequest, res: Response, _next: NextFunction) => {
@@ -11,9 +14,21 @@ export const CredentialController = {
     res.json({ credential });
   }),
 
+  listModels: asyncHandler(async (req: AuthRequest, res: Response, _next: NextFunction) => {
+    const provider = req.query.provider as string;
+    if (!VALID_PROVIDERS.includes(provider as LLMCredentialProvider)) {
+      throw new ValidationError(`Unknown provider: ${provider}`);
+    }
+    const models = await ModelCatalogService.getModels(provider as LLMCredentialProvider);
+    res.json({ models });
+  }),
+
   save: asyncHandler(async (req: AuthRequest, res: Response, _next: NextFunction) => {
     const { provider, model, apiKey } = req.body;
-    if (!isValidLLMCredential(provider, model)) {
+    if (!VALID_PROVIDERS.includes(provider)) {
+      throw new ValidationError(`Unknown provider: ${provider}`);
+    }
+    if (!(await ModelCatalogService.isValidModel(provider, model))) {
       throw new ValidationError(`Unsupported provider/model combination: ${provider}/${model}`);
     }
     if (typeof apiKey !== 'string' || !apiKey.trim()) {

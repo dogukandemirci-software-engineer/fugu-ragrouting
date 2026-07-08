@@ -10,6 +10,12 @@ export interface LLMCredential {
   lastVerifiedAt: string;
 }
 
+export interface CatalogModel {
+  id: string;
+  label: string;
+  free: boolean;
+}
+
 export const credentialApi = createApi({
   reducerPath: 'credentialApi',
   baseQuery: baseQueryWithReauth,
@@ -18,6 +24,9 @@ export const credentialApi = createApi({
     getCredential: builder.query<{ credential: LLMCredential | null }, void>({
       query: () => '/organization/llm-credential',
       providesTags: ['Credential'],
+    }),
+    getModels: builder.query<{ models: CatalogModel[] }, LLMCredentialProvider>({
+      query: (provider) => `/organization/llm-credential/models?provider=${provider}`,
     }),
     saveCredential: builder.mutation<{ credential: LLMCredential }, { provider: LLMCredentialProvider; model: string; apiKey: string }>({
       query: (body) => ({ url: '/organization/llm-credential', method: 'PUT', body }),
@@ -32,6 +41,7 @@ export const credentialApi = createApi({
 
 export const {
   useGetCredentialQuery,
+  useGetModelsQuery,
   useSaveCredentialMutation,
   useRemoveCredentialMutation,
 } = credentialApi;

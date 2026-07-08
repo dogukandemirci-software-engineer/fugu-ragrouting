@@ -15,7 +15,11 @@ async function testCredential(provider: LLMCredentialProvider, model: string, ap
       model,
       systemPrompt: 'Reply with the single word: ok',
       userMessage: 'ping',
-      maxTokens: 8,
+      // Mandatory-reasoning models can consume a small budget entirely on
+      // hidden reasoning tokens before emitting any visible content — give
+      // enough headroom that the test call reflects a real invalid key
+      // rather than an undersized budget.
+      maxTokens: 64,
       apiKey,
     });
   } catch (err) {

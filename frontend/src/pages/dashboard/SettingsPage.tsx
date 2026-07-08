@@ -10,11 +10,12 @@ import { useUpdateProfileMutation, useDeleteOrganizationMutation } from '../../s
 import { useLogoutMutation, useListMyOrganizationsQuery } from '../../store/api/authApi';
 import {
   useGetCredentialQuery,
+  useGetModelsQuery,
   useSaveCredentialMutation,
   useRemoveCredentialMutation,
   LLMCredentialProvider,
 } from '../../store/api/credentialApi';
-import { SUPPORTED_LLM_MODELS, PROVIDER_LABELS } from '../../config/llmCredentialModels';
+import { PROVIDER_LABELS } from '../../config/llmCredentialModels';
 import toast from 'react-hot-toast';
 
 export function SettingsPage() {
@@ -30,8 +31,11 @@ export function SettingsPage() {
   const [saveCredential, { isLoading: savingCredential }] = useSaveCredentialMutation();
   const [removeCredential, { isLoading: removingCredential }] = useRemoveCredentialMutation();
   const [provider, setProvider] = useState<LLMCredentialProvider>('anthropic');
-  const [model, setModel] = useState(SUPPORTED_LLM_MODELS.anthropic[0]);
+  const [model, setModel] = useState('');
   const [apiKey, setApiKey] = useState('');
+
+  const { data: modelsData, isFetching: modelsLoading } = useGetModelsQuery(provider);
+  const models = modelsData?.models ?? [];
 
   useEffect(() => {
     if (credentialData?.credential) {
@@ -40,9 +44,16 @@ export function SettingsPage() {
     }
   }, [credentialData]);
 
+  // Once the model list for the selected provider loads, default to its
+  // first entry (catalog is sorted free-first) unless a model is already set
+  // (e.g. restored from the saved credential above).
+  useEffect(() => {
+    if (!model && models.length > 0) setModel(models[0].id);
+  }, [models, model]);
+
   const handleProviderChange = (next: LLMCredentialProvider) => {
     setProvider(next);
-    setModel(SUPPORTED_LLM_MODELS[next][0]);
+    setModel('');
   };
 
   const handleSaveCredential = async () => {
@@ -149,16 +160,24 @@ export function SettingsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-body-sm font-medium text-on-surface mb-1.5">Model</label>
+              <label className="block text-body-sm font-medium text-on-surface mb-1.5">
+                Model{modelsLoading && <span className="text-on-surface-variant font-normal"> (loading…)</span>}
+              </label>
               <select
                 value={model}
                 onChange={(e) => setModel(e.target.value)}
-                className="w-full px-3 py-2.5 text-body-sm font-body text-on-surface bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-violet/30 focus:border-accent-violet"
+                disabled={modelsLoading || models.length === 0}
+                className="w-full px-3 py-2.5 text-body-sm font-body text-on-surface bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-violet/30 focus:border-accent-violet disabled:opacity-50"
               >
-                {SUPPORTED_LLM_MODELS[provider].map((m) => (
-                  <option key={m} value={m}>{m}</option>
+                {models.map((m) => (
+                  <option key={m.id} value={m.id}>{m.free ? `🆓 ${m.label}` : m.label}</option>
                 ))}
               </select>
+              {provider === 'openrouter' && (
+                <p className="mt-1.5 text-body-sm text-on-surface-variant">
+                  🆓 marks free-tier models — no cost on your OpenRouter account.
+                </p>
+              )}
             </div>
             <Input
               label="API key"

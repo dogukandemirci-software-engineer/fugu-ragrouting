@@ -63,8 +63,21 @@ async function callOpenRouter(params: LLMCallParams): Promise<string> {
     }),
   });
   if (!res.ok) throw new Error(`OpenRouter error ${res.status}: ${await res.text()}`);
-  const data = (await res.json()) as { choices: Array<{ message: { content: string } }> };
-  return data.choices[0].message.content.trim();
+  const data = (await res.json()) as {
+    choices: Array<{ message: { content: string | null }; finish_reason?: string }>;
+  };
+  const content = data.choices[0].message.content;
+  // Mandatory-reasoning models (e.g. some free-tier models) can spend the
+  // entire max_tokens budget on hidden reasoning and return content: null
+  // with finish_reason "length" — a too-small maxTokens, not a real failure.
+  if (content == null) {
+    throw new Error(
+      data.choices[0].finish_reason === 'length'
+        ? 'Model returned no content — try a smaller/non-reasoning model or a larger maxTokens budget'
+        : 'Model returned empty content'
+    );
+  }
+  return content.trim();
 }
 
 async function callOpenAI(params: LLMCallParams): Promise<string> {

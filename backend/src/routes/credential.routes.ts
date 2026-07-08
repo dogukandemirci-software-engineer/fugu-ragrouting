@@ -8,6 +8,7 @@ router.use(requireAuth);
 router.use(rateLimitMiddleware);
 
 router.get('/', CredentialController.get);
+router.get('/models', CredentialController.listModels);
 router.put('/', requireRole('owner', 'admin'), CredentialController.save);
 router.delete('/', requireRole('owner', 'admin'), CredentialController.remove);
 
