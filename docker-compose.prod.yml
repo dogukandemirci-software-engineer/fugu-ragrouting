@@ -102,13 +102,14 @@ services:
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       # No Ollama container in production — internal ops (routing/entity-extraction/embedding)
       # always run on FUGU's own OpenRouter key here, regardless of dev's local Ollama setup.
+      # Answer synthesis is BYOK-only (organization_llm_credentials) and takes no provider env.
       EMBEDDING_PROVIDER: openrouter
       LLM_CLASSIFIER_PROVIDER: openrouter
-      LLM_SYNTHESIS_PROVIDER: openrouter
       ENTITY_EXTRACTION_PROVIDER: openrouter
       EMBEDDING_MODEL: ${EMBEDDING_MODEL:-text-embedding-3-small}
       EMBEDDING_DIMENSIONS: ${EMBEDDING_DIMENSIONS:-1536}
       FRONTEND_URL: ${FRONTEND_URL}
+      CREDENTIAL_ENCRYPTION_KEY: ${CREDENTIAL_ENCRYPTION_KEY}
       KAFKA_BROKERS: redpanda:29092
       INGESTION_QUEUE_ENABLED: 'true'
     depends_on:
