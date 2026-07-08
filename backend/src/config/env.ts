@@ -35,7 +35,9 @@ const envSchema = z.object({
   // signup/reset flows work without a real SMTP server. Set true in production.
   EMAIL_ENABLED: z.coerce.boolean().default(false),
 
-  // Embedding
+  // Embedding (unchanged by BYOK — Ollama remains valid here as a local/no-cost
+  // embedding option; only chat-LLM providers for synthesis/classifier/entity
+  // extraction dropped Ollama support)
   EMBEDDING_PROVIDER: z.enum(['openai', 'openrouter', 'cohere', 'ollama']).default('openai'),
   EMBEDDING_MODEL: z.string().default('text-embedding-3-small'),
   EMBEDDING_DIMENSIONS: z.coerce.number().default(1536),
@@ -53,27 +55,32 @@ const envSchema = z.object({
   // Cohere
   COHERE_API_KEY: z.string().optional(),
 
-  // Ollama (local, no key needed)
+  // Ollama (local, no key needed) — embedding only, see EMBEDDING_PROVIDER above
   OLLAMA_URL: z.string().url().optional(),
 
   // Anthropic Claude (for LLM classifier)
   ANTHROPIC_API_KEY: z.string().optional(),
 
-  // LLM Classifier provider (openai | anthropic | openrouter | ollama)
-  LLM_CLASSIFIER_PROVIDER: z.enum(['openai', 'anthropic', 'openrouter', 'ollama']).default('openai'),
+  // LLM Classifier provider — FUGU-paid, OpenRouter-backed, unaffected by BYOK
+  LLM_CLASSIFIER_PROVIDER: z.enum(['openai', 'anthropic', 'openrouter']).default('openai'),
   LLM_CLASSIFIER_MODEL: z.string().optional(),
 
-  // LLM Synthesis (answer generation from retrieved context)
-  LLM_SYNTHESIS_PROVIDER: z.enum(['openai', 'anthropic', 'openrouter', 'ollama']).default('openrouter'),
-  LLM_SYNTHESIS_MODEL: z.string().optional(),
+  // LLM Synthesis (answer generation) — max tokens/timeout are provider-agnostic,
+  // applied to the organization's own BYOK synthesis call. Provider/model/key
+  // come from organization_llm_credentials (see credential.service.ts), not env.
   LLM_SYNTHESIS_MAX_TOKENS: z.coerce.number().default(1024),
   LLM_SYNTHESIS_TIMEOUT_MS: z.coerce.number().default(20000),
 
-  // Entity extraction for graph ingestion
+  // Entity extraction for graph ingestion — FUGU-paid, OpenRouter-backed
   ENTITY_EXTRACTION_ENABLED: z.coerce.boolean().default(true),
-  ENTITY_EXTRACTION_PROVIDER: z.enum(['openai', 'anthropic', 'openrouter', 'ollama']).default('openrouter'),
+  ENTITY_EXTRACTION_PROVIDER: z.enum(['openai', 'anthropic', 'openrouter']).default('openrouter'),
   ENTITY_EXTRACTION_MODEL: z.string().optional(),
   ENTITY_EXTRACTION_MAX_TOKENS: z.coerce.number().default(512),
+
+  // BYOK credential encryption — 32-byte AES-256-GCM master key (hex or
+  // base64). Losing this key makes all stored organization API keys
+  // unrecoverable; back it up to a secure secret store before deploy.
+  CREDENTIAL_ENCRYPTION_KEY: z.string().min(32),
 
   // Ingestion queue (Redpanda / Kafka-compatible)
   INGESTION_QUEUE_ENABLED: z.coerce.boolean().default(true),

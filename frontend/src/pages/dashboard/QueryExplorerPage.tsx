@@ -42,7 +42,7 @@ export function QueryExplorerPage() {
 
   const { hardBlocked } = useQuotaStatus();
   const dispatch = useDispatch();
-  const { answer: streamedAnswer, isStreaming, run: runStream } = useQueryStream();
+  const { answer: streamedAnswer, isStreaming, byokRequired, run: runStream } = useQueryStream();
   const { data: logs } = useListQueryLogsQuery({ limit: 10 });
 
   const isLoading = isStreaming;
@@ -67,6 +67,9 @@ export function QueryExplorerPage() {
       if (res.explain?.graph_available === false) dispatch(setGraphUnavailable(true));
       // Refresh the shared team history sidebar with the just-logged query.
       dispatch(queryApi.util.invalidateTags(['QueryLog']));
+    } else if (outcome.byokRequired) {
+      // Handled by the persistent banner below instead of a toast — it needs
+      // a settings link, not a one-line dismissible message.
     } else if (outcome.error && outcome.error !== 'aborted') {
       toast.error(outcome.error);
     }
@@ -124,6 +127,17 @@ export function QueryExplorerPage() {
                 Query limit reached.{' '}
                 <a href="/dashboard/billing" className="font-semibold underline">Upgrade your plan</a>{' '}
                 to continue.
+              </span>
+            </div>
+          )}
+
+          {byokRequired && (
+            <div className="flex items-center gap-3 p-4 bg-error-container rounded-[10px] text-on-error-container text-body-sm">
+              <AlertCircle size={16} className="shrink-0" />
+              <span>
+                No LLM API key configured for this organization.{' '}
+                <a href="/dashboard/settings" className="font-semibold underline">Add one in Settings</a>{' '}
+                to run queries.
               </span>
             </div>
           )}

@@ -61,13 +61,16 @@ class RuleBasedClassifier implements ClassifierStrategy {
   }
 }
 
-const CLASSIFIER_PROMPT = `You are a query routing classifier for a RAG system.
-Given a user query, classify it as ONE of: vector_only, graph_only, hybrid.
+const CLASSIFIER_PROMPT = `Classify the user query as ONE of: vector_only, graph_only, hybrid.
 
-Rules:
-- vector_only: semantic search, document retrieval, summarization, "what is", "explain", "find similar"
-- graph_only: relationship queries, "how does X relate to Y", "path between", "connected to", "depends on", "hierarchy", "parent/child"
-- hybrid: ambiguous, involves both concepts, or unclear intent
+- vector_only: semantic search, retrieval, summarization ("what is X", "explain Y", "find similar docs")
+- graph_only: relationships between entities ("how does X relate to Y", "path between A and B", "who depends on Z", "parent/child of")
+- hybrid: ambiguous, needs both, or unclear intent
+
+Examples:
+"What is our refund policy?" -> {"strategy":"vector_only","confidence":0.9}
+"How is the billing service connected to the auth service?" -> {"strategy":"graph_only","confidence":0.85}
+"Summarize what we know about vendor X and how they relate to our supply chain" -> {"strategy":"hybrid","confidence":0.7}
 
 Reply with ONLY valid JSON: {"strategy":"vector_only"|"graph_only"|"hybrid","confidence":0.0-1.0}`;
 
@@ -75,7 +78,6 @@ const CLASSIFIER_DEFAULT_MODELS: Record<string, string> = {
   anthropic: 'claude-haiku-4-5-20251001',
   openrouter: 'anthropic/claude-haiku-4-5',
   openai: 'gpt-4o-mini',
-  ollama: 'qwen2.5:0.5b',
 };
 
 class LLMClassifier implements ClassifierStrategy {

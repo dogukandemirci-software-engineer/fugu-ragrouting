@@ -1,6 +1,6 @@
 import { env } from '../config/env';
 
-export type LLMProvider = 'openai' | 'anthropic' | 'openrouter' | 'ollama';
+export type LLMProvider = 'openai' | 'anthropic' | 'openrouter' | 'gemini';
 
 export interface LLMCallParams {
   provider: LLMProvider;
@@ -9,15 +9,25 @@ export interface LLMCallParams {
   userMessage: string;
   maxTokens: number;
   signal?: AbortSignal;
+  // BYOK synthesis calls pass the organization's own decrypted key; internal
+  // FUGU-paid calls (classifier, entity extraction) omit this and fall back
+  // to the shared env-configured key for that provider.
+  apiKey?: string;
+}
+
+function resolveKey(params: LLMCallParams, envKey: string | undefined, envVarName: string): string {
+  const key = params.apiKey ?? envKey;
+  if (!key) throw new Error(`${envVarName} not set`);
+  return key;
 }
 
 async function callAnthropic(params: LLMCallParams): Promise<string> {
-  if (!env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY not set');
+  const apiKey = resolveKey(params, env.ANTHROPIC_API_KEY, 'ANTHROPIC_API_KEY');
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     signal: params.signal,
     headers: {
-      'x-api-key': env.ANTHROPIC_API_KEY,
+      'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
       'content-type': 'application/json',
     },
@@ -34,12 +44,12 @@ async function callAnthropic(params: LLMCallParams): Promise<string> {
 }
 
 async function callOpenRouter(params: LLMCallParams): Promise<string> {
-  if (!env.OPENROUTER_API_KEY) throw new Error('OPENROUTER_API_KEY not set');
+  const apiKey = resolveKey(params, env.OPENROUTER_API_KEY, 'OPENROUTER_API_KEY');
   const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     signal: params.signal,
     headers: {
-      Authorization: `Bearer ${env.OPENROUTER_API_KEY}`,
+      Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
       'HTTP-Referer': env.FRONTEND_URL,
     },
@@ -58,12 +68,12 @@ async function callOpenRouter(params: LLMCallParams): Promise<string> {
 }
 
 async function callOpenAI(params: LLMCallParams): Promise<string> {
-  if (!env.OPENAI_API_KEY) throw new Error('OPENAI_API_KEY not set');
+  const apiKey = resolveKey(params, env.OPENAI_API_KEY, 'OPENAI_API_KEY');
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     signal: params.signal,
     headers: {
-      Authorization: `Bearer ${env.OPENAI_API_KEY}`,
+      Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -80,24 +90,26 @@ async function callOpenAI(params: LLMCallParams): Promise<string> {
   return data.choices[0].message.content.trim();
 }
 
-async function callOllama(params: LLMCallParams): Promise<string> {
-  const baseUrl = env.OLLAMA_URL ?? 'http://localhost:11434';
-  const res = await fetch(`${baseUrl}/api/chat`, {
+// Gemini is BYOK-only (no FUGU-paid fallback), so params.apiKey is always
+// required here — there is no env.GEMINI_API_KEY to fall back to.
+async function callGemini(params: LLMCallParams): Promise<string> {
+  if (!params.apiKey) throw new Error('Gemini requires an API key (BYOK)');
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${params.model}:generateContent`;
+  const res = await fetch(url, {
     method: 'POST',
     signal: params.signal,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': params.apiKey },
     body: JSON.stringify({
-      model: params.model,
-      stream: false,
-      messages: [
-        { role: 'system', content: params.systemPrompt },
-        { role: 'user', content: params.userMessage },
-      ],
+      systemInstruction: { parts: [{ text: params.systemPrompt }] },
+      contents: [{ role: 'user', parts: [{ text: params.userMessage }] }],
+      generationConfig: { maxOutputTokens: params.maxTokens },
     }),
   });
-  if (!res.ok) throw new Error(`Ollama error ${res.status}: ${await res.text()}`);
-  const data = (await res.json()) as { message: { content: string } };
-  return data.message.content.trim();
+  if (!res.ok) throw new Error(`Gemini error ${res.status}: ${await res.text()}`);
+  const data = (await res.json()) as {
+    candidates: Array<{ content: { parts: Array<{ text: string }> } }>;
+  };
+  return data.candidates[0].content.parts[0].text.trim();
 }
 
 // Single entry point for every chat-style LLM provider used across the codebase
@@ -105,8 +117,8 @@ async function callOllama(params: LLMCallParams): Promise<string> {
 // fetch/header/parsing details in one place instead of duplicated per service.
 export async function callChatLLM(params: LLMCallParams): Promise<string> {
   switch (params.provider) {
-    case 'ollama':
-      return callOllama(params);
+    case 'gemini':
+      return callGemini(params);
     case 'anthropic':
       return callAnthropic(params);
     case 'openai':
@@ -119,9 +131,8 @@ export async function callChatLLM(params: LLMCallParams): Promise<string> {
 // ─── Streaming ──────────────────────────────────────────────────────────────
 // Yields answer text incrementally. Consumers (SSE endpoint) forward each delta
 // to the client so tokens render as they arrive instead of after a full-answer
-// round-trip. Provider wire formats differ: OpenAI/OpenRouter and Anthropic use
-// SSE (`data: {json}\n\n`); Ollama uses newline-delimited JSON. A single line
-// reader normalizes both.
+// round-trip. Provider wire formats differ: OpenAI/OpenRouter/Gemini and
+// Anthropic use SSE (`data: {json}\n\n`) with different event shapes.
 
 async function* readSSELines(res: Response): AsyncGenerator<string> {
   if (!res.body) return;
@@ -177,12 +188,12 @@ async function* streamOpenAICompatible(params: LLMCallParams, url: string, heade
 }
 
 async function* streamAnthropic(params: LLMCallParams): AsyncGenerator<string> {
-  if (!env.ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY not set');
+  const apiKey = resolveKey(params, env.ANTHROPIC_API_KEY, 'ANTHROPIC_API_KEY');
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     signal: params.signal,
     headers: {
-      'x-api-key': env.ANTHROPIC_API_KEY,
+      'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
       'content-type': 'application/json',
     },
@@ -206,26 +217,28 @@ async function* streamAnthropic(params: LLMCallParams): AsyncGenerator<string> {
   }
 }
 
-async function* streamOllama(params: LLMCallParams): AsyncGenerator<string> {
-  const baseUrl = env.OLLAMA_URL ?? 'http://localhost:11434';
-  const res = await fetch(`${baseUrl}/api/chat`, {
+async function* streamGemini(params: LLMCallParams): AsyncGenerator<string> {
+  if (!params.apiKey) throw new Error('Gemini requires an API key (BYOK)');
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${params.model}:streamGenerateContent?alt=sse`;
+  const res = await fetch(url, {
     method: 'POST',
     signal: params.signal,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': params.apiKey },
     body: JSON.stringify({
-      model: params.model,
-      stream: true,
-      messages: [
-        { role: 'system', content: params.systemPrompt },
-        { role: 'user', content: params.userMessage },
-      ],
+      systemInstruction: { parts: [{ text: params.systemPrompt }] },
+      contents: [{ role: 'user', parts: [{ text: params.userMessage }] }],
+      generationConfig: { maxOutputTokens: params.maxTokens },
     }),
   });
-  if (!res.ok) throw new Error(`Ollama stream error ${res.status}: ${await res.text()}`);
+  if (!res.ok) throw new Error(`Gemini stream error ${res.status}: ${await res.text()}`);
   for await (const line of readSSELines(res)) {
+    if (!line.startsWith('data:')) continue;
     try {
-      const evt = JSON.parse(line) as { message?: { content?: string } };
-      if (evt.message?.content) yield evt.message.content;
+      const evt = JSON.parse(line.slice(5).trim()) as {
+        candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+      };
+      const text = evt.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (text) yield text;
     } catch {
       // ignore
     }
@@ -234,20 +247,22 @@ async function* streamOllama(params: LLMCallParams): AsyncGenerator<string> {
 
 export function streamChatLLM(params: LLMCallParams): AsyncGenerator<string> {
   switch (params.provider) {
-    case 'ollama':
-      return streamOllama(params);
+    case 'gemini':
+      return streamGemini(params);
     case 'anthropic':
       return streamAnthropic(params);
-    case 'openai':
-      if (!env.OPENAI_API_KEY) throw new Error('OPENAI_API_KEY not set');
+    case 'openai': {
+      const apiKey = resolveKey(params, env.OPENAI_API_KEY, 'OPENAI_API_KEY');
       return streamOpenAICompatible(params, 'https://api.openai.com/v1/chat/completions', {
-        Authorization: `Bearer ${env.OPENAI_API_KEY}`,
+        Authorization: `Bearer ${apiKey}`,
       });
-    case 'openrouter':
-      if (!env.OPENROUTER_API_KEY) throw new Error('OPENROUTER_API_KEY not set');
+    }
+    case 'openrouter': {
+      const apiKey = resolveKey(params, env.OPENROUTER_API_KEY, 'OPENROUTER_API_KEY');
       return streamOpenAICompatible(params, 'https://openrouter.ai/api/v1/chat/completions', {
-        Authorization: `Bearer ${env.OPENROUTER_API_KEY}`,
+        Authorization: `Bearer ${apiKey}`,
         'HTTP-Referer': env.FRONTEND_URL,
       });
+    }
   }
 }

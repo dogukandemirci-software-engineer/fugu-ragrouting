@@ -63,3 +63,13 @@ export class ServiceUnavailableError extends AppError {
     super(`${service} is temporarily unavailable`, 503, 'SERVICE_UNAVAILABLE');
   }
 }
+
+export class BYOKRequiredError extends AppError {
+  constructor() {
+    super(
+      'This organization has no active LLM credential configured. Add one in Settings to run queries.',
+      409,
+      'BYOK_REQUIRED'
+    );
+  }
+}

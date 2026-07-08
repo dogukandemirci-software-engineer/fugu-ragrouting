@@ -10,6 +10,7 @@ import { teamApi } from './api/teamApi';
 import { webhookApi } from './api/webhookApi';
 import { auditApi } from './api/auditApi';
 import { accountApi } from './api/accountApi';
+import { credentialApi } from './api/credentialApi';
 
 export const store = configureStore({
   reducer: {
@@ -24,6 +25,7 @@ export const store = configureStore({
     [webhookApi.reducerPath]: webhookApi.reducer,
     [auditApi.reducerPath]: auditApi.reducer,
     [accountApi.reducerPath]: accountApi.reducer,
+    [credentialApi.reducerPath]: credentialApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -35,7 +37,8 @@ export const store = configureStore({
       teamApi.middleware,
       webhookApi.middleware,
       auditApi.middleware,
-      accountApi.middleware
+      accountApi.middleware,
+      credentialApi.middleware
     ),
 });
 

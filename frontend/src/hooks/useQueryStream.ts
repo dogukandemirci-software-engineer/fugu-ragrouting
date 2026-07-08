@@ -18,9 +18,10 @@ interface StreamState {
   result: QueryResponse | null;
   isStreaming: boolean;
   error: string | null;
+  byokRequired: boolean;
 }
 
-const INITIAL: StreamState = { answer: '', result: null, isStreaming: false, error: null };
+const INITIAL: StreamState = { answer: '', result: null, isStreaming: false, error: null, byokRequired: false };
 
 export function useQueryStream() {
   const token = useSelector((s: RootState) => s.auth.accessToken);
@@ -49,15 +50,17 @@ export function useQueryStream() {
         });
 
         if (!res.ok || !res.body) {
-          // Non-SSE error (quota, validation) comes back as JSON.
+          // Non-SSE error (quota, validation, BYOK) comes back as JSON.
           let message = 'Query failed. Please try again.';
+          let byokRequired = false;
           try {
             const j = await res.json();
             message = j?.error?.message ?? message;
             if (j?.error?.code === 'QUOTA_EXCEEDED') message = 'Monthly query quota exceeded. Upgrade your plan.';
+            if (j?.error?.code === 'BYOK_REQUIRED') byokRequired = true;
           } catch { /* keep default */ }
-          setState({ ...INITIAL, error: message });
-          return { ok: false as const, error: message };
+          setState({ ...INITIAL, error: message, byokRequired });
+          return { ok: false as const, error: message, byokRequired };
         }
 
         const reader = res.body.getReader();
@@ -94,7 +97,7 @@ export function useQueryStream() {
                 explain: meta.explain,
                 quota: meta.quota,
               };
-              setState({ answer, result, isStreaming: false, error: null });
+              setState({ answer, result, isStreaming: false, error: null, byokRequired: false });
               return { ok: true as const, result };
             }
           }
@@ -111,7 +114,7 @@ export function useQueryStream() {
             explain: meta.explain,
             quota: meta.quota,
           };
-          setState({ answer, result, isStreaming: false, error: null });
+          setState({ answer, result, isStreaming: false, error: null, byokRequired: false });
           return { ok: true as const, result };
         }
         setState((s) => ({ ...s, isStreaming: false }));
@@ -120,7 +123,7 @@ export function useQueryStream() {
         if (controller.signal.aborted) return { ok: false as const, error: 'aborted' };
         const message = err instanceof Error ? err.message : 'Query failed. Please try again.';
         setState({ ...INITIAL, error: message });
-        return { ok: false as const, error: message };
+        return { ok: false as const, error: message, byokRequired: false };
       }
     },
     [token]

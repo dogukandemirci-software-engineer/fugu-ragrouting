@@ -8,14 +8,18 @@ export interface ExtractedTriple {
   object: { name: string; type: string };
 }
 
-const EXTRACTION_SYSTEM_PROMPT = `Extract factual entity relationships from the given text as (subject, predicate, object) triples suitable for a knowledge graph. Only extract relationships explicitly stated or clearly implied in the text — do not infer speculative connections.
+const EXTRACTION_SYSTEM_PROMPT = `Extract factual (subject, predicate, object) relationship triples from the text for a knowledge graph. Only relationships explicitly stated or clearly implied — no speculation.
 
 Rules:
-- subject/object: short canonical names (e.g. "Marie Curie" not "she" or "the scientist mentioned above")
+- subject/object: short canonical names copied from the text (e.g. "Marie Curie", never "she" or "the scientist mentioned above")
 - subject/object type: one of Person, Organization, Location, Concept, Product, Event, Other
-- predicate: an UPPER_SNAKE_CASE relationship verb, e.g. WORKS_AT, LOCATED_IN, PART_OF, RELATED_TO, AUTHORED_BY
-- Extract at most 8 triples. If the text contains no clear factual relationships, return an empty array.
-- Every subject and object MUST have a real, specific name copied from the text. Never write "..." or leave name empty.
+- predicate: UPPER_SNAKE_CASE verb, e.g. WORKS_AT, LOCATED_IN, PART_OF, RELATED_TO, AUTHORED_BY
+- Max 8 triples. No clear relationships -> empty array.
+- Every subject/object MUST be a real name from the text. Never "..." or empty.
+
+Each subject/object is an object with exactly the keys "name" and "type" — never use the type as the key.
+Right: {"name":"Marie Curie","type":"Person"}
+Wrong: {"person":"Marie Curie"}
 
 Reply with ONLY valid JSON, no other text. Example for "Marie Curie discovered radium.":
 {"triples":[{"subject":{"name":"Marie Curie","type":"Person"},"predicate":"DISCOVERED","object":{"name":"radium","type":"Product"}}]}`;
@@ -24,7 +28,6 @@ const DEFAULT_MODELS: Record<string, string> = {
   anthropic: 'claude-haiku-4-5-20251001',
   openrouter: 'anthropic/claude-haiku-4-5',
   openai: 'gpt-4o-mini',
-  ollama: 'qwen2.5:0.5b',
 };
 
 // Small/quantized models (e.g. qwen2.5:0.5b) frequently ignore the exact

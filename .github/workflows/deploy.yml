@@ -166,6 +166,7 @@ jobs:
             echo "ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}" >> .env.deploy
             echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env.deploy
             echo "FRONTEND_URL=${{ secrets.FRONTEND_URL }}" >> .env.deploy
+            echo "CREDENTIAL_ENCRYPTION_KEY=${{ secrets.CREDENTIAL_ENCRYPTION_KEY }}" >> .env.deploy
             chmod 600 .env.deploy
             docker compose -f docker-compose.prod.yml --env-file .env.deploy pull
             docker compose -f docker-compose.prod.yml --env-file .env.deploy up -d

@@ -1,6 +1,7 @@
-import { env } from '../config/env';
 import { logger } from '../utils/logger';
 import { callChatLLM, streamChatLLM } from '../utils/llm-client';
+import { LLMCredentialDecrypted } from '../entities/credential.entity';
+import { env } from '../config/env';
 
 export interface SourceChunk {
   id: string; // "S1", "S2", ... — citation marker, must match display order
@@ -16,33 +17,24 @@ export interface SynthesisResult {
   degraded: boolean;
 }
 
-const SYNTHESIS_SYSTEM_PROMPT = `You are a precise, grounded answer-synthesis engine for a retrieval-augmented system. You will be given a user question and a numbered list of retrieved source excerpts (marked [S1], [S2], etc.). Your ONLY job is to answer the question using EXCLUSIVELY the information contained in these excerpts.
+const SYNTHESIS_SYSTEM_PROMPT = `You are a grounded answer-synthesis engine for a retrieval-augmented system. You get a user question and numbered source excerpts (marked [S1], [S2], ...). Answer using ONLY those excerpts.
 
-STRICT GROUNDING RULES:
-- Never use knowledge outside the provided excerpts, even if you know the answer from training. If the excerpts don't contain the answer, say so explicitly — do not guess, infer beyond what's stated, or fill gaps with general knowledge.
-- Every factual claim you make must be traceable to a specific excerpt. Cite the excerpt inline immediately after the claim using its marker, e.g. "Revenue grew 12% in Q3 [S2]." Use multiple markers if a claim draws on more than one excerpt, e.g. [S1][S4].
-- If the excerpts are empty, irrelevant to the question, or only partially answer it, say exactly what is and is not covered. Use this exact phrasing when nothing relevant is found: "I don't have enough information in the retrieved sources to answer this." Never apologize excessively or pad with disclaimers beyond this.
-- Do not fabricate citation markers. Only cite excerpt numbers that were actually provided to you.
+Grounding:
+- Never use outside knowledge, even if you know the answer. If the excerpts don't cover it, don't guess or fill gaps.
+- Cite every factual claim inline right after it, e.g. "Revenue grew 12% in Q3 [S2]." Stack markers for multi-source claims, e.g. [S1][S4].
+- If excerpts are empty, irrelevant, or only partial, say exactly what's covered. If nothing relevant exists, reply exactly: "I don't have enough information in the retrieved sources to answer this." No other apology or disclaimer.
+- Never invent a citation marker beyond what was provided.
 
-OUTPUT FORMATTING RULES (strict — the output is rendered as Markdown in a UI):
-- Structure your answer for scannability. Prefer short paragraphs, bullet lists, and numbered steps over dense prose.
-- When the excerpts contain tabular, comparative, or multi-attribute data, you MUST render it as a Markdown table with a header row — never as a wall of prose.
-- Use Markdown headers (##, ###) to break up multi-part answers longer than ~150 words.
-- Use **bold** for key terms, numbers, and named entities the user is likely scanning for.
-- Use fenced code blocks (\`\`\`) for anything that is code, a command, a file path, or structured data (JSON/YAML/config).
-- Never invent a table or list structure the source data doesn't support — only use these formats when they genuinely fit the content; don't force formatting onto a one-sentence answer.
-- Keep the final answer self-contained and directly responsive to the question — do not restate the question, do not add unrequested meta-commentary about the retrieval process itself.
-
-Answer now, following every rule above exactly.`;
+Formatting (rendered as Markdown):
+- Short paragraphs, bullets, numbered steps over dense prose.
+- Tabular/comparative/multi-attribute data → a Markdown table with a header row, never prose.
+- ## / ### headers for answers longer than ~150 words.
+- **Bold** key terms, numbers, named entities.
+- Fenced code blocks for code, commands, paths, or structured data.
+- Only use tables/lists where the content genuinely fits — don't force structure onto a one-line answer.
+- Answer only the question. No restating it, no meta-commentary about retrieval.`;
 
 const NO_INFO_ANSWER = "I don't have enough information in the retrieved sources to answer this.";
-
-const DEFAULT_MODELS: Record<string, string> = {
-  anthropic: 'claude-sonnet-4-5-20250929',
-  openrouter: 'anthropic/claude-sonnet-4.5',
-  openai: 'gpt-4o-mini',
-  ollama: 'qwen2.5:0.5b',
-};
 
 function buildUserMessage(query: string, chunks: SourceChunk[]): string {
   const sources = chunks.map((c) => `[${c.id}] ${c.content}`).join('\n');
@@ -67,20 +59,22 @@ async function callWithTimeout(fn: (signal: AbortSignal) => Promise<string>, tim
 }
 
 export const AnswerSynthesisService = {
-  async synthesize(query: string, chunks: SourceChunk[]): Promise<SynthesisResult> {
+  // credential is the caller's org's own BYOK key — required, since synthesis
+  // no longer runs on any FUGU-paid shared key (see BYOKRequiredError callers).
+  async synthesize(query: string, chunks: SourceChunk[], credential: LLMCredentialDecrypted): Promise<SynthesisResult> {
     if (chunks.length === 0) {
       return { answer: NO_INFO_ANSWER, citations: [], degraded: false };
     }
 
     const userMessage = buildUserMessage(query, chunks);
-    const provider = env.LLM_SYNTHESIS_PROVIDER;
 
     try {
       const answer = await callWithTimeout(
         (signal) =>
           callChatLLM({
-            provider,
-            model: env.LLM_SYNTHESIS_MODEL ?? DEFAULT_MODELS[provider],
+            provider: credential.provider,
+            model: credential.model,
+            apiKey: credential.apiKey,
             systemPrompt: SYNTHESIS_SYSTEM_PROMPT,
             userMessage,
             maxTokens: env.LLM_SYNTHESIS_MAX_TOKENS,
@@ -92,7 +86,7 @@ export const AnswerSynthesisService = {
       return { answer, citations: extractCitations(answer), degraded: false };
     } catch (err) {
       logger.warn('Answer synthesis failed, degrading to raw sources', {
-        provider,
+        provider: credential.provider,
         err: err instanceof Error ? err.message : String(err),
       });
       return { answer: '', citations: [], degraded: true };
@@ -106,7 +100,8 @@ export const AnswerSynthesisService = {
   // (the SSE endpoint then surfaces raw sources like the non-streaming path).
   async *synthesizeStream(
     query: string,
-    chunks: SourceChunk[]
+    chunks: SourceChunk[],
+    credential: LLMCredentialDecrypted
   ): AsyncGenerator<string, SynthesisResult, void> {
     if (chunks.length === 0) {
       yield NO_INFO_ANSWER;
@@ -114,15 +109,15 @@ export const AnswerSynthesisService = {
     }
 
     const userMessage = buildUserMessage(query, chunks);
-    const provider = env.LLM_SYNTHESIS_PROVIDER;
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), env.LLM_SYNTHESIS_TIMEOUT_MS);
 
     let answer = '';
     try {
       for await (const delta of streamChatLLM({
-        provider,
-        model: env.LLM_SYNTHESIS_MODEL ?? DEFAULT_MODELS[provider],
+        provider: credential.provider,
+        model: credential.model,
+        apiKey: credential.apiKey,
         systemPrompt: SYNTHESIS_SYSTEM_PROMPT,
         userMessage,
         maxTokens: env.LLM_SYNTHESIS_MAX_TOKENS,
@@ -134,7 +129,7 @@ export const AnswerSynthesisService = {
       return { answer, citations: extractCitations(answer), degraded: false };
     } catch (err) {
       logger.warn('Answer synthesis stream failed, degrading to raw sources', {
-        provider,
+        provider: credential.provider,
         err: err instanceof Error ? err.message : String(err),
       });
       return { answer, citations: extractCitations(answer), degraded: true };

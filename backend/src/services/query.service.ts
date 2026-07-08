@@ -3,8 +3,9 @@ import { SubscriptionRepository } from '../repositories/subscription.repository'
 import { VectorRepository } from '../repositories/vector.repository';
 import { query as dbQuery } from '../config/database';
 import { QUOTA } from '../config/constants';
-import { QuotaExceededError } from '../utils/errors';
+import { QuotaExceededError, BYOKRequiredError } from '../utils/errors';
 import { AnswerSynthesisService, SourceChunk } from './answer-synthesis.service';
+import { CredentialService } from './credential.service';
 import { embedSingle } from './embedding.service';
 import { EmailService } from './email.service';
 import { logger } from '../utils/logger';
@@ -88,6 +89,11 @@ export const QueryService = {
     const embeddingPromise = embedSingle(params.query);
     embeddingPromise.catch(() => undefined); // swallow if quota short-circuits
 
+    // Fail fast before spending any retrieval work if the org has no BYOK
+    // credential configured — synthesis cannot run without one.
+    const credential = await CredentialService.getDecrypted(params.org_id);
+    if (!credential) throw new BYOKRequiredError();
+
     const usage = await subRepo.getUsageForPeriod(params.org_id);
     const percentUsed = usage.query_count / usage.monthly_query_limit;
 
@@ -126,7 +132,7 @@ export const QueryService = {
       document_id: r.document_id,
       score: r.score,
     }));
-    const synthesis = await AnswerSynthesisService.synthesize(params.query, sourceChunks);
+    const synthesis = await AnswerSynthesisService.synthesize(params.query, sourceChunks, credential);
 
     // 7. Persist query log
     await QueryService._logQuery(params, result);
@@ -212,6 +218,9 @@ export const QueryService = {
     const embeddingPromise = embedSingle(params.query);
     embeddingPromise.catch(() => undefined);
 
+    const credential = await CredentialService.getDecrypted(params.org_id);
+    if (!credential) throw new BYOKRequiredError();
+
     const usage = await subRepo.getUsageForPeriod(params.org_id);
     if (usage.query_count / usage.monthly_query_limit >= QUOTA.HARD_LIMIT) {
       throw new QuotaExceededError();
@@ -265,7 +274,7 @@ export const QueryService = {
     // close the inner synthesis generator so its AbortController fires and the
     // upstream LLM fetch is cancelled rather than left running.
     let synthesis: { citations: string[]; degraded: boolean } | undefined;
-    const stream = AnswerSynthesisService.synthesizeStream(params.query, sourceChunks);
+    const stream = AnswerSynthesisService.synthesizeStream(params.query, sourceChunks, credential);
     try {
       let next = await stream.next();
       while (!next.done) {

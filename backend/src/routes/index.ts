@@ -7,6 +7,7 @@ import teamRoutes from './team.routes';
 import billingRoutes from './billing.routes';
 import webhookRoutes from './webhook.routes';
 import accountRoutes from './account.routes';
+import credentialRoutes from './credential.routes';
 import { requireAuth } from '../middlewares/auth.middleware';
 import { AuditLogService } from '../services/audit-log.service';
 import { auditLogMiddleware } from '../middlewares/audit-log.middleware';
@@ -22,6 +23,7 @@ router.use('/team', auditLogMiddleware as any, teamRoutes);
 router.use('/billing', billingRoutes);
 router.use('/webhooks', auditLogMiddleware as any, webhookRoutes);
 router.use('/account', auditLogMiddleware as any, accountRoutes);
+router.use('/organization/llm-credential', auditLogMiddleware as any, credentialRoutes);
 
 // Audit logs — read-only
 router.get('/audit-logs', requireAuth, async (req: any, res, next) => {

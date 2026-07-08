@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Search, GitBranch, Layers, ArrowRight, Check, BookOpen, Terminal, ShieldCheck, Lock, Building2, FileCheck2 } from 'lucide-react';
+import { Search, GitBranch, Layers, ArrowRight, Check, BookOpen, Terminal, ShieldCheck, Lock, Building2, FileCheck2, KeyRound } from 'lucide-react';
 import { useListPlansQuery } from '../store/api/billingApi';
 import { LogoMark } from '../components/ui/Logo';
 import { RevealSection } from '../components/ui/RevealSection';
@@ -55,7 +55,7 @@ const SECURITY_CARDS = [
 const INCLUDED_FEATURES = [
   'Multi-format document parsing (PDF, DOCX, CSV, XLSX, JSON)',
   'OpenRouter, OpenAI, Cohere, Ollama embedding support',
-  'LLM-based query classifier (Claude via OpenRouter)',
+  'Bring your own API key for answer generation',
   'Apache AGE graph routing',
   'Google OAuth + JWT auth',
   'API key management',
@@ -63,6 +63,13 @@ const INCLUDED_FEATURES = [
   'Webhook integrations',
   'Audit logs',
   'Team management',
+];
+
+const BYOK_PROVIDERS = [
+  { name: 'Anthropic', desc: 'Claude models' },
+  { name: 'OpenAI', desc: 'GPT models' },
+  { name: 'Google Gemini', desc: 'Gemini models' },
+  { name: 'OpenRouter', desc: 'Any routed model' },
 ];
 
 export function LandingPage() {
@@ -222,6 +229,27 @@ export function LandingPage() {
                   <h3 className="text-[16px] font-semibold text-on-surface mb-1.5">{title}</h3>
                   <p className="text-[14px] text-on-surface-variant leading-relaxed">{desc}</p>
                 </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </RevealSection>
+
+      {/* BYOK */}
+      <RevealSection className="py-24 px-6 border-t border-outline-variant">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-5 bg-accent-violet/10 border border-accent-violet/30">
+            <KeyRound size={22} className="text-accent-violet" />
+          </div>
+          <h2 className="font-headline text-[36px] font-semibold mb-4 text-on-surface">Works with your own API key</h2>
+          <p className="text-on-surface-variant text-[16px] max-w-xl mx-auto mb-10">
+            Answer generation runs on the API key you provide — you pay your LLM provider directly, at their rates, with full visibility into usage. Retrieval, routing, and graph search stay fully managed by FUGU.
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {BYOK_PROVIDERS.map((p) => (
+              <div key={p.name} className="rounded-[12px] border border-outline-variant p-5 bg-surface-container-lowest">
+                <p className="text-[15px] font-semibold text-on-surface">{p.name}</p>
+                <p className="text-[13px] text-on-surface-variant mt-1">{p.desc}</p>
               </div>
             ))}
           </div>
