@@ -1,0 +1,74 @@
+name: SDK Release
+
+# Only runs on version tags (e.g. v1.0.0). Publishing the Python SDK is
+# intentionally out of scope here — it's being sunset and must not be
+# published by this workflow (sdk-python/ is left untouched).
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  node-publish:
+    name: Publish TypeScript SDK to npm
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sdk-typescript
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  go-publish:
+    name: Publish Go SDK release and trigger proxy indexing
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sdk-go
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+
+      - name: Build
+        run: go build ./...
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trigger Go proxy indexing
+        run: |
+          MODULE_PATH="github.com/dogukandemirci-software-engineer/fugu-ragrouting/sdk-go"
+          VERSION="${GITHUB_REF_NAME}"
+          curl -sf "https://proxy.golang.org/${MODULE_PATH}/@v/${VERSION}.info" || true
