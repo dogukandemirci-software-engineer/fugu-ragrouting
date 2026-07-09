@@ -1,0 +1,17 @@
+{
+  "name": "ts-sdk-test",
+  "private": true,
+  "version": "1.0.0",
+  "type": "commonjs",
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "dependencies": {
+    "@fugu/sdk": "file:../../sdk-typescript"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "@types/node": "^22.0.0"
+  }
+}
