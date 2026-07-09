@@ -1,5 +1,7 @@
 package fugu
 
+import "fmt"
+
 // QueryStrategy selects the routing strategy for a query.
 type QueryStrategy string
 
@@ -86,14 +88,43 @@ const (
 )
 
 // Document represents a document record.
+//
+// FileSize is typed as a JSON-number-or-string decoder because Postgres
+// BIGINT columns are serialized as JSON strings by the backend's driver
+// (pg's default int8 handling) to avoid float64 precision loss — the
+// dashboard's own TypeScript client treats it as a string for the same
+// reason.
 type Document struct {
 	ID        string         `json:"id"`
 	Name      string         `json:"name"`
 	FileType  string         `json:"file_type"`
-	FileSize  int64          `json:"file_size"`
+	FileSize  FlexibleInt64  `json:"file_size"`
 	Status    DocumentStatus `json:"status"`
 	CreatedAt string         `json:"created_at"`
 	UpdatedAt string         `json:"updated_at,omitempty"`
+}
+
+// FlexibleInt64 unmarshals a JSON number or a JSON string containing a
+// number into an int64. Some backend fields (e.g. Postgres BIGINT columns)
+// are serialized as strings to avoid precision loss.
+type FlexibleInt64 int64
+
+// UnmarshalJSON implements json.Unmarshaler.
+func (n *FlexibleInt64) UnmarshalJSON(data []byte) error {
+	s := string(data)
+	if len(s) >= 2 && s[0] == '"' && s[len(s)-1] == '"' {
+		s = s[1 : len(s)-1]
+	}
+	if s == "" || s == "null" {
+		*n = 0
+		return nil
+	}
+	var v int64
+	if _, err := fmt.Sscanf(s, "%d", &v); err != nil {
+		return fmt.Errorf("fugu: parsing file_size %q: %w", s, err)
+	}
+	*n = FlexibleInt64(v)
+	return nil
 }
 
 // UploadResponse is returned after a successful document upload.

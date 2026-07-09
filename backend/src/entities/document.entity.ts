@@ -1,7 +1,7 @@
 export interface Document {
   id: string;
   organization_id: string;
-  uploaded_by: string;
+  uploaded_by: string | null;
   name: string;
   file_type: string;
   file_size: number;

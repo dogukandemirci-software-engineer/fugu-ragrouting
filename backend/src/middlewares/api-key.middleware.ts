@@ -18,9 +18,32 @@ export async function requireApiKey(req: AuthRequest, res: Response, next: NextF
     return next(new UnauthorizedError('Invalid, expired, or revoked API key'));
   }
 
-  // Attach minimal context so downstream handlers can filter by org
-  req.user = { id: 'api_key', orgId: result.orgId, role: 'api_key', email: '' };
+  // Attach minimal context so downstream handlers can filter by org, plus the
+  // key's granted permissions so mutating routes can enforce 'write' scope.
+  req.user = {
+    id: 'api_key',
+    orgId: result.orgId,
+    role: 'api_key',
+    email: '',
+    apiKeyPermissions: result.permissions,
+  };
   await orgScopeMiddleware(req, res, next);
+}
+
+/**
+ * Gates a route on the caller's API key having `permission` in its granted
+ * scopes. JWT-authenticated requests (role !== 'api_key') always pass, since
+ * their access is governed by requireRole instead — this only restricts
+ * API keys, so a key minted with only 'read' can't hit write endpoints.
+ */
+export function requirePermission(permission: string) {
+  return (req: AuthRequest, _res: Response, next: NextFunction): void => {
+    if (req.user?.role !== 'api_key') return next();
+    if (!req.user.apiKeyPermissions?.includes(permission)) {
+      return next(new UnauthorizedError(`This API key does not have '${permission}' permission`));
+    }
+    next();
+  };
 }
 
 /**

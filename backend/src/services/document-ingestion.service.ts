@@ -127,7 +127,7 @@ export const DocumentIngestionService = {
    */
   async ingest(params: {
     org_id: string;
-    user_id: string;
+    user_id?: string;
     name: string;
     file_type: string;
     file_size: number;
@@ -136,7 +136,7 @@ export const DocumentIngestionService = {
   }): Promise<string> {
     const doc = await docRepo.create({
       organization_id: params.org_id,
-      uploaded_by: params.user_id,
+      uploaded_by: params.user_id ?? null,
       name: params.name,
       file_type: params.file_type,
       file_size: params.file_size,

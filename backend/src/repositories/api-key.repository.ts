@@ -2,11 +2,13 @@ import { BaseRepository } from './base.repository';
 import { ApiKey, ApiKeyPublic } from '../entities/api-key.entity';
 
 export class ApiKeyRepository extends BaseRepository {
-  async findByHash(keyHash: string): Promise<ApiKey | null> {
-    return this.queryOne<ApiKey>(
-      `SELECT * FROM api_keys
-       WHERE key_hash = $1 AND revoked_at IS NULL
-         AND (expires_at IS NULL OR expires_at > NOW())`,
+  // Runs before the request's org scope is known (see auth bootstrap comment
+  // in migrations/006_api_key_auth_lookup_function.sql) — uses a SECURITY
+  // DEFINER function instead of a raw SELECT so it isn't silently zeroed out
+  // by api_keys' FORCE ROW LEVEL SECURITY tenant_isolation policy.
+  async findByHash(keyHash: string): Promise<Pick<ApiKey, 'id' | 'organization_id' | 'permissions'> | null> {
+    return this.queryOne<Pick<ApiKey, 'id' | 'organization_id' | 'permissions'>>(
+      `SELECT * FROM find_api_key_by_hash($1)`,
       [keyHash]
     );
   }
@@ -47,10 +49,9 @@ export class ApiKeyRepository extends BaseRepository {
     );
   }
 
+  // Runs before org scope is set (called from the same auth-bootstrap path
+  // as findByHash above) — same SECURITY DEFINER rationale.
   async updateLastUsed(id: string): Promise<void> {
-    await this.query(
-      'UPDATE api_keys SET last_used_at = NOW() WHERE id = $1',
-      [id]
-    );
+    await this.query('SELECT touch_api_key_last_used($1)', [id]);
   }
 }

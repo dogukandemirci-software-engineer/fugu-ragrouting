@@ -9,6 +9,8 @@ export interface AuthRequest extends Request {
     orgId: string;
     role: string;
     email: string;
+    /** Set only for API-key auth (role === 'api_key'); the key's granted scopes (e.g. 'read', 'write'). */
+    apiKeyPermissions?: string[];
   };
 }
 

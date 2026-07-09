@@ -29,7 +29,7 @@ export const DocumentController = {
 
     const docId = await DocumentIngestionService.ingest({
       org_id: req.user!.orgId,
-      user_id: req.user!.id,
+      user_id: req.user!.id !== 'api_key' ? req.user!.id : undefined,
       name: file.originalname,
       file_type: file.mimetype,
       file_size: file.size,

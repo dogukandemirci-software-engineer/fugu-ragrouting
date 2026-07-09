@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import { DocumentController } from '../controllers/document.controller';
-import { requireAuthOrApiKey } from '../middlewares/api-key.middleware';
+import { requireAuthOrApiKey, requirePermission } from '../middlewares/api-key.middleware';
 import { rateLimitMiddleware } from '../middlewares/rate-limit.middleware';
 
 const upload = multer({
@@ -28,10 +28,13 @@ const upload = multer({
 const router = Router();
 router.use(requireAuthOrApiKey);
 
+// Mutating routes require 'write' permission for API-key callers (no-op for
+// JWT dashboard sessions) so a read-only integration key can't ingest or
+// delete documents.
 router.get('/', DocumentController.list);
 router.get('/:id', DocumentController.getById);
-router.post('/', rateLimitMiddleware, upload.single('file'), DocumentController.upload);
-router.delete('/:id', DocumentController.delete);
-router.post('/:id/retry', DocumentController.retry);
+router.post('/', rateLimitMiddleware, requirePermission('write'), upload.single('file'), DocumentController.upload);
+router.delete('/:id', requirePermission('write'), DocumentController.delete);
+router.post('/:id/retry', requirePermission('write'), DocumentController.retry);
 
 export default router;
