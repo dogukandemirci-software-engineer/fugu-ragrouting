@@ -1,5 +1,5 @@
 {
-  "name": "@fugu/sdk",
+  "name": "fugu-sdk",
   "version": "1.0.0",
   "description": "TypeScript SDK for the FUGU routed RAG API",
   "main": "dist/index.js",

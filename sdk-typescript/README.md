@@ -1,4 +1,4 @@
-# @fugu/sdk
+# fugu-sdk
 
 TypeScript SDK for the FUGU routed RAG API. Class-based, zero runtime
 dependencies (uses the platform `fetch`), works in Node 18+ and browsers.
@@ -6,13 +6,13 @@ dependencies (uses the platform `fetch`), works in Node 18+ and browsers.
 ## Install
 
 ```bash
-npm install @fugu/sdk
+npm install fugu-sdk
 ```
 
 ## Quick start
 
 ```ts
-import { FuguClient } from '@fugu/sdk';
+import { FuguClient } from 'fugu-sdk';
 
 const client = new FuguClient({ apiKey: 'fugu_sk_...' });
 
@@ -99,7 +99,7 @@ All non-2xx responses throw `FuguApiError` (with `status` and `code`).
 Two conditions get typed subclasses so you can branch without string-matching:
 
 ```ts
-import { FuguApiError, BYOKRequiredError, QuotaExceededError } from '@fugu/sdk';
+import { FuguApiError, BYOKRequiredError, QuotaExceededError } from 'fugu-sdk';
 
 try {
   await client.query.execute('...');
