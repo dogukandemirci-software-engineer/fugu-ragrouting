@@ -9,12 +9,19 @@ on:
       - "v*"
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   node-publish:
     name: Publish TypeScript SDK to npm
     runs-on: ubuntu-latest
+    # Manual approval gate — requires the "release" environment to be
+    # configured with required reviewers in repo settings. A tag push alone
+    # must not be sufficient to publish to a public registry unattended.
+    environment: release
+    permissions:
+      contents: read
+      id-token: write # required for npm provenance attestation
     defaults:
       run:
         working-directory: sdk-typescript
@@ -29,19 +36,23 @@ jobs:
           registry-url: "https://registry.npmjs.org"
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build
         run: npm run build
 
       - name: Publish to npm
-        run: npm publish --access public
+        run: npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   go-publish:
     name: Publish Go SDK release and trigger proxy indexing
     runs-on: ubuntu-latest
+    # Same manual approval gate as node-publish — see comment above.
+    environment: release
+    permissions:
+      contents: write # required by softprops/action-gh-release to create the release
     defaults:
       run:
         working-directory: sdk-go
