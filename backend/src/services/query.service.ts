@@ -82,17 +82,19 @@ export const QueryService = {
     api_key_id?: string;
     user_id?: string;
   }): Promise<QueryResponse> {
+    // Fail fast before spending any retrieval work if the org has no BYOK
+    // credential configured — synthesis cannot run without one. Fetched
+    // before embedding so the org's own key (if its provider matches the
+    // configured embedding provider) is used instead of the static env key.
+    const credential = await CredentialService.getDecrypted(params.org_id);
+    if (!credential) throw new BYOKRequiredError();
+
     // 1. Check quota and embed the query in parallel — independent work, and
     //    embedding is the slowest external call. If the quota check throws, the
     //    embedding promise is discarded (its rejection is caught below so it
     //    never surfaces as an unhandled rejection).
-    const embeddingPromise = embedSingle(params.query);
+    const embeddingPromise = embedSingle(params.query, credential);
     embeddingPromise.catch(() => undefined); // swallow if quota short-circuits
-
-    // Fail fast before spending any retrieval work if the org has no BYOK
-    // credential configured — synthesis cannot run without one.
-    const credential = await CredentialService.getDecrypted(params.org_id);
-    if (!credential) throw new BYOKRequiredError();
 
     const usage = await subRepo.getUsageForPeriod(params.org_id);
     const percentUsed = usage.query_count / usage.monthly_query_limit;
@@ -215,11 +217,11 @@ export const QueryService = {
     | { type: 'delta'; text: string }
     | { type: 'done'; citations: string[]; answer_degraded: boolean }
   > {
-    const embeddingPromise = embedSingle(params.query);
-    embeddingPromise.catch(() => undefined);
-
     const credential = await CredentialService.getDecrypted(params.org_id);
     if (!credential) throw new BYOKRequiredError();
+
+    const embeddingPromise = embedSingle(params.query, credential);
+    embeddingPromise.catch(() => undefined);
 
     const usage = await subRepo.getUsageForPeriod(params.org_id);
     if (usage.query_count / usage.monthly_query_limit >= QUOTA.HARD_LIMIT) {

@@ -123,8 +123,8 @@ export const borderRadius = {
 } as const;
 
 export const fontFamily = {
-  headline: ['Fraunces', 'Georgia', 'serif'],
-  body: ['Inter', 'sans-serif'],
+  headline: ['IBM Plex Sans', 'Georgia', 'serif'],
+  body: ['IBM Plex Sans', 'sans-serif'],
   code: ['JetBrains Mono', 'monospace'],
 } as const;
 

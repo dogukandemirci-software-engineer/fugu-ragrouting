@@ -37,21 +37,29 @@ export async function orgScopeMiddleware(req: AuthRequest, res: Response, next: 
     return next(err);
   }
 
-  // Both 'finish' and 'close' fire for every normal response (close always
-  // follows finish once the socket ends) — guard with a single settled flag
-  // so a slow COMMIT is never raced/undone by the close handler's ROLLBACK.
+  // COMMIT must happen before the response is flushed to the client —
+  // committing on the 'finish' event is too late, since callers (and tests)
+  // can observe the response and issue a follow-up request on a different
+  // pooled connection before that async COMMIT has actually landed, causing
+  // them to read pre-commit state. Instead, wrap res.end so the transaction
+  // is committed synchronously as part of ending the response.
   let settled = false;
-  res.on('finish', async () => {
-    if (settled) return;
+  const originalEnd = res.end.bind(res);
+  res.end = ((...args: Parameters<Response['end']>) => {
+    if (settled) return originalEnd(...args);
     settled = true;
-    try {
-      await client.query('COMMIT');
-    } catch {
-      // connection likely already broken; nothing more to do
-    } finally {
-      release();
-    }
-  });
+    client
+      .query('COMMIT')
+      .catch(() => {
+        // connection likely already broken; nothing more to do
+      })
+      .finally(() => {
+        release();
+        originalEnd(...args);
+      });
+    return res;
+  }) as Response['end'];
+
   res.on('close', async () => {
     if (settled) return;
     settled = true;

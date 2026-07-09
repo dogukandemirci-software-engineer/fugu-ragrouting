@@ -1,29 +1,13 @@
 import { Link } from 'react-router-dom';
-import { Search, GitBranch, Layers, ArrowRight, Check, BookOpen, Terminal, ShieldCheck, Lock, Building2, FileCheck2, KeyRound } from 'lucide-react';
+import { ArrowRight, Check, BookOpen, Terminal, ShieldCheck, Lock, Building2, FileCheck2, KeyRound } from 'lucide-react';
 import { useListPlansQuery } from '../store/api/billingApi';
 import { LogoMark } from '../components/ui/Logo';
 import { RevealSection } from '../components/ui/RevealSection';
-
-const FEATURE_CARDS = [
-  {
-    icon: Search,
-    accent: 'text-accent-violet bg-accent-violet/10 border-accent-violet/30',
-    title: 'Vector Search',
-    desc: 'Semantic similarity search over embedded document chunks. Best for conceptual or open-ended questions.',
-  },
-  {
-    icon: GitBranch,
-    accent: 'text-accent-magenta bg-accent-magenta/10 border-accent-magenta/30',
-    title: 'Graph Routing',
-    desc: 'Apache AGE-powered graph queries for relationship and entity lookups. Ideal for structured knowledge.',
-  },
-  {
-    icon: Layers,
-    accent: 'text-secondary bg-secondary/10 border-secondary/30',
-    title: 'Hybrid Mode',
-    desc: 'Fusion of both strategies, ranked by relevance. FUGU picks this automatically for complex queries.',
-  },
-];
+import { TestimonialMarquee } from '../components/landing/TestimonialMarquee';
+import { ProviderOrbit } from '../components/landing/ProviderOrbit';
+import { SdkTerminal } from '../components/landing/SdkTerminal';
+import { Meteors } from '../components/magicui/meteors';
+import { TextAnimate } from '../components/magicui/text-animate';
 
 const SECURITY_CARDS = [
   {
@@ -65,13 +49,6 @@ const INCLUDED_FEATURES = [
   'Team management',
 ];
 
-const BYOK_PROVIDERS = [
-  { name: 'Anthropic', desc: 'Claude models' },
-  { name: 'OpenAI', desc: 'GPT models' },
-  { name: 'Google Gemini', desc: 'Gemini models' },
-  { name: 'OpenRouter', desc: 'Any routed model' },
-];
-
 export function LandingPage() {
   const { data: plansData } = useListPlansQuery();
   const PLANS = (plansData?.plans ?? []).map((p) => ({
@@ -82,7 +59,7 @@ export function LandingPage() {
   }));
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-on-surface">
+    <div className="relative min-h-screen flex flex-col bg-background text-on-surface">
       {/* Nav */}
       <header className="sticky top-0 z-50 border-b border-outline-variant backdrop-blur-xl bg-background/85">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -112,24 +89,28 @@ export function LandingPage() {
         {/* Warm ambient glow instead of a stock neon render */}
         <div className="absolute top-1/4 right-1/4 w-[560px] h-[560px] rounded-full blur-[160px] pointer-events-none bg-accent-violet/[0.12] animate-float" />
         <div className="absolute bottom-1/4 left-1/3 w-[420px] h-[420px] rounded-full blur-[140px] pointer-events-none bg-accent-teal-glow/[0.14] animate-float" style={{ animationDelay: '1.5s' }} />
+        <Meteors number={18} className="z-[1]" />
 
         <div className="relative z-10 max-w-6xl mx-auto px-6 py-24 text-center w-full">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-surface-container-lowest border border-outline-variant rounded-full text-[13px] font-medium mb-8 text-on-surface-variant animate-fade-in-up">
             <span className="w-2 h-2 rounded-full bg-accent-violet shadow-accent-glow" />
-            Enterprise-grade RAG infrastructure — multi-tenant by design
+            One query, two retrieval engines, one automatic router
           </div>
 
-          <h1 className="font-headline text-[48px] md:text-[64px] font-semibold leading-[1.1] tracking-tight mb-6 text-on-surface animate-fade-in-up">
-            Retrieval infrastructure{' '}
-            <span className="brand-gradient-text">
-              your security team approves
-            </span>
+          <h1 className="font-headline text-[48px] md:text-[64px] font-semibold leading-[1.1] tracking-tight mb-6 text-on-surface">
+            <TextAnimate animation="blurInUp" by="word" once className="justify-center">
+              Stop choosing between
+            </TextAnimate>
+            <TextAnimate animation="blurInUp" by="word" once delay={0.3} segmentClassName="brand-gradient-text" className="justify-center">
+              vector search and graph search
+            </TextAnimate>
           </h1>
 
           <p className="text-[18px] text-on-surface-variant max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in-up">
-            FUGU routes every query between vector search and graph databases automatically,
-            with strict tenant isolation, full audit trails, and GDPR/KVKK-ready data controls
-            baked into the platform — not bolted on.
+            FUGU classifies every query and routes it to pgvector, a graph traversal, or both —
+            automatically — then grounds the answer in the actual retrieved chunks. Every
+            document, chunk, and graph path is isolated at the database layer, per organization,
+            not just filtered in application code.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up">
@@ -143,16 +124,16 @@ export function LandingPage() {
               to="/docs"
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-[10px] text-[16px] font-semibold text-on-surface border border-outline-variant hover:bg-surface-container-lowest transition-all"
             >
-              Talk to engineering <ArrowRight size={16} />
+              Read the docs <ArrowRight size={16} />
             </Link>
           </div>
 
           {/* Stats */}
           <div className="flex flex-wrap justify-center gap-8 mt-16 pt-10 border-t border-outline-variant">
             {[
-              { value: '< 200ms', label: 'Avg query latency' },
-              { value: '99.9%', label: 'Uptime SLA' },
-              { value: 'Org-scoped', label: 'Tenant isolation' },
+              { value: 'Vector + Graph', label: 'Routed automatically' },
+              { value: 'Org-scoped', label: 'Tenant isolation, DB-enforced' },
+              { value: 'BYOK', label: 'Bring your own LLM key' },
               { value: 'GDPR / KVKK', label: 'Compliance ready' },
             ].map(({ value, label }) => (
               <div key={label} className="text-center">
@@ -181,33 +162,8 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* Features */}
-      <RevealSection className="py-24 px-6 max-w-6xl mx-auto w-full">
-        <div className="text-center mb-16">
-          <h2 className="font-headline text-[36px] font-semibold mb-4 text-on-surface">How FUGU works</h2>
-          <p className="text-on-surface-variant text-[16px] max-w-xl mx-auto">
-            Three routing strategies, one intelligent classifier.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6">
-          {FEATURE_CARDS.map(({ icon: Icon, accent, title, desc }) => (
-            <div
-              key={title}
-              className="rounded-[12px] border border-outline-variant p-6 bg-surface-container-lowest hover:border-accent-violet/40 hover:-translate-y-1 transition-all duration-300"
-            >
-              <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 border ${accent}`}>
-                <Icon size={20} />
-              </div>
-              <h3 className="text-[18px] font-semibold text-on-surface mb-2">{title}</h3>
-              <p className="text-[14px] text-on-surface-variant leading-relaxed">{desc}</p>
-            </div>
-          ))}
-        </div>
-      </RevealSection>
-
       {/* Security & Compliance */}
-      <RevealSection className="py-24 px-6 border-t border-outline-variant">
+      <RevealSection parallax className="py-24 px-6 border-t border-outline-variant relative z-20 bg-background rounded-t-[24px]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="font-headline text-[36px] font-semibold mb-4 text-on-surface">Built for security teams, not just developers</h2>
@@ -242,17 +198,10 @@ export function LandingPage() {
             <KeyRound size={22} className="text-accent-violet" />
           </div>
           <h2 className="font-headline text-[36px] font-semibold mb-4 text-on-surface">Works with your own API key</h2>
-          <p className="text-on-surface-variant text-[16px] max-w-xl mx-auto mb-10">
+          <p className="text-on-surface-variant text-[16px] max-w-xl mx-auto mb-6">
             Answer generation runs on the API key you provide — you pay your LLM provider directly, at their rates, with full visibility into usage. Retrieval, routing, and graph search stay fully managed by FUGU.
           </p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {BYOK_PROVIDERS.map((p) => (
-              <div key={p.name} className="rounded-[12px] border border-outline-variant p-5 bg-surface-container-lowest">
-                <p className="text-[15px] font-semibold text-on-surface">{p.name}</p>
-                <p className="text-[13px] text-on-surface-variant mt-1">{p.desc}</p>
-              </div>
-            ))}
-          </div>
+          <ProviderOrbit />
         </div>
       </RevealSection>
 
@@ -319,21 +268,29 @@ export function LandingPage() {
         </div>
       </RevealSection>
 
-      {/* Docs / SDK callout */}
-      <RevealSection className="py-20 px-6 border-t border-outline-variant bg-surface-container-lowest/50">
-        <div className="max-w-4xl mx-auto rounded-[12px] border border-outline-variant p-10 text-center bg-surface-container-lowest">
+      {/* Example feedback */}
+      <RevealSection className="py-16 border-t border-outline-variant">
+        <TestimonialMarquee />
+      </RevealSection>
+
+      {/* Docs / SDK quick start */}
+      <RevealSection parallax className="py-20 px-6 border-t border-outline-variant bg-surface-container-lowest/50 relative z-30 rounded-t-[24px]">
+        <div className="max-w-2xl mx-auto text-center mb-10">
           <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-5 bg-accent-violet/10 border border-accent-violet/30">
             <Terminal size={22} className="text-accent-violet" />
           </div>
-          <h2 className="font-headline text-[26px] font-semibold mb-3 text-on-surface">Build with the FUGU SDKs</h2>
-          <p className="text-on-surface-variant text-[15px] mb-8 max-w-lg mx-auto">
-            Official TypeScript and Python SDKs make it simple to integrate routed retrieval into your application.
+          <h2 className="font-headline text-[26px] font-semibold mb-3 text-on-surface">Up and running in under a minute</h2>
+          <p className="text-on-surface-variant text-[15px] max-w-lg mx-auto">
+            Install the SDK, drop in your API key, query and upload documents right away.
           </p>
+        </div>
+        <SdkTerminal />
+        <div className="text-center mt-10">
           <Link
             to="/docs"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-[10px] text-[15px] font-semibold text-on-surface border border-outline-variant hover:bg-background transition-all"
           >
-            <BookOpen size={16} /> View documentation
+            <BookOpen size={16} /> Full docs, streaming & REST reference
           </Link>
         </div>
       </RevealSection>

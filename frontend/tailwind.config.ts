@@ -67,6 +67,31 @@ const config: Config = {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
         },
+        // MagicUI components (meteors, orbiting-circles, marquee) — see
+        // frontend/src/components/magicui/*.tsx for the adapted sources.
+        meteor: {
+          '0%': { transform: 'rotate(var(--angle)) translateX(0)', opacity: '1' },
+          '70%': { opacity: '1' },
+          '100%': { transform: 'rotate(var(--angle)) translateX(-500px)', opacity: '0' },
+        },
+        orbit: {
+          '0%': {
+            transform:
+              'rotate(calc(var(--angle) * 1deg)) translateY(calc(var(--radius) * 1px)) rotate(calc(var(--angle) * -1deg))',
+          },
+          '100%': {
+            transform:
+              'rotate(calc(var(--angle) * 1deg + 360deg)) translateY(calc(var(--radius) * 1px)) rotate(calc((var(--angle) * -1deg) - 360deg))',
+          },
+        },
+        marquee: {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(calc(-100% - var(--gap)))' },
+        },
+        'marquee-vertical': {
+          from: { transform: 'translateY(0)' },
+          to: { transform: 'translateY(calc(-100% - var(--gap)))' },
+        },
       },
       animation: {
         'fade-in-up': 'fade-in-up 0.25s ease-out',
@@ -74,6 +99,10 @@ const config: Config = {
         'reveal-up': 'reveal-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
         float: 'float 4s ease-in-out infinite',
         shimmer: 'shimmer 2.5s linear infinite',
+        meteor: 'meteor 5s linear infinite',
+        orbit: 'orbit calc(var(--duration)*1s) linear infinite',
+        marquee: 'marquee var(--duration) infinite linear',
+        'marquee-vertical': 'marquee-vertical var(--duration) linear infinite',
       },
     },
   },

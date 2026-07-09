@@ -2,7 +2,7 @@ import { VectorRepository } from '../repositories/vector.repository';
 import { GraphRepository } from '../repositories/graph.repository';
 import { IVectorRepository, VectorSearchResult } from '../interfaces/i-vector-repository';
 import { IGraphRepository, GraphSearchResult } from '../interfaces/i-graph-repository';
-import { ROUTING_STRATEGY } from '../config/constants';
+import { ROUTING_STRATEGY, ROUTING } from '../config/constants';
 import { logger } from '../utils/logger';
 import { env } from '../config/env';
 import { callChatLLM } from '../utils/llm-client';
@@ -135,7 +135,7 @@ export interface RoutingResult {
 export class RoutingEngineService {
   private readonly ruleClassifier: ClassifierStrategy = new RuleBasedClassifier();
   private readonly llmClassifier: ClassifierStrategy = new LLMClassifier();
-  private readonly CONFIDENCE_THRESHOLD = 0.6;
+  private readonly CONFIDENCE_THRESHOLD = ROUTING.CONFIDENCE_THRESHOLD;
 
   constructor(
     private readonly vectorRepo: IVectorRepository,
@@ -218,8 +218,8 @@ export class RoutingEngineService {
     // Fusion: simple score merge for hybrid results
     let fusionScore: number | null = null;
     if (strategy === ROUTING_STRATEGY.HYBRID) {
-      const vectorWeight = 0.7;
-      const graphWeight = 0.3;
+      const vectorWeight = ROUTING.FUSION_VECTOR_WEIGHT;
+      const graphWeight = ROUTING.FUSION_GRAPH_WEIGHT;
       const avgVectorSim = vectorResults.length
         ? vectorResults.reduce((s, r) => s + r.similarity, 0) / vectorResults.length
         : 0;

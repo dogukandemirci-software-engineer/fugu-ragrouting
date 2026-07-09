@@ -55,6 +55,15 @@ export const ROUTING_STRATEGY = {
   HYBRID: 'hybrid',
 } as const;
 
+// Heuristic defaults, not derived from an offline eval set — tune here if
+// classifier/fusion behavior needs adjusting. TODO: build a labeled query set
+// and validate these against real precision/recall before treating them as tuned.
+export const ROUTING = {
+  CONFIDENCE_THRESHOLD: 0.6,   // below this, rule-based classification defers to the LLM classifier
+  FUSION_VECTOR_WEIGHT: 0.7,   // hybrid fusion score weighting
+  FUSION_GRAPH_WEIGHT: 0.3,
+} as const;
+
 export const SUBSCRIPTION_TIER = {
   FREE: 'free',
   PRO: 'pro',

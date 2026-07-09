@@ -4,6 +4,7 @@ import { connectRedis } from './config/redis';
 import { env } from './config/env';
 import { logger } from './utils/logger';
 import { startIngestionConsumer, enqueueIngestion, enqueueDlq, IngestMessage } from './queue/ingestion-queue';
+import { startWebhookRetryScheduler } from './queue/webhook-retry.scheduler';
 import { DocumentIngestionService } from './services/document-ingestion.service';
 
 async function handleIngestMessage(msg: IngestMessage): Promise<void> {
@@ -40,6 +41,8 @@ async function start(): Promise<void> {
       });
     });
   }
+
+  startWebhookRetryScheduler();
 
   app.listen(env.PORT, () => {
     logger.info(`FUGU backend running on port ${env.PORT} (${env.NODE_ENV})`);

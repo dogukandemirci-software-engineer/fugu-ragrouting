@@ -6,6 +6,7 @@ import { DocumentParserService } from './document-parser.service';
 import { DOCUMENT_STATUS } from '../config/constants';
 import { logger } from '../utils/logger';
 import { embedBatch } from './embedding.service';
+import { CredentialService } from './credential.service';
 import { EntityExtractionService } from './entity-extraction.service';
 import { StorageService } from './storage.service';
 import { env } from '../config/env';
@@ -239,6 +240,12 @@ export const DocumentIngestionService = {
       // 2. Chunk
       const chunks = chunkText(rawText);
 
+      // Use the org's BYOK credential for embedding when its provider matches
+      // the configured EMBEDDING_PROVIDER, falling back to the static env key
+      // otherwise — orgs without any BYOK credential configured still ingest
+      // fine off the platform default.
+      const credential = await CredentialService.getDecrypted(orgId);
+
       // 3. Embed + insert in batches of 20, with up to 3 batches in flight at once —
       // large documents (hundreds of chunks) previously ran every batch strictly
       // sequentially, which meant ingestion time scaled linearly with document size.
@@ -249,7 +256,7 @@ export const DocumentIngestionService = {
       }
 
       const chunkRefsByBatch = await mapWithConcurrency(batches, 3, async (batch, batchIdx) => {
-        const embeddings = await embedBatch(batch);
+        const embeddings = await embedBatch(batch, credential);
         const refs: ChunkRef[] = [];
         for (let j = 0; j < batch.length; j++) {
           const chunkId = uuidv4();

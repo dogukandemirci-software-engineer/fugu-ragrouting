@@ -11,6 +11,13 @@
 import { env } from '../config/env';
 import { mapWithConcurrency } from '../utils/concurrency';
 import { LRUCache } from '../utils/lru-cache';
+import type { LLMCredentialDecrypted } from '../entities/credential.entity';
+
+function resolveKey(credential: LLMCredentialDecrypted | null | undefined, envKey: string | undefined, envVarName: string): string {
+  const key = credential?.apiKey ?? envKey;
+  if (!key) throw new Error(`${envVarName} not set`);
+  return key;
+}
 
 // Query embeddings are the hot path: the same question re-asked (or the same
 // text embedded during ingestion of near-duplicate chunks) would otherwise hit
@@ -27,11 +34,16 @@ function cacheKey(text: string): string {
 
 export type EmbeddingProvider = 'openai' | 'openrouter' | 'cohere' | 'ollama';
 
-async function embedOpenAI(texts: string[]): Promise<number[][]> {
+async function embedOpenAI(texts: string[], credential?: LLMCredentialDecrypted | null): Promise<number[][]> {
+  const apiKey = resolveKey(
+    credential?.provider === 'openai' ? credential : null,
+    env.OPENAI_API_KEY,
+    'OPENAI_API_KEY'
+  );
   const res = await fetch('https://api.openai.com/v1/embeddings', {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${env.OPENAI_API_KEY}`,
+      Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ model: env.EMBEDDING_MODEL, input: texts }),
@@ -41,13 +53,18 @@ async function embedOpenAI(texts: string[]): Promise<number[][]> {
   return data.data.sort((a, b) => a.index - b.index).map((d) => d.embedding);
 }
 
-async function embedOpenRouter(texts: string[]): Promise<number[][]> {
+async function embedOpenRouter(texts: string[], credential?: LLMCredentialDecrypted | null): Promise<number[][]> {
   // OpenRouter exposes an OpenAI-compatible /embeddings endpoint
+  const apiKey = resolveKey(
+    credential?.provider === 'openrouter' ? credential : null,
+    env.OPENROUTER_API_KEY,
+    'OPENROUTER_API_KEY'
+  );
   const model = env.OPENROUTER_EMBEDDING_MODEL ?? 'openai/text-embedding-3-small';
   const res = await fetch('https://openrouter.ai/api/v1/embeddings', {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${env.OPENROUTER_API_KEY}`,
+      Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
       'HTTP-Referer': env.FRONTEND_URL,
     },
@@ -91,19 +108,19 @@ async function embedOllama(texts: string[]): Promise<number[][]> {
   });
 }
 
-export async function embedBatch(texts: string[]): Promise<number[][]> {
+export async function embedBatch(texts: string[], credential?: LLMCredentialDecrypted | null): Promise<number[][]> {
   const provider: EmbeddingProvider = (env.EMBEDDING_PROVIDER as EmbeddingProvider) ?? 'openai';
 
   let vectors: number[][];
   switch (provider) {
     case 'openai':
-      if (!env.OPENAI_API_KEY) throw new Error('OPENAI_API_KEY is not configured');
-      vectors = await embedOpenAI(texts);
+      if (!credential && !env.OPENAI_API_KEY) throw new Error('OPENAI_API_KEY is not configured');
+      vectors = await embedOpenAI(texts, credential);
       break;
 
     case 'openrouter':
-      if (!env.OPENROUTER_API_KEY) throw new Error('OPENROUTER_API_KEY is not configured');
-      vectors = await embedOpenRouter(texts);
+      if (!credential && !env.OPENROUTER_API_KEY) throw new Error('OPENROUTER_API_KEY is not configured');
+      vectors = await embedOpenRouter(texts, credential);
       break;
 
     case 'cohere':
@@ -130,12 +147,12 @@ export async function embedBatch(texts: string[]): Promise<number[][]> {
   return vectors;
 }
 
-export async function embedSingle(text: string): Promise<number[]> {
+export async function embedSingle(text: string, credential?: LLMCredentialDecrypted | null): Promise<number[]> {
   const key = cacheKey(text);
   const cached = embeddingCache?.get(key);
   if (cached) return cached;
 
-  const [vec] = await embedBatch([text]);
+  const [vec] = await embedBatch([text], credential);
   embeddingCache?.set(key, vec);
   return vec;
 }

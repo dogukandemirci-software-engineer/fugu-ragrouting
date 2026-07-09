@@ -1,39 +1,15 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
-import { ArrowLeft, Copy, Check } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { LogoMark } from '../components/ui/Logo';
+import { CodeBlock } from '../components/ui/CodeBlock';
 
-function CodeBlock({ code, language }: { code: string; language: string }) {
-  const [copied, setCopied] = useState(false);
+const TS_INSTALL = `npm install fugu-sdk`;
 
-  const copy = () => {
-    navigator.clipboard.writeText(code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
-  };
-
-  return (
-    <div className="relative rounded-lg border border-white/10 bg-white/[0.03] overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-2 border-b border-white/10">
-        <span className="text-[11px] uppercase tracking-wider text-white/40 font-mono">{language}</span>
-        <button onClick={copy} className="text-white/40 hover:text-white transition-colors" aria-label="Copy code">
-          {copied ? <Check size={13} className="text-accent-teal-glow" /> : <Copy size={13} />}
-        </button>
-      </div>
-      <pre className="p-4 overflow-x-auto text-[13px] leading-relaxed font-mono text-white/80">
-        <code>{code}</code>
-      </pre>
-    </div>
-  );
-}
-
-const TS_INSTALL = `npm install @fugu/sdk`;
-
-const TS_QUERY = `import { FuguClient } from '@fugu/sdk';
+const TS_QUERY = `import { FuguClient } from 'fugu-sdk';
 
 const client = new FuguClient({ apiKey: 'fugu_sk_...' });
 
-const result = await client.query('what does FUGU combine to answer questions', {
+const result = await client.query.execute('what does FUGU combine to answer questions', {
   strategy: 'auto', // 'vector_only' | 'graph_only' | 'hybrid' | 'auto'
   top_k: 10,
 });
@@ -42,6 +18,18 @@ console.log(result.answer);
 console.log(result.citations);   // e.g. ["S1", "S3"]
 console.log(result.results);     // supporting source chunks
 console.log(result.quota);       // { used, limit, percent, warn }`;
+
+const TS_UPLOAD = `import { readFile } from 'fs/promises';
+
+const file = await readFile('./handbook.pdf');
+
+const doc = await client.documents.upload({
+  filename: 'handbook.pdf',
+  data: file,
+  contentType: 'application/pdf',
+});
+
+console.log(doc.id, doc.status); // "pending" — ingestion runs async`;
 
 const TS_CUSTOM_URL = `const client = new FuguClient({
   apiKey: 'fugu_sk_...',
@@ -123,6 +111,10 @@ export function DocsPage() {
           <div className="space-y-4">
             <CodeBlock code={TS_INSTALL} language="bash" />
             <CodeBlock code={TS_QUERY} language="typescript" />
+            <p className="text-white/50 text-[13px] leading-relaxed">
+              Upload a document for ingestion:
+            </p>
+            <CodeBlock code={TS_UPLOAD} language="typescript" />
             <p className="text-white/50 text-[13px] leading-relaxed">
               Point at a self-hosted or non-default deployment with <code className="font-mono bg-white/10 px-1.5 py-0.5 rounded text-[12px]">baseUrl</code>:
             </p>
