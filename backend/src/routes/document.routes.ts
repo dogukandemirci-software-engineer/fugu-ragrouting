@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import { DocumentController } from '../controllers/document.controller';
-import { requireAuth } from '../middlewares/auth.middleware';
+import { requireAuthOrApiKey } from '../middlewares/api-key.middleware';
 import { rateLimitMiddleware } from '../middlewares/rate-limit.middleware';
 
 const upload = multer({
@@ -26,7 +26,7 @@ const upload = multer({
 });
 
 const router = Router();
-router.use(requireAuth);
+router.use(requireAuthOrApiKey);
 
 router.get('/', DocumentController.list);
 router.get('/:id', DocumentController.getById);
