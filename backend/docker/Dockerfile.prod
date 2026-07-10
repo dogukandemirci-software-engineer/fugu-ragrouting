@@ -19,6 +19,13 @@ COPY --from=build /app/dist ./dist
 COPY --from=build /app/migrations/*.sql ./dist/migrations/
 
 RUN addgroup -S fugu && adduser -S fugu -G fugu
+
+# StorageService writes uploaded files to <cwd>/storage/documents/<orgId> at
+# request time. /app is owned by root (COPY runs as root by default), so the
+# unprivileged `fugu` user could not mkdir into it — every upload failed with
+# an unhandled EACCES, surfaced to clients as a generic 500. Pre-create the
+# directory and hand ownership to fugu before dropping privileges.
+RUN mkdir -p /app/storage/documents && chown -R fugu:fugu /app/storage
 USER fugu
 
 EXPOSE 3001

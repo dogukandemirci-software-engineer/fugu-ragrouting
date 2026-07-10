@@ -112,6 +112,11 @@ services:
       CREDENTIAL_ENCRYPTION_KEY: ${CREDENTIAL_ENCRYPTION_KEY}
       KAFKA_BROKERS: redpanda:29092
       INGESTION_QUEUE_ENABLED: 'true'
+    volumes:
+      # StorageService persists uploaded file buffers to <cwd>/storage/documents
+      # so failed ingestions can be retried without a re-upload. Without a
+      # named volume here, every redeploy (new container) loses all of them.
+      - backend_storage:/app/storage
     depends_on:
       postgres:
         condition: service_healthy
@@ -155,3 +160,4 @@ volumes:
   postgres_data:
   redis_data:
   redpanda_data:
+  backend_storage:
