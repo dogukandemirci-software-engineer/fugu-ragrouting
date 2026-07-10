@@ -4,8 +4,8 @@ import { IVectorRepository, VectorSearchResult } from '../interfaces/i-vector-re
 import { IGraphRepository, GraphSearchResult } from '../interfaces/i-graph-repository';
 import { ROUTING_STRATEGY, ROUTING } from '../config/constants';
 import { logger } from '../utils/logger';
-import { env } from '../config/env';
-import { callChatLLM } from '../utils/llm-client';
+import { EmbeddingCentroidClassifier } from './embedding-centroid-classifier';
+import type { LLMCredentialDecrypted } from '../entities/credential.entity';
 
 // ─── Classifier Strategy (OCP: new strategies without modifying this file) ───
 
@@ -61,62 +61,6 @@ class RuleBasedClassifier implements ClassifierStrategy {
   }
 }
 
-const CLASSIFIER_PROMPT = `Classify the user query as ONE of: vector_only, graph_only, hybrid.
-
-- vector_only: semantic search, retrieval, summarization ("what is X", "explain Y", "find similar docs")
-- graph_only: relationships between entities ("how does X relate to Y", "path between A and B", "who depends on Z", "parent/child of")
-- hybrid: ambiguous, needs both, or unclear intent
-
-Examples:
-"What is our refund policy?" -> {"strategy":"vector_only","confidence":0.9}
-"How is the billing service connected to the auth service?" -> {"strategy":"graph_only","confidence":0.85}
-"Summarize what we know about vendor X and how they relate to our supply chain" -> {"strategy":"hybrid","confidence":0.7}
-
-Reply with ONLY valid JSON: {"strategy":"vector_only"|"graph_only"|"hybrid","confidence":0.0-1.0}`;
-
-const CLASSIFIER_DEFAULT_MODELS: Record<string, string> = {
-  anthropic: 'claude-haiku-4-5-20251001',
-  openrouter: 'anthropic/claude-haiku-4-5',
-  openai: 'gpt-4o-mini',
-};
-
-class LLMClassifier implements ClassifierStrategy {
-  async classify(query: string): Promise<ClassificationResult> {
-    const provider = env.LLM_CLASSIFIER_PROVIDER ?? 'openai';
-    logger.debug('LLM classifier invoked', { provider, query: query.substring(0, 50) });
-
-    try {
-      const raw = await callChatLLM({
-        provider,
-        model: env.LLM_CLASSIFIER_MODEL ?? CLASSIFIER_DEFAULT_MODELS[provider],
-        systemPrompt: CLASSIFIER_PROMPT,
-        userMessage: query,
-        maxTokens: 64,
-      });
-      // Extract JSON object from response (handles markdown fences and trailing text)
-      const jsonMatch = raw.match(/\{[^}]+\}/);
-      if (!jsonMatch) throw new Error(`No JSON object found in LLM response: ${raw.substring(0, 100)}`);
-      const parsed = JSON.parse(jsonMatch[0]) as { strategy?: unknown; confidence?: unknown };
-      // Small/local models sometimes emit valid JSON with the wrong shape
-      // (missing key, wrong casing, extra text) — validate the enum instead
-      // of trusting it, or a bad response silently becomes a NULL DB write.
-      const VALID_STRATEGIES = ['vector_only', 'graph_only', 'hybrid'];
-      if (typeof parsed.strategy !== 'string' || !VALID_STRATEGIES.includes(parsed.strategy)) {
-        throw new Error(`LLM classifier returned invalid strategy: ${JSON.stringify(parsed)}`);
-      }
-      const confidence = typeof parsed.confidence === 'number' ? parsed.confidence : 0.5;
-      return {
-        strategy: parsed.strategy as 'vector_only' | 'graph_only' | 'hybrid',
-        confidence,
-        classifier: `llm_${provider}`,
-      };
-    } catch (err) {
-      logger.warn('LLM classifier failed, falling back to hybrid', { err: (err as Error).message });
-      return { strategy: 'hybrid', confidence: 0.5, classifier: 'llm_fallback' };
-    }
-  }
-}
-
 // ─── Query Results ────────────────────────────────────────────────────────────
 
 export interface RoutingResult {
@@ -134,7 +78,7 @@ export interface RoutingResult {
 
 export class RoutingEngineService {
   private readonly ruleClassifier: ClassifierStrategy = new RuleBasedClassifier();
-  private readonly llmClassifier: ClassifierStrategy = new LLMClassifier();
+  private readonly centroidClassifier = new EmbeddingCentroidClassifier();
   private readonly CONFIDENCE_THRESHOLD = ROUTING.CONFIDENCE_THRESHOLD;
 
   constructor(
@@ -148,6 +92,9 @@ export class RoutingEngineService {
     query_embedding: number[];
     forced_strategy?: 'vector_only' | 'graph_only' | 'hybrid' | 'auto';
     top_k?: number;
+    // Used only to pay for the one-time prototype-embedding warm-up of the
+    // centroid classifier (embedding model is platform-fixed via env).
+    embed_credential?: LLMCredentialDecrypted | null;
   }): Promise<RoutingResult> {
     const t0 = Date.now();
     const topK = params.top_k ?? 10;
@@ -165,11 +112,16 @@ export class RoutingEngineService {
       classification = await this.ruleClassifier.classify(params.query);
 
       if (classification.confidence < this.CONFIDENCE_THRESHOLD) {
-        // Low confidence → delegate to LLM, which has broader context
-        const llmResult = await this.llmClassifier.classify(params.query);
-        // Use LLM result unless it explicitly failed (llm_fallback)
-        if (!llmResult.classifier.endsWith('_fallback')) {
-          classification = llmResult;
+        // Low confidence (ambiguous or non-English, where the keyword rules
+        // score nothing) → defer to the embedding-centroid classifier, which is
+        // semantic and free (reuses the query vector). Returns null only if it
+        // can't run, in which case we keep the rule-based result.
+        const centroidResult = await this.centroidClassifier.classify(
+          params.query_embedding,
+          params.embed_credential
+        );
+        if (centroidResult) {
+          classification = centroidResult;
         }
       }
     }

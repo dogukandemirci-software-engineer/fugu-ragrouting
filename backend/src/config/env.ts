@@ -61,9 +61,9 @@ const envSchema = z.object({
   // Anthropic Claude (for LLM classifier)
   ANTHROPIC_API_KEY: z.string().optional(),
 
-  // LLM Classifier provider — FUGU-paid, OpenRouter-backed, unaffected by BYOK
-  LLM_CLASSIFIER_PROVIDER: z.enum(['openai', 'anthropic', 'openrouter']).default('openai'),
-  LLM_CLASSIFIER_MODEL: z.string().optional(),
+  // Query classification is now done locally by the embedding-centroid
+  // classifier (see embedding-centroid-classifier.ts) — no paid LLM classifier
+  // call. The former LLM_CLASSIFIER_PROVIDER/MODEL vars are intentionally gone.
 
   // LLM Synthesis (answer generation) — max tokens/timeout are provider-agnostic,
   // applied to the organization's own BYOK synthesis call. Provider/model/key
@@ -80,7 +80,18 @@ const envSchema = z.object({
   // BYOK credential encryption — 32-byte AES-256-GCM master key (hex or
   // base64). Losing this key makes all stored organization API keys
   // unrecoverable; back it up to a secure secret store before deploy.
-  CREDENTIAL_ENCRYPTION_KEY: z.string().min(32),
+  // Validate the DECODED byte length (not just string length): a key that is
+  // >=32 chars but does not decode to exactly 32 bytes silently passed a
+  // plain .min(32) check, then threw on every BYOK save (a generic 500 that
+  // manifested downstream as "credential never persists / Remove button never
+  // appears"). Fail fast at boot instead, with a clear message.
+  CREDENTIAL_ENCRYPTION_KEY: z.string().refine(
+    (raw) => {
+      const buf = /^[0-9a-fA-F]{64}$/.test(raw) ? Buffer.from(raw, 'hex') : Buffer.from(raw, 'base64');
+      return buf.length === 32;
+    },
+    { message: 'must decode to exactly 32 bytes for AES-256-GCM (64 hex chars, or base64 of 32 bytes)' }
+  ),
 
   // Ingestion queue (Redpanda / Kafka-compatible)
   INGESTION_QUEUE_ENABLED: z.coerce.boolean().default(true),

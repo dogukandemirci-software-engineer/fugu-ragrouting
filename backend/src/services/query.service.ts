@@ -113,6 +113,7 @@ export const QueryService = {
       query_embedding: queryEmbedding,
       forced_strategy: params.strategy,
       top_k: params.top_k,
+      embed_credential: credential,
     });
 
     // 4. Enrich graph results with the actual chunk text from pgvector — graph
@@ -235,6 +236,7 @@ export const QueryService = {
       query_embedding: queryEmbedding,
       forced_strategy: params.strategy,
       top_k: params.top_k,
+      embed_credential: credential,
     });
 
     const graphChunkIds = collectChunkIds(result.graph_results);

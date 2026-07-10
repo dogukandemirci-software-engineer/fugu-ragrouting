@@ -4,7 +4,9 @@
 // actually meant to verify.
 process.env.ENTITY_EXTRACTION_ENABLED = 'false';
 
-// env.ts requires this at module load time (BYOK credential encryption) —
-// tests never touch real credentials, so any 32-byte value satisfies the
-// schema without needing a real production key.
-process.env.CREDENTIAL_ENCRYPTION_KEY ??= 'a'.repeat(32);
+// env.ts requires this at module load time (BYOK credential encryption) and
+// now validates it decodes to exactly 32 bytes (AES-256). Use a real 64-hex
+// (32-byte) key so credential save/encryption paths are actually exercisable
+// in tests — the previous 'a'.repeat(32) placeholder is 32 CHARS but decodes
+// to 24 bytes as base64, so any test hitting encryption threw at runtime.
+process.env.CREDENTIAL_ENCRYPTION_KEY ??= '0'.repeat(64);

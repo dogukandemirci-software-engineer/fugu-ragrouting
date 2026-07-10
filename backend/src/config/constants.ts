@@ -59,9 +59,18 @@ export const ROUTING_STRATEGY = {
 // classifier/fusion behavior needs adjusting. TODO: build a labeled query set
 // and validate these against real precision/recall before treating them as tuned.
 export const ROUTING = {
-  CONFIDENCE_THRESHOLD: 0.6,   // below this, rule-based classification defers to the LLM classifier
+  CONFIDENCE_THRESHOLD: 0.6,   // below this, rule-based classification defers to the embedding-centroid classifier
   FUSION_VECTOR_WEIGHT: 0.7,   // hybrid fusion score weighting
   FUSION_GRAPH_WEIGHT: 0.3,
+  // Embedding-centroid classifier: the query vector (already computed for
+  // retrieval) is compared by cosine similarity to one prototype centroid per
+  // strategy. Confidence is derived from the MARGIN between the top-1 and
+  // top-2 centroid similarities: a clear winner → high confidence, a near-tie
+  // → low confidence (falls back to hybrid). These map margin→[floor, cap].
+  CENTROID_CONFIDENCE_FLOOR: 0.55, // confidence at ~zero margin (near-tie)
+  CENTROID_CONFIDENCE_CAP: 0.97,   // max confidence for a decisive margin
+  CENTROID_MARGIN_SCALE: 4.0,      // margin multiplier before clamping to the range above
+  CENTROID_MIN_MARGIN_FOR_SINGLE: 0.04, // below this margin, prefer hybrid over the top single strategy
 } as const;
 
 export const SUBSCRIPTION_TIER = {
