@@ -25,6 +25,11 @@ const STATIC_MODELS: Record<Exclude<LLMCredentialProvider, 'openrouter'>, Catalo
   gemini: [
     { id: 'gemini-2.5-pro', label: 'gemini-2.5-pro', free: false },
     { id: 'gemini-2.5-flash', label: 'gemini-2.5-flash', free: false },
+    // Free-tier AI Studio keys commonly have zero quota on 2.5-pro and no
+    // longer get 2.5-flash access as new users — 2.0-flash remains on the
+    // free tier for those accounts, so it's the one that actually works
+    // for a plain "create key, don't touch billing" signup.
+    { id: 'gemini-2.0-flash', label: 'gemini-2.0-flash (free tier)', free: true },
   ],
 };
 

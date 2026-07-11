@@ -4,8 +4,34 @@ import { LLMCredentialProvider, LLMCredentialDisplay, LLMCredentialDecrypted } f
 import { callChatLLM } from '../utils/llm-client';
 import { ValidationError } from '../utils/errors';
 import { parseMasterKey, encryptCredential, decryptCredential } from '../utils/credential-crypto.util';
+import { logger } from '../utils/logger';
 
 const credentialRepo = new CredentialRepository();
+
+// Maps a raw provider error (which may embed upstream response bodies —
+// quota figures, account/project identifiers, internal doc links) to a
+// short, safe classification. Provider fetch helpers throw
+// `Error(\`<Provider> error <status>: <raw response text>\`)` — extract only
+// the status code and never let the raw text reach the client, since it is
+// untrusted third-party output attacker/provider-controlled content, not
+// something we've validated for safe display.
+function classifyVerificationFailure(provider: LLMCredentialProvider, err: unknown): string {
+  const message = err instanceof Error ? err.message : '';
+  const statusMatch = message.match(/\berror (\d{3}):/i);
+  const status = statusMatch ? Number(statusMatch[1]) : undefined;
+
+  switch (status) {
+    case 401:
+    case 403:
+      return `This ${provider} API key was rejected as invalid — check that it was copied correctly.`;
+    case 429:
+      return `This ${provider} API key is currently rate-limited or over its quota. Verify your plan/billing on the provider's dashboard and try again shortly.`;
+    case 404:
+      return `This ${provider} key is valid, but the model or endpoint could not be found. Check the model name.`;
+    default:
+      return `Could not verify this ${provider} key — the provider did not accept the test request. Double-check the key and model, then try again.`;
+  }
+}
 
 // Minimal real API call to confirm the key is valid before it's ever stored.
 async function testCredential(provider: LLMCredentialProvider, model: string, apiKey: string): Promise<void> {
@@ -23,9 +49,12 @@ async function testCredential(provider: LLMCredentialProvider, model: string, ap
       apiKey,
     });
   } catch (err) {
-    throw new ValidationError(
-      `Could not verify this ${provider} key: ${err instanceof Error ? err.message : 'request failed'}`
-    );
+    logger.warn('Credential verification failed', {
+      provider,
+      model,
+      message: err instanceof Error ? err.message : String(err),
+    });
+    throw new ValidationError(classifyVerificationFailure(provider, err));
   }
 }
 

@@ -100,14 +100,19 @@ services:
       COHERE_API_KEY: ${COHERE_API_KEY}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-      # No Ollama container in production — internal ops (routing/entity-extraction/embedding)
-      # always run on FUGU's own OpenRouter key here, regardless of dev's local Ollama setup.
-      # Answer synthesis is BYOK-only (organization_llm_credentials) and takes no provider env.
-      EMBEDDING_PROVIDER: openrouter
-      LLM_CLASSIFIER_PROVIDER: openrouter
+      # No Ollama container in production. document_chunks now stores
+      # embeddings in dimension-keyed columns (see migration 009 and
+      # vector.repository.ts) so the platform is not locked to one provider's
+      # output size — each org's BYOK provider writes/reads its own column.
+      # EMBEDDING_PROVIDER is only the DEFAULT for orgs with no BYOK embedding
+      # credential. openrouter has no funded key here, so default to gemini
+      # (BYOK-only, no FUGU-paid fallback — orgs must configure their own key
+      # for retrieval to work off the default). Entity extraction stays on
+      # openrouter; it degrades gracefully (skips graph enrichment) rather
+      # than blocking ingestion, so it isn't the urgent path to fix.
+      EMBEDDING_PROVIDER: gemini
       ENTITY_EXTRACTION_PROVIDER: openrouter
-      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-text-embedding-3-small}
-      EMBEDDING_DIMENSIONS: ${EMBEDDING_DIMENSIONS:-1536}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-text-embedding-004}
       FRONTEND_URL: ${FRONTEND_URL}
       CREDENTIAL_ENCRYPTION_KEY: ${CREDENTIAL_ENCRYPTION_KEY}
       KAFKA_BROKERS: redpanda:29092

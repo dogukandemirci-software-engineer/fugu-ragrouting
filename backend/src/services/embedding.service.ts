@@ -6,6 +6,7 @@
  *   openai      — OpenAI text-embedding-3-small / text-embedding-3-large
  *   openrouter  — OpenRouter (OpenAI-compatible endpoint, supports many models)
  *   cohere      — Cohere embed-english-v3.0 / embed-multilingual-v3.0
+ *   gemini      — Google Generative Language API (text-embedding-004, etc.) — BYOK only
  *   ollama      — Local Ollama (nomic-embed-text, mxbai-embed-large, etc.) — free, no API key
  */
 import { env } from '../config/env';
@@ -32,7 +33,7 @@ function cacheKey(text: string): string {
   return `${env.EMBEDDING_PROVIDER}:${env.EMBEDDING_MODEL}:${text}`;
 }
 
-export type EmbeddingProvider = 'openai' | 'openrouter' | 'cohere' | 'ollama';
+export type EmbeddingProvider = 'openai' | 'openrouter' | 'cohere' | 'gemini' | 'ollama';
 
 async function embedOpenAI(texts: string[], credential?: LLMCredentialDecrypted | null): Promise<number[][]> {
   const apiKey = resolveKey(
@@ -90,6 +91,28 @@ async function embedCohere(texts: string[]): Promise<number[][]> {
   return data.embeddings;
 }
 
+// Gemini has no FUGU-paid fallback — only usable when the org's own BYOK
+// credential is for gemini, mirroring callGemini in llm-client.ts.
+async function embedGemini(texts: string[], credential?: LLMCredentialDecrypted | null): Promise<number[][]> {
+  const apiKey = credential?.provider === 'gemini' ? credential.apiKey : undefined;
+  if (!apiKey) throw new Error('Gemini embeddings require a BYOK gemini credential');
+  const model = env.EMBEDDING_MODEL.startsWith('text-embedding') ? env.EMBEDDING_MODEL : 'text-embedding-004';
+
+  return mapWithConcurrency(texts, 4, async (text) => {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:embedContent`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
+        body: JSON.stringify({ content: { parts: [{ text }] } }),
+      }
+    );
+    if (!res.ok) throw new Error(`Gemini embedding error ${res.status}: ${await res.text()}`);
+    const data = await res.json() as { embedding: { values: number[] } };
+    return data.embedding.values;
+  });
+}
+
 async function embedOllama(texts: string[]): Promise<number[][]> {
   const model = env.EMBEDDING_MODEL.includes('/') ? env.EMBEDDING_MODEL : `nomic-embed-text`;
   const baseUrl = env.OLLAMA_URL ?? 'http://localhost:11434';
@@ -126,6 +149,10 @@ export async function embedBatch(texts: string[], credential?: LLMCredentialDecr
     case 'cohere':
       if (!env.COHERE_API_KEY) throw new Error('COHERE_API_KEY is not configured');
       vectors = await embedCohere(texts);
+      break;
+
+    case 'gemini':
+      vectors = await embedGemini(texts, credential);
       break;
 
     case 'ollama':

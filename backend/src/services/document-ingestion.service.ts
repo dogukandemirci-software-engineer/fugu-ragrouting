@@ -197,8 +197,17 @@ export const DocumentIngestionService = {
     await runInOrgScope(orgId, async () => {
       const doc = await docRepo.findById(docId, orgId);
       if (!doc) {
-        logger.warn('Queued ingestion skipped: document not found', { docId });
-        return;
+        // The producer (document.controller.ts's upload handler) enqueues
+        // this message from inside the same HTTP request whose transaction
+        // creates the row — Kafka/Redpanda can deliver to this consumer
+        // before that transaction's COMMIT is visible, so "not found" here
+        // is frequently a real race, not a genuinely missing document.
+        // Silently returning (treating this as done) previously dropped the
+        // job forever with the document stuck in "pending" and no user-
+        // visible error. Throw instead so the caller's existing
+        // attempt-count retry/DLQ logic (handleIngestMessage in server.ts)
+        // gives the transaction time to land before giving up.
+        throw new Error(`Document ${docId} not found (org ${orgId}) — likely a commit-visibility race, will retry`);
       }
       if (doc.status === DOCUMENT_STATUS.READY) return; // duplicate delivery, already done
 

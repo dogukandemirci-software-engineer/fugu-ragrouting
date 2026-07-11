@@ -37,8 +37,10 @@ const envSchema = z.object({
 
   // Embedding (unchanged by BYOK — Ollama remains valid here as a local/no-cost
   // embedding option; only chat-LLM providers for synthesis/classifier/entity
-  // extraction dropped Ollama support)
-  EMBEDDING_PROVIDER: z.enum(['openai', 'openrouter', 'cohere', 'ollama']).default('openai'),
+  // extraction dropped Ollama support). "gemini" is BYOK-only — see
+  // embedGemini() in embedding.service.ts — and requires the vector column
+  // dimension to match (768 for text-embedding-004, see migration 009).
+  EMBEDDING_PROVIDER: z.enum(['openai', 'openrouter', 'cohere', 'gemini', 'ollama']).default('openai'),
   EMBEDDING_MODEL: z.string().default('text-embedding-3-small'),
   EMBEDDING_DIMENSIONS: z.coerce.number().default(1536),
   // In-process cache for single-text embeddings (identical queries re-embedded

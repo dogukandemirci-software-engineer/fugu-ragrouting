@@ -7,6 +7,10 @@ import { startIngestionConsumer, enqueueIngestion, enqueueDlq, IngestMessage } f
 import { startWebhookRetryScheduler } from './queue/webhook-retry.scheduler';
 import { DocumentIngestionService } from './services/document-ingestion.service';
 
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function handleIngestMessage(msg: IngestMessage): Promise<void> {
   try {
     await DocumentIngestionService.processDocument(msg.docId, msg.orgId);
@@ -14,6 +18,13 @@ async function handleIngestMessage(msg: IngestMessage): Promise<void> {
     const error = err instanceof Error ? err.message : String(err);
     if (msg.attempt < env.INGESTION_MAX_ATTEMPTS) {
       logger.warn('Ingestion attempt failed, re-enqueueing', { docId: msg.docId, attempt: msg.attempt, error });
+      // A first-attempt failure is often the upload request's own DB
+      // transaction not having committed yet by the time this consumer —
+      // running in a separate process/connection — picked up the message
+      // (Kafka/Redpanda delivery can outrun a same-request Postgres commit).
+      // A short delay before the very next attempt gives that race a chance
+      // to resolve without burning through all retries near-instantly.
+      if (msg.attempt === 1) await sleep(300);
       await enqueueIngestion({ ...msg, attempt: msg.attempt + 1 });
     } else {
       logger.error('Ingestion exhausted retries, sending to DLQ', { docId: msg.docId, attempts: msg.attempt, error });
