@@ -65,7 +65,11 @@ export async function enqueueDlq(msg: IngestMessage, error: string): Promise<voi
 export async function startIngestionConsumer(
   handle: (msg: IngestMessage) => Promise<void>
 ): Promise<void> {
-  const consumer = kafka.consumer({ groupId: 'ingestion-workers' });
+  // sessionTimeout is longer than default: embedding calls can retry against
+  // Bedrock throttling for up to ~90s (see invokeBedrockWithRetry), and
+  // eachMessage only heartbeats between messages, not during one — a short
+  // timeout would otherwise evict this consumer from the group mid-job.
+  const consumer = kafka.consumer({ groupId: 'ingestion-workers', sessionTimeout: 120_000 });
   await consumer.connect();
   await consumer.subscribe({ topic: INGEST_TOPIC, fromBeginning: false });
 

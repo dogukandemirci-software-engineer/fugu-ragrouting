@@ -143,7 +143,9 @@ async function invokeBedrockWithRetry(text: string): Promise<number[]> {
       const data = JSON.parse(Buffer.from(res.body).toString('utf-8')) as { embedding: number[] };
       return data.embedding;
     } catch (err) {
-      const isThrottling = err instanceof ThrottlingException;
+      const isThrottling =
+        err instanceof ThrottlingException ||
+        (err instanceof Error && (err.name === 'ThrottlingException' || /too many requests/i.test(err.message)));
       if (!isThrottling || attempt === maxAttempts) {
         throw new Error(`Bedrock embedding error: ${err instanceof Error ? err.message : String(err)}`);
       }
