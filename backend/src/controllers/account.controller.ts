@@ -32,6 +32,16 @@ export const AccountController = {
     res.json({ user: userPublic });
   }),
 
+  getOrgSettings: asyncHandler(async (req: AuthRequest, res: Response, _next: NextFunction) => {
+    const settings = await AccountService.getOrgSettings(req.user!.orgId);
+    res.json({ settings });
+  }),
+
+  updateOrgSettings: asyncHandler(async (req: AuthRequest, res: Response, _next: NextFunction) => {
+    const settings = await AccountService.updateOrgSettings(req.user!.orgId, req.body);
+    res.json({ settings });
+  }),
+
   deleteOrganization: asyncHandler(async (req: AuthRequest, res: Response, _next: NextFunction) => {
     await AccountService.scheduleOrgDeletion({
       orgId: req.user!.orgId,

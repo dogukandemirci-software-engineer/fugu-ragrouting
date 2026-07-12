@@ -6,6 +6,7 @@ import { QUOTA } from '../config/constants';
 import { QuotaExceededError, BYOKRequiredError } from '../utils/errors';
 import { AnswerSynthesisService, SourceChunk } from './answer-synthesis.service';
 import { CredentialService } from './credential.service';
+import { OrganizationRepository } from '../repositories/organization.repository';
 import { embedSingle } from './embedding.service';
 import { EmailService } from './email.service';
 import { logger } from '../utils/logger';
@@ -13,6 +14,7 @@ import type { GraphSearchResult } from '../interfaces/i-graph-repository';
 
 const subRepo = new SubscriptionRepository();
 const vectorRepo = new VectorRepository();
+const orgRepo = new OrganizationRepository();
 
 export interface QueryResponse {
   answer: string;
@@ -135,7 +137,9 @@ export const QueryService = {
       document_id: r.document_id,
       score: r.score,
     }));
-    const synthesis = await AnswerSynthesisService.synthesize(params.query, sourceChunks, credential);
+    const org = await orgRepo.findById(params.org_id);
+    const customInstructions = org?.settings?.custom_instructions as string | undefined;
+    const synthesis = await AnswerSynthesisService.synthesize(params.query, sourceChunks, credential, customInstructions);
 
     // 7. Persist query log
     await QueryService._logQuery(params, result);
@@ -278,7 +282,9 @@ export const QueryService = {
     // close the inner synthesis generator so its AbortController fires and the
     // upstream LLM fetch is cancelled rather than left running.
     let synthesis: { citations: string[]; degraded: boolean } | undefined;
-    const stream = AnswerSynthesisService.synthesizeStream(params.query, sourceChunks, credential);
+    const org = await orgRepo.findById(params.org_id);
+    const customInstructions = org?.settings?.custom_instructions as string | undefined;
+    const stream = AnswerSynthesisService.synthesizeStream(params.query, sourceChunks, credential, customInstructions);
     try {
       let next = await stream.next();
       while (!next.done) {

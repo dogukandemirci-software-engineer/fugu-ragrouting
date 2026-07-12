@@ -13,6 +13,17 @@ export const AccountService = {
     return userRepo.updateProfile(userId, data);
   },
 
+  async updateOrgSettings(orgId: string, patch: { custom_instructions?: string }): Promise<Record<string, unknown>> {
+    const org = await orgRepo.updateSettings(orgId, patch);
+    return org.settings;
+  },
+
+  async getOrgSettings(orgId: string): Promise<Record<string, unknown>> {
+    const org = await orgRepo.findById(orgId);
+    if (!org) throw new Error('Organization not found');
+    return org.settings;
+  },
+
   async scheduleOrgDeletion(params: {
     orgId: string;
     actorRole: string;

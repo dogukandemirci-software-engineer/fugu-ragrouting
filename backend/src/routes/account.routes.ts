@@ -3,6 +3,7 @@ import { AccountController } from '../controllers/account.controller';
 import { requireAuth, requireRole } from '../middlewares/auth.middleware';
 import { validateDto } from '../middlewares/validate-dto.middleware';
 import { UpdateProfileDto } from '../dto/account/update-profile.dto';
+import { UpdateOrgSettingsDto } from '../dto/account/update-org-settings.dto';
 import { rateLimitMiddleware } from '../middlewares/rate-limit.middleware';
 
 const router = Router();
@@ -12,6 +13,14 @@ router.use(rateLimitMiddleware);
 router.patch('/profile', validateDto(UpdateProfileDto), AccountController.updateProfile);
 router.get('/export', AccountController.exportData);
 router.delete('/organization', requireRole('owner'), AccountController.deleteOrganization);
+
+router.get('/organization/settings', AccountController.getOrgSettings);
+router.patch(
+  '/organization/settings',
+  requireRole('owner', 'admin'),
+  validateDto(UpdateOrgSettingsDto),
+  AccountController.updateOrgSettings
+);
 
 // Pending team invitations for the logged-in user — not org-scoped, since a
 // pending invite grants no org membership yet (see organization.repository.ts).

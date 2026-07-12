@@ -125,6 +125,20 @@ export class OrganizationRepository extends BaseRepository {
     );
   }
 
+  // Merges into the existing settings JSONB rather than replacing it wholesale,
+  // so unrelated keys set by other features aren't clobbered by this update.
+  async updateSettings(orgId: string, patch: Record<string, unknown>): Promise<Organization> {
+    const org = await this.queryOne<Organization>(
+      `UPDATE organizations
+       SET settings = settings || $2::jsonb, updated_at = NOW()
+       WHERE id = $1 AND deleted_at IS NULL
+       RETURNING *`,
+      [orgId, JSON.stringify(patch)]
+    );
+    if (!org) throw new Error('Organization not found');
+    return org;
+  }
+
   async generateUniqueSlug(base: string): Promise<string> {
     const normalized = base.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     let slug = normalized;
