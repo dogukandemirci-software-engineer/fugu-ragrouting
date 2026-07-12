@@ -118,12 +118,16 @@ async function embedGemini(texts: string[], credential?: LLMCredentialDecrypted 
 
 const bedrockClient = new BedrockRuntimeClient({ region: env.AWS_REGION });
 
-// Platform-paid default embedding path, never BYOK — credential param is
-// accepted only to match the other providers' call signature for the
-// embedBatch switch below; it's intentionally unused. Auth comes from the
-// EC2 instance's IAM role via the SDK's default credential provider chain.
-async function embedBedrock(texts: string[]): Promise<number[][]> {
-  return mapWithConcurrency(texts, 4, async (text) => {
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// New AWS accounts get a low default TPS quota for on-demand Bedrock models
+// (as low as ~1-2 req/s), so throttling is expected under any concurrency —
+// retry with exponential backoff before giving up.
+async function invokeBedrockWithRetry(text: string): Promise<number[]> {
+  const maxAttempts = 5;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       const res = await bedrockClient.send(
         new InvokeModelCommand({
@@ -136,9 +140,24 @@ async function embedBedrock(texts: string[]): Promise<number[][]> {
       const data = JSON.parse(Buffer.from(res.body).toString('utf-8')) as { embedding: number[] };
       return data.embedding;
     } catch (err) {
-      throw new Error(`Bedrock embedding error: ${err instanceof Error ? err.message : String(err)}`);
+      const isThrottling = err instanceof Error && err.name === 'ThrottlingException';
+      if (!isThrottling || attempt === maxAttempts) {
+        throw new Error(`Bedrock embedding error: ${err instanceof Error ? err.message : String(err)}`);
+      }
+      await sleep(500 * 2 ** (attempt - 1));
     }
-  });
+  }
+  throw new Error('Bedrock embedding error: unreachable');
+}
+
+// Platform-paid default embedding path, never BYOK — credential param is
+// accepted only to match the other providers' call signature for the
+// embedBatch switch below; it's intentionally unused. Auth comes from the
+// EC2 instance's IAM role via the SDK's default credential provider chain.
+// Concurrency is 1: new AWS accounts' default Bedrock TPS quota is too low
+// to safely parallelize (see invokeBedrockWithRetry for the retry policy).
+async function embedBedrock(texts: string[]): Promise<number[][]> {
+  return mapWithConcurrency(texts, 1, invokeBedrockWithRetry);
 }
 
 async function embedOllama(texts: string[]): Promise<number[][]> {
