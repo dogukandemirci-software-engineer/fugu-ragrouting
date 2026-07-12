@@ -172,7 +172,7 @@ async function embedBedrock(texts: string[]): Promise<number[][]> {
 }
 
 async function embedOllama(texts: string[]): Promise<number[][]> {
-  const model = env.EMBEDDING_MODEL.includes('/') ? env.EMBEDDING_MODEL : `nomic-embed-text`;
+  const model = env.EMBEDDING_MODEL;
   const baseUrl = env.OLLAMA_URL ?? 'http://localhost:11434';
 
   // Ollama's HTTP API takes one prompt per request — bound concurrency so we
