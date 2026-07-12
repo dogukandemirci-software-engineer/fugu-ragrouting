@@ -81,11 +81,10 @@ const envSchema = z.object({
   LLM_SYNTHESIS_MAX_TOKENS: z.coerce.number().default(1024),
   LLM_SYNTHESIS_TIMEOUT_MS: z.coerce.number().default(20000),
 
-  // Entity extraction for graph ingestion — FUGU-paid, OpenRouter-backed
+  // Entity extraction for graph ingestion — BYOK-only (see
+  // entity-extraction.service.ts): runs on the organization's own credential,
+  // never a platform-paid key, and is skipped entirely when none is set.
   ENTITY_EXTRACTION_ENABLED: z.coerce.boolean().default(true),
-  ENTITY_EXTRACTION_PROVIDER: z.enum(['openai', 'anthropic', 'openrouter']).default('openrouter'),
-  ENTITY_EXTRACTION_MODEL: z.string().optional(),
-  ENTITY_EXTRACTION_MAX_TOKENS: z.coerce.number().default(512),
 
   // BYOK credential encryption — 32-byte AES-256-GCM master key (hex or
   // base64). Losing this key makes all stored organization API keys

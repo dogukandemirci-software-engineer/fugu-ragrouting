@@ -1,6 +1,6 @@
-import { env } from '../config/env';
 import { logger } from '../utils/logger';
 import { callChatLLM } from '../utils/llm-client';
+import type { LLMCredentialDecrypted } from '../entities/credential.entity';
 
 export interface ExtractedTriple {
   subject: { name: string; type: string };
@@ -90,15 +90,21 @@ function extractTripleObjects(raw: string): Array<{ subject: unknown; predicate:
 }
 
 export const EntityExtractionService = {
-  async extractFromChunk(chunkText: string): Promise<ExtractedTriple[]> {
+  // BYOK-only: entity extraction never runs against a platform-paid key.
+  // Without a credential there's no provider to call, so skip silently
+  // (this is a best-effort enrichment step, not a required one) rather than
+  // falling back to a shared key that may not exist or be misconfigured.
+  async extractFromChunk(chunkText: string, credential: LLMCredentialDecrypted | null | undefined): Promise<ExtractedTriple[]> {
+    if (!credential) return [];
     try {
-      const provider = env.ENTITY_EXTRACTION_PROVIDER;
+      const provider = credential.provider;
       const raw = await callChatLLM({
         provider,
-        model: env.ENTITY_EXTRACTION_MODEL ?? DEFAULT_MODELS[provider],
+        model: credential.model || DEFAULT_MODELS[provider],
         systemPrompt: EXTRACTION_SYSTEM_PROMPT,
         userMessage: chunkText,
-        maxTokens: env.ENTITY_EXTRACTION_MAX_TOKENS,
+        maxTokens: 1024,
+        apiKey: credential.apiKey,
       });
 
       const rawTriples = extractTripleObjects(raw);

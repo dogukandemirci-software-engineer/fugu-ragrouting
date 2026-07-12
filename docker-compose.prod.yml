@@ -131,11 +131,10 @@ services:
       # document-storage path, which is unaffected by this. Revisit switching
       # EMBEDDING_PROVIDER back to bedrock if/when Bedrock quota is confirmed
       # working (see infra/terraform/iam.tf for the IAM policy, already
-      # scoped to both regions). Entity extraction stays on openrouter; it
-      # degrades gracefully (skips graph enrichment) rather than blocking
-      # ingestion, so it isn't the urgent path to fix.
+      # scoped to both regions). Entity extraction is BYOK-only (see
+      # entity-extraction.service.ts) — it runs on the org's own credential
+      # and is skipped entirely without one, never on a platform-paid key.
       EMBEDDING_PROVIDER: ollama
-      ENTITY_EXTRACTION_PROVIDER: openrouter
       EMBEDDING_MODEL: ${EMBEDDING_MODEL:-all-minilm}
       OLLAMA_URL: http://ollama:11434
       EMBEDDING_DIMENSIONS: ${EMBEDDING_DIMENSIONS:-384}

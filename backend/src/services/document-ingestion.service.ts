@@ -13,6 +13,7 @@ import { env } from '../config/env';
 import { enqueueIngestion } from '../queue/ingestion-queue';
 import { mapWithConcurrency } from '../utils/concurrency';
 import { runInOrgScope } from '../config/request-context';
+import type { LLMCredentialDecrypted } from '../entities/credential.entity';
 
 const docRepo = new DocumentRepository();
 const vectorRepo = new VectorRepository();
@@ -38,10 +39,15 @@ interface ChunkRef {
 // Each node/edge carries the source chunk_id so query-time graph traversal can
 // pull the chunk's full text back from pgvector instead of relying on the
 // entity summary alone.
-async function ingestGraphEntities(chunks: ChunkRef[], docId: string, orgId: string): Promise<void> {
+async function ingestGraphEntities(
+  chunks: ChunkRef[],
+  docId: string,
+  orgId: string,
+  credential: LLMCredentialDecrypted | null | undefined
+): Promise<void> {
   await mapWithConcurrency(chunks, 6, async ({ content, chunkId }) => {
     try {
-      const triples = await EntityExtractionService.extractFromChunk(content);
+      const triples = await EntityExtractionService.extractFromChunk(content, credential);
       for (const t of triples) {
         if (!t.subject?.name || !t.object?.name || !t.predicate) continue;
         const subjId = await graphRepo.upsertNode({
@@ -290,9 +296,11 @@ export const DocumentIngestionService = {
 
       await docRepo.updateChunkCount(docId, orgId, chunks.length);
 
-      // 4. Graph enrichment (best-effort, never fails the document)
-      if (env.ENTITY_EXTRACTION_ENABLED) {
-        await ingestGraphEntities(chunkRefs, docId, orgId);
+      // 4. Graph enrichment (best-effort, never fails the document). BYOK-only:
+      // entity extraction never runs on a platform-paid key, so orgs without
+      // a BYOK credential simply skip it (see EntityExtractionService).
+      if (env.ENTITY_EXTRACTION_ENABLED && credential) {
+        await ingestGraphEntities(chunkRefs, docId, orgId, credential);
       }
 
       await docRepo.updateStatus(docId, orgId, DOCUMENT_STATUS.READY);
