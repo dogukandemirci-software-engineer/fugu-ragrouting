@@ -179,8 +179,16 @@ export function Sidebar() {
       )}
       <aside
         className={clsx(
-          'flex flex-col h-screen bg-surface-container-lowest border-r border-outline-variant transition-all duration-200 shrink-0 relative',
-          'fixed md:static inset-y-0 left-0 z-50 md:z-auto',
+          'flex flex-col h-screen bg-surface-container-lowest border-r border-outline-variant transition-all duration-200 shrink-0',
+          // `fixed` and `relative` both set `position`, and Tailwind's
+          // stylesheet defines `.relative` after `.fixed` — an unconditional
+          // `relative` here would always win over `fixed` regardless of
+          // breakpoint, permanently pulling the mobile sidebar back into
+          // normal flow (visually translated off-screen, but still
+          // reserving its full width and pushing the rest of the layout
+          // right). Scope `relative` to md+ where `static` needs a
+          // positioning context for the collapse-toggle button below.
+          'fixed md:static md:relative inset-y-0 left-0 z-50 md:z-auto',
           mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
           collapsed ? 'w-14' : 'w-64'
         )}
