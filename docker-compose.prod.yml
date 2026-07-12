@@ -67,6 +67,25 @@ services:
     networks:
       - fugu-net
 
+  ollama:
+    image: ollama/ollama:latest
+    container_name: fugu-ollama
+    restart: unless-stopped
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ['CMD-SHELL', 'ollama list || exit 1']
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+    networks:
+      - fugu-net
+
   backend:
     image: ${DOCKERHUB_USERNAME}/fugu-backend:${IMAGE_TAG:-latest}
     container_name: fugu-backend
@@ -100,21 +119,26 @@ services:
       COHERE_API_KEY: ${COHERE_API_KEY}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-      # No Ollama container in production. document_chunks now stores
-      # embeddings in dimension-keyed columns (see migration 009 and
-      # vector.repository.ts) so the platform is not locked to one provider's
-      # output size. EMBEDDING_PROVIDER is bedrock — AWS Titan v2, 1024-dim,
-      # platform-paid, authenticated via the EC2 instance's IAM role (see
-      # infra/terraform/iam.tf) — this is now the ONLY embedding path, BYOK
-      # or not; BYOK credentials only ever apply to answer synthesis, never
-      # embedding, so no org can end up with embedding silently failing for
-      # lack of a configured key (the bug this replaced: gemini's embedding
-      # was BYOK-only with no platform fallback). Entity extraction stays on
-      # openrouter; it degrades gracefully (skips graph enrichment) rather
-      # than blocking ingestion, so it isn't the urgent path to fix.
-      EMBEDDING_PROVIDER: bedrock
+      # document_chunks stores embeddings in dimension-keyed columns (see
+      # migration 009 and vector.repository.ts) so the platform is not locked
+      # to one provider's output size. EMBEDDING_PROVIDER is ollama — this
+      # account's Bedrock Titan v2 access throttles every request even at
+      # wide intervals (new-account quota not yet effectively provisioned,
+      # confirmed in both eu-north-1 and eu-west-1), so the platform default
+      # runs against the local Ollama container instead: free, no external
+      # quota, all-minilm (384-dim, ~45MB) sized to fit this instance's tight
+      # RAM budget. S3_DOCUMENTS_BUCKET/AWS_REGION stay configured for the
+      # document-storage path, which is unaffected by this. Revisit switching
+      # EMBEDDING_PROVIDER back to bedrock if/when Bedrock quota is confirmed
+      # working (see infra/terraform/iam.tf for the IAM policy, already
+      # scoped to both regions). Entity extraction stays on openrouter; it
+      # degrades gracefully (skips graph enrichment) rather than blocking
+      # ingestion, so it isn't the urgent path to fix.
+      EMBEDDING_PROVIDER: ollama
       ENTITY_EXTRACTION_PROVIDER: openrouter
-      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-amazon.titan-embed-text-v2:0}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-all-minilm}
+      OLLAMA_URL: http://ollama:11434
+      EMBEDDING_DIMENSIONS: ${EMBEDDING_DIMENSIONS:-384}
       AWS_REGION: ${AWS_REGION:-eu-north-1}
       S3_DOCUMENTS_BUCKET: ${S3_DOCUMENTS_BUCKET}
       FRONTEND_URL: ${FRONTEND_URL}
@@ -132,6 +156,8 @@ services:
       redis:
         condition: service_healthy
       redpanda:
+        condition: service_healthy
+      ollama:
         condition: service_healthy
     healthcheck:
       test: ['CMD', 'node', '-e', "require('http').get('http://127.0.0.1:3001/health', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
@@ -170,3 +196,4 @@ volumes:
   redis_data:
   redpanda_data:
   backend_storage:
+  ollama_data:

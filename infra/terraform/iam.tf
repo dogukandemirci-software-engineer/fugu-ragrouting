@@ -19,6 +19,10 @@ resource "aws_iam_role" "fugu_ec2_role" {
 
 # Bedrock Titan v2 embeddings are the platform-wide default embedding path
 # (not BYOK) — scoped to InvokeModel on the specific foundation model only.
+# Both eu-north-1 and eu-west-1 are allowed: eu-north-1 (the EC2/S3 region)
+# throttled every request on this account even at wide intervals, so the
+# app falls back to invoking the model in eu-west-1 instead (see
+# bedrockClient in embedding.service.ts).
 resource "aws_iam_role_policy" "bedrock_invoke" {
   name = "fugu-bedrock-invoke"
   role = aws_iam_role.fugu_ec2_role.id
@@ -27,9 +31,12 @@ resource "aws_iam_role_policy" "bedrock_invoke" {
     Version = "2012-10-17"
     Statement = [
       {
-        Effect   = "Allow"
-        Action   = "bedrock:InvokeModel"
-        Resource = "arn:aws:bedrock:${var.aws_region}::foundation-model/amazon.titan-embed-text-v2:0"
+        Effect = "Allow"
+        Action = "bedrock:InvokeModel"
+        Resource = [
+          "arn:aws:bedrock:${var.aws_region}::foundation-model/amazon.titan-embed-text-v2:0",
+          "arn:aws:bedrock:eu-west-1::foundation-model/amazon.titan-embed-text-v2:0",
+        ]
       }
     ]
   })
