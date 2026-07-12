@@ -103,24 +103,28 @@ services:
       # No Ollama container in production. document_chunks now stores
       # embeddings in dimension-keyed columns (see migration 009 and
       # vector.repository.ts) so the platform is not locked to one provider's
-      # output size — each org's BYOK provider writes/reads its own column.
-      # EMBEDDING_PROVIDER is only the DEFAULT for orgs with no BYOK embedding
-      # credential. openrouter has no funded key here, so default to gemini
-      # (BYOK-only, no FUGU-paid fallback — orgs must configure their own key
-      # for retrieval to work off the default). Entity extraction stays on
+      # output size. EMBEDDING_PROVIDER is bedrock — AWS Titan v2, 1024-dim,
+      # platform-paid, authenticated via the EC2 instance's IAM role (see
+      # infra/terraform/iam.tf) — this is now the ONLY embedding path, BYOK
+      # or not; BYOK credentials only ever apply to answer synthesis, never
+      # embedding, so no org can end up with embedding silently failing for
+      # lack of a configured key (the bug this replaced: gemini's embedding
+      # was BYOK-only with no platform fallback). Entity extraction stays on
       # openrouter; it degrades gracefully (skips graph enrichment) rather
       # than blocking ingestion, so it isn't the urgent path to fix.
-      EMBEDDING_PROVIDER: gemini
+      EMBEDDING_PROVIDER: bedrock
       ENTITY_EXTRACTION_PROVIDER: openrouter
-      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-text-embedding-004}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-amazon.titan-embed-text-v2:0}
+      AWS_REGION: ${AWS_REGION:-eu-north-1}
+      S3_DOCUMENTS_BUCKET: ${S3_DOCUMENTS_BUCKET}
       FRONTEND_URL: ${FRONTEND_URL}
       CREDENTIAL_ENCRYPTION_KEY: ${CREDENTIAL_ENCRYPTION_KEY}
       KAFKA_BROKERS: redpanda:29092
       INGESTION_QUEUE_ENABLED: 'true'
     volumes:
-      # StorageService persists uploaded file buffers to <cwd>/storage/documents
-      # so failed ingestions can be retried without a re-upload. Without a
-      # named volume here, every redeploy (new container) loses all of them.
+      # Legacy read-only path: documents uploaded before the S3 migration
+      # only exist here — StorageService.read() falls back to this volume on
+      # an S3 miss. New uploads go straight to S3, nothing new is written here.
       - backend_storage:/app/storage
     depends_on:
       postgres:

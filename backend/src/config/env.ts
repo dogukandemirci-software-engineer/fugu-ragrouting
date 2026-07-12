@@ -40,9 +40,17 @@ const envSchema = z.object({
   // extraction dropped Ollama support). "gemini" is BYOK-only — see
   // embedGemini() in embedding.service.ts — and requires the vector column
   // dimension to match (768 for text-embedding-004, see migration 009).
-  EMBEDDING_PROVIDER: z.enum(['openai', 'openrouter', 'cohere', 'gemini', 'ollama']).default('openai'),
-  EMBEDDING_MODEL: z.string().default('text-embedding-3-small'),
-  EMBEDDING_DIMENSIONS: z.coerce.number().default(1536),
+  // "bedrock" (AWS Titan v2, 1024-dim) is the platform-paid default — never
+  // BYOK, authenticated via the EC2 instance's IAM role, no API key needed.
+  EMBEDDING_PROVIDER: z.enum(['openai', 'openrouter', 'cohere', 'gemini', 'ollama', 'bedrock']).default('bedrock'),
+  EMBEDDING_MODEL: z.string().default('amazon.titan-embed-text-v2:0'),
+  EMBEDDING_DIMENSIONS: z.coerce.number().default(1024),
+
+  // AWS (Bedrock embeddings, S3 document storage) — credentials are NOT read
+  // from env; the AWS SDK v3 default credential provider chain picks up the
+  // EC2 instance profile automatically. Only region + bucket name are config.
+  AWS_REGION: z.string().default('eu-north-1'),
+  S3_DOCUMENTS_BUCKET: z.string().optional(),
   // In-process cache for single-text embeddings (identical queries re-embedded
   // on every request otherwise). 0 size disables it.
   EMBEDDING_CACHE_SIZE: z.coerce.number().default(1000),

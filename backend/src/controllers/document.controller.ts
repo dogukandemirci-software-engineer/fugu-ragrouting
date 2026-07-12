@@ -41,7 +41,9 @@ export const DocumentController = {
   }),
 
   delete: asyncHandler(async (req: AuthRequest, res: Response, _next: NextFunction) => {
+    const doc = await docRepo.findById(req.params.id, req.user!.orgId);
     await docRepo.delete(req.params.id, req.user!.orgId);
+    if (doc) await StorageService.delete(doc.storage_path);
     res.status(204).end();
   }),
 

@@ -1,6 +1,6 @@
 /**
  * Multi-provider embedding service.
- * Provider is selected via EMBEDDING_PROVIDER env var.
+ * Provider is selected via EMBEDDING_PROVIDER env var (default: bedrock).
  *
  * Providers:
  *   openai      — OpenAI text-embedding-3-small / text-embedding-3-large
@@ -8,7 +8,10 @@
  *   cohere      — Cohere embed-english-v3.0 / embed-multilingual-v3.0
  *   gemini      — Google Generative Language API (text-embedding-004, etc.) — BYOK only
  *   ollama      — Local Ollama (nomic-embed-text, mxbai-embed-large, etc.) — free, no API key
+ *   bedrock     — AWS Bedrock Titan Text Embeddings v2 — platform-paid default,
+ *                  never BYOK, authenticated via the EC2 instance's IAM role
  */
+import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime';
 import { env } from '../config/env';
 import { mapWithConcurrency } from '../utils/concurrency';
 import { LRUCache } from '../utils/lru-cache';
@@ -33,7 +36,7 @@ function cacheKey(text: string): string {
   return `${env.EMBEDDING_PROVIDER}:${env.EMBEDDING_MODEL}:${text}`;
 }
 
-export type EmbeddingProvider = 'openai' | 'openrouter' | 'cohere' | 'gemini' | 'ollama';
+export type EmbeddingProvider = 'openai' | 'openrouter' | 'cohere' | 'gemini' | 'ollama' | 'bedrock';
 
 async function embedOpenAI(texts: string[], credential?: LLMCredentialDecrypted | null): Promise<number[][]> {
   const apiKey = resolveKey(
@@ -113,6 +116,31 @@ async function embedGemini(texts: string[], credential?: LLMCredentialDecrypted 
   });
 }
 
+const bedrockClient = new BedrockRuntimeClient({ region: env.AWS_REGION });
+
+// Platform-paid default embedding path, never BYOK — credential param is
+// accepted only to match the other providers' call signature for the
+// embedBatch switch below; it's intentionally unused. Auth comes from the
+// EC2 instance's IAM role via the SDK's default credential provider chain.
+async function embedBedrock(texts: string[]): Promise<number[][]> {
+  return mapWithConcurrency(texts, 4, async (text) => {
+    try {
+      const res = await bedrockClient.send(
+        new InvokeModelCommand({
+          modelId: env.EMBEDDING_MODEL,
+          contentType: 'application/json',
+          accept: 'application/json',
+          body: JSON.stringify({ inputText: text }),
+        })
+      );
+      const data = JSON.parse(Buffer.from(res.body).toString('utf-8')) as { embedding: number[] };
+      return data.embedding;
+    } catch (err) {
+      throw new Error(`Bedrock embedding error: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  });
+}
+
 async function embedOllama(texts: string[]): Promise<number[][]> {
   const model = env.EMBEDDING_MODEL.includes('/') ? env.EMBEDDING_MODEL : `nomic-embed-text`;
   const baseUrl = env.OLLAMA_URL ?? 'http://localhost:11434';
@@ -157,6 +185,10 @@ export async function embedBatch(texts: string[], credential?: LLMCredentialDecr
 
     case 'ollama':
       vectors = await embedOllama(texts);
+      break;
+
+    case 'bedrock':
+      vectors = await embedBedrock(texts);
       break;
 
     default:
