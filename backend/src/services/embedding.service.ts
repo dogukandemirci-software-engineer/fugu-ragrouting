@@ -11,7 +11,7 @@
  *   bedrock     — AWS Bedrock Titan Text Embeddings v2 — platform-paid default,
  *                  never BYOK, authenticated via the EC2 instance's IAM role
  */
-import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime';
+import { BedrockRuntimeClient, InvokeModelCommand, ThrottlingException } from '@aws-sdk/client-bedrock-runtime';
 import { env } from '../config/env';
 import { mapWithConcurrency } from '../utils/concurrency';
 import { LRUCache } from '../utils/lru-cache';
@@ -122,11 +122,14 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// New AWS accounts get a low default TPS quota for on-demand Bedrock models
-// (as low as ~1-2 req/s), so throttling is expected under any concurrency —
-// retry with exponential backoff before giving up.
+// New AWS accounts get a very low default TPS quota for on-demand Bedrock
+// models (observed: throttling even at 1 req per several seconds), so a
+// short backoff isn't enough — cap out at a long wait and keep retrying
+// rather than giving up, since the alternative is the document landing in
+// the DLQ. A minimum spacing between calls (see embedBedrock) reduces how
+// often this path is even hit.
 async function invokeBedrockWithRetry(text: string): Promise<number[]> {
-  const maxAttempts = 5;
+  const maxAttempts = 8;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       const res = await bedrockClient.send(
@@ -140,11 +143,11 @@ async function invokeBedrockWithRetry(text: string): Promise<number[]> {
       const data = JSON.parse(Buffer.from(res.body).toString('utf-8')) as { embedding: number[] };
       return data.embedding;
     } catch (err) {
-      const isThrottling = err instanceof Error && err.name === 'ThrottlingException';
+      const isThrottling = err instanceof ThrottlingException;
       if (!isThrottling || attempt === maxAttempts) {
         throw new Error(`Bedrock embedding error: ${err instanceof Error ? err.message : String(err)}`);
       }
-      await sleep(500 * 2 ** (attempt - 1));
+      await sleep(Math.min(1000 * 2 ** (attempt - 1), 20000));
     }
   }
   throw new Error('Bedrock embedding error: unreachable');
@@ -154,10 +157,16 @@ async function invokeBedrockWithRetry(text: string): Promise<number[]> {
 // accepted only to match the other providers' call signature for the
 // embedBatch switch below; it's intentionally unused. Auth comes from the
 // EC2 instance's IAM role via the SDK's default credential provider chain.
-// Concurrency is 1: new AWS accounts' default Bedrock TPS quota is too low
-// to safely parallelize (see invokeBedrockWithRetry for the retry policy).
+// Concurrency is 1 with a minimum spacing between requests: new AWS
+// accounts' default Bedrock TPS quota is too low to safely parallelize
+// (see invokeBedrockWithRetry for the per-request retry policy).
 async function embedBedrock(texts: string[]): Promise<number[][]> {
-  return mapWithConcurrency(texts, 1, invokeBedrockWithRetry);
+  const results: number[][] = [];
+  for (const text of texts) {
+    if (results.length > 0) await sleep(1000);
+    results.push(await invokeBedrockWithRetry(text));
+  }
+  return results;
 }
 
 async function embedOllama(texts: string[]): Promise<number[][]> {
