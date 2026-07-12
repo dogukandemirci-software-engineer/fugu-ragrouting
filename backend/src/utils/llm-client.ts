@@ -1,6 +1,6 @@
 import { env } from '../config/env';
 
-export type LLMProvider = 'openai' | 'anthropic' | 'openrouter' | 'gemini';
+export type LLMProvider = 'openai' | 'anthropic' | 'openrouter' | 'gemini' | 'grok';
 
 export interface LLMCallParams {
   provider: LLMProvider;
@@ -103,6 +103,31 @@ async function callOpenAI(params: LLMCallParams): Promise<string> {
   return data.choices[0].message.content.trim();
 }
 
+// xAI's Grok API is BYOK-only (no FUGU-paid fallback) and OpenAI-compatible
+// (same chat completions request/response shape) — see callOpenAI above.
+async function callGrok(params: LLMCallParams): Promise<string> {
+  if (!params.apiKey) throw new Error('Grok requires an API key (BYOK)');
+  const res = await fetch('https://api.x.ai/v1/chat/completions', {
+    method: 'POST',
+    signal: params.signal,
+    headers: {
+      Authorization: `Bearer ${params.apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: params.model,
+      max_tokens: params.maxTokens,
+      messages: [
+        { role: 'system', content: params.systemPrompt },
+        { role: 'user', content: params.userMessage },
+      ],
+    }),
+  });
+  if (!res.ok) throw new Error(`Grok error ${res.status}: ${await res.text()}`);
+  const data = (await res.json()) as { choices: Array<{ message: { content: string } }> };
+  return data.choices[0].message.content.trim();
+}
+
 // Gemini is BYOK-only (no FUGU-paid fallback), so params.apiKey is always
 // required here — there is no env.GEMINI_API_KEY to fall back to.
 async function callGemini(params: LLMCallParams): Promise<string> {
@@ -138,6 +163,8 @@ export async function callChatLLM(params: LLMCallParams): Promise<string> {
       return callOpenAI(params);
     case 'openrouter':
       return callOpenRouter(params);
+    case 'grok':
+      return callGrok(params);
   }
 }
 
@@ -275,6 +302,12 @@ export function streamChatLLM(params: LLMCallParams): AsyncGenerator<string> {
       return streamOpenAICompatible(params, 'https://openrouter.ai/api/v1/chat/completions', {
         Authorization: `Bearer ${apiKey}`,
         'HTTP-Referer': env.FRONTEND_URL,
+      });
+    }
+    case 'grok': {
+      if (!params.apiKey) throw new Error('Grok requires an API key (BYOK)');
+      return streamOpenAICompatible(params, 'https://api.x.ai/v1/chat/completions', {
+        Authorization: `Bearer ${params.apiKey}`,
       });
     }
   }

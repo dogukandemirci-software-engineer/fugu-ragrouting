@@ -31,6 +31,11 @@ const STATIC_MODELS: Record<Exclude<LLMCredentialProvider, 'openrouter'>, Catalo
     // for a plain "create key, don't touch billing" signup.
     { id: 'gemini-2.0-flash', label: 'gemini-2.0-flash (free tier)', free: true },
   ],
+  grok: [
+    { id: 'grok-4', label: 'grok-4', free: false },
+    { id: 'grok-3', label: 'grok-3', free: false },
+    { id: 'grok-3-mini', label: 'grok-3-mini', free: false },
+  ],
 };
 
 // Curated fallback so OpenRouter always has a usable list (including at

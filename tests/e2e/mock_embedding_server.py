@@ -13,11 +13,12 @@ meaningful without needing a real model.
 """
 import hashlib
 import json
+import os
 import re
 import struct
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-DIM = 384
+DIM = int(os.environ.get("MOCK_EMBED_DIM", "384"))
 STOPWORDS = {
     "the", "a", "an", "is", "are", "was", "were", "of", "in", "on", "to",
     "and", "or", "for", "with", "how", "what", "does", "do", "it", "its",
@@ -75,7 +76,7 @@ class Handler(BaseHTTPRequestHandler):
 
 def serve(port: int = 11434):
     server = HTTPServer(("127.0.0.1", port), Handler)
-    print(f"mock embedding server listening on :{port}")
+    print(f"mock embedding server listening on :{port}, dim={DIM}")
     server.serve_forever()
 
 

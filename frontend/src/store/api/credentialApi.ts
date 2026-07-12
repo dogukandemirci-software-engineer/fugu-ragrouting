@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQueryWithReauth } from '../../lib/apiClient';
 
-export type LLMCredentialProvider = 'anthropic' | 'openai' | 'gemini' | 'openrouter';
+export type LLMCredentialProvider = 'anthropic' | 'openai' | 'gemini' | 'openrouter' | 'grok';
 
 export interface LLMCredential {
   provider: LLMCredentialProvider;

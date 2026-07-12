@@ -6,7 +6,7 @@ import { asyncHandler } from '../middlewares/async-handler';
 import { ValidationError } from '../utils/errors';
 import { LLMCredentialProvider } from '../entities/credential.entity';
 
-const VALID_PROVIDERS: LLMCredentialProvider[] = ['anthropic', 'openai', 'gemini', 'openrouter'];
+const VALID_PROVIDERS: LLMCredentialProvider[] = ['anthropic', 'openai', 'gemini', 'openrouter', 'grok'];
 
 export const CredentialController = {
   get: asyncHandler(async (req: AuthRequest, res: Response, _next: NextFunction) => {

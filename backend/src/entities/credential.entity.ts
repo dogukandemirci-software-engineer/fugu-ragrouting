@@ -1,4 +1,4 @@
-export type LLMCredentialProvider = 'anthropic' | 'openai' | 'gemini' | 'openrouter';
+export type LLMCredentialProvider = 'anthropic' | 'openai' | 'gemini' | 'openrouter' | 'grok';
 
 export interface OrganizationLLMCredential {
   id: string;

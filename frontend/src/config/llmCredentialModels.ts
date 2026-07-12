@@ -5,4 +5,5 @@ export const PROVIDER_LABELS: Record<LLMCredentialProvider, string> = {
   openai: 'OpenAI',
   gemini: 'Google Gemini',
   openrouter: 'OpenRouter',
+  grok: 'xAI (Grok)',
 };
