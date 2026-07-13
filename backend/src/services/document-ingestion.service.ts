@@ -253,11 +253,13 @@ export const DocumentIngestionService = {
       }
 
       // 2. Chunk. all-minilm (the Ollama embedding model) has a ~256-token
-      // context window — well under the default 1200-char chunk size, which
-      // caused every ingestion to fail with "input length exceeds the
-      // context length". Use a smaller chunk size for it; other providers
-      // (Bedrock, OpenAI, etc.) keep the larger default.
-      const chunkSize = env.EMBEDDING_PROVIDER === 'ollama' ? 700 : 1200;
+      // context window. 700 chars/chunk still overflowed it in practice
+      // (production logs showed "input length exceeds the context length"
+      // even at that size) — dense/punctuation-heavy text can tokenize at
+      // under 3 chars/token, so 700 chars isn't a safe margin. Use a much
+      // smaller size for it; other providers (Bedrock, OpenAI, etc.) keep
+      // the larger default.
+      const chunkSize = env.EMBEDDING_PROVIDER === 'ollama' ? 350 : 1200;
       const chunks = chunkText(rawText, chunkSize);
 
       // Use the org's BYOK credential for embedding when its provider matches
