@@ -53,9 +53,12 @@ export function LandingPage() {
   const { data: plansData } = useListPlansQuery();
   const PLANS = (plansData?.plans ?? []).map((p) => ({
     name: p.label,
+    price: p.price,
+    period: p.period,
     limit: p.tier === 'free' ? 'Included query allowance' : `${p.queries} queries / month`,
     features: p.features,
     highlighted: p.highlighted,
+    contactUs: p.contactUs,
   }));
 
   return (
@@ -241,6 +244,10 @@ export function LandingPage() {
                 }`}
               >
                 <h3 className="text-[20px] font-semibold text-on-surface mb-1">{plan.name}</h3>
+                <div className="flex items-baseline gap-1.5 mb-1">
+                  <span className="text-[28px] font-headline font-semibold text-on-surface">{plan.price}</span>
+                  {plan.period && <span className="text-[13px] text-on-surface-variant">/{plan.period}</span>}
+                </div>
                 <p className="text-[14px] text-on-surface-variant mb-5">{plan.limit}</p>
                 <ul className="space-y-2 mb-6">
                   {plan.features.map((f) => (
@@ -249,16 +256,25 @@ export function LandingPage() {
                     </li>
                   ))}
                 </ul>
-                <Link
-                  to="/sign-up"
-                  className={
-                    plan.highlighted
-                      ? 'btn-brand w-full justify-center py-2.5 text-[14px]'
-                      : 'block text-center py-2.5 rounded-lg text-[14px] font-semibold text-on-surface border border-outline-variant hover:bg-surface-container transition-all'
-                  }
-                >
-                  Get started
-                </Link>
+                {plan.contactUs ? (
+                  <a
+                    href="mailto:sales@fugu-routes.com?subject=Enterprise%20plan%20inquiry"
+                    className="block text-center py-2.5 rounded-lg text-[14px] font-semibold text-on-surface border border-outline-variant hover:bg-surface-container transition-all"
+                  >
+                    Contact us
+                  </a>
+                ) : (
+                  <Link
+                    to="/sign-up"
+                    className={
+                      plan.highlighted
+                        ? 'btn-brand w-full justify-center py-2.5 text-[14px]'
+                        : 'block text-center py-2.5 rounded-lg text-[14px] font-semibold text-on-surface border border-outline-variant hover:bg-surface-container transition-all'
+                    }
+                  >
+                    Get started
+                  </Link>
+                )}
               </div>
             ))}
           </div>
@@ -314,6 +330,12 @@ export function LandingPage() {
         </p>
         <span className="hidden sm:inline text-outline-variant">·</span>
         <Link to="/docs" className="text-[13px] text-on-surface-variant hover:text-on-surface transition-colors">Documentation</Link>
+        <span className="hidden sm:inline text-outline-variant">·</span>
+        <Link to="/faq" className="text-[13px] text-on-surface-variant hover:text-on-surface transition-colors">FAQ</Link>
+        <span className="hidden sm:inline text-outline-variant">·</span>
+        <Link to="/compare/pinecone" className="text-[13px] text-on-surface-variant hover:text-on-surface transition-colors">vs. Pinecone</Link>
+        <span className="hidden sm:inline text-outline-variant">·</span>
+        <Link to="/compare/langchain" className="text-[13px] text-on-surface-variant hover:text-on-surface transition-colors">vs. LangChain</Link>
         <span className="hidden sm:inline text-outline-variant">·</span>
         <Link to="/privacy" className="text-[13px] text-on-surface-variant hover:text-on-surface transition-colors">Privacy Policy</Link>
       </footer>

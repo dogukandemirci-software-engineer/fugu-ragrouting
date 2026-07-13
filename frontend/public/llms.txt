@@ -1,0 +1,41 @@
+# FUGU
+
+> FUGU is a retrieval-augmented generation (RAG) platform that classifies each
+> incoming query and automatically routes it to a vector search backend
+> (pgvector), a graph traversal backend (Apache AGE), or both — then grounds
+> the generated answer in the retrieved chunks.
+
+FUGU is aimed at teams who want production-grade RAG infrastructure without
+choosing upfront between vector search and graph search, and who need strict
+per-organization data isolation.
+
+## Key facts
+
+- Query routing: an embedding-centroid classifier decides per-query whether
+  to use vector search, graph search, or a hybrid of both — no manual backend
+  selection required.
+- Tenant isolation: every document, chunk, and graph path is scoped to
+  organization_id at the database (row-level security) layer, not just
+  filtered in application code.
+- Bring your own key (BYOK): answer generation runs on the customer's own
+  LLM API key (OpenAI, Anthropic, Gemini, OpenRouter, Grok); FUGU never
+  charges markup on model usage.
+- Document ingestion: supports PDF, DOCX, CSV, XLSX, JSON, and plain text,
+  parsed and chunked automatically.
+- Compliance: GDPR and Turkish KVKK aligned, with self-serve data export and
+  a documented erasure workflow.
+- Security: SSRF-hardened outbound webhooks, complete audit logging of
+  mutating actions, API key management, team roles.
+
+## Pages
+
+- [Homepage](https://fugu-routes.com/): product overview, pricing, security posture.
+- [Docs](https://fugu-routes.com/docs): API reference, SDK quick start.
+- [FAQ](https://fugu-routes.com/faq): common questions about routing, BYOK, pricing, security.
+- [FUGU vs Pinecone](https://fugu-routes.com/compare/pinecone): comparison for teams evaluating a managed vector database vs. a routed RAG platform.
+- [FUGU vs LangChain](https://fugu-routes.com/compare/langchain): comparison for teams evaluating a DIY orchestration framework vs. a managed RAG platform.
+
+## Contact
+
+For questions not covered by the docs or FAQ, sign up at https://fugu-routes.com/sign-up
+and use the in-dashboard support page.

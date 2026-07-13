@@ -91,7 +91,7 @@ export const BillingService = {
           status: stripeSub.status as any,
           tier,
           current_period_end: new Date(stripeSub.current_period_end * 1000),
-          monthly_query_limit: tier === 'enterprise' ? 100_000 : 10_000,
+          monthly_query_limit: tier === 'enterprise' ? 20_000 : 1_000,
         });
 
         await AuditLogService.logAudit(AUDIT_ACTIONS.SUBSCRIPTION_CHANGED, {
@@ -112,7 +112,7 @@ export const BillingService = {
         await subRepo.update(orgId, {
           status: 'canceled',
           tier: 'free',
-          monthly_query_limit: 1000,
+          monthly_query_limit: 20,
         });
         break;
       }

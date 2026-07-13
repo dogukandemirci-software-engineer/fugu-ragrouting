@@ -12,10 +12,13 @@ export const billingApi = createApi({
         tier: 'free' | 'pro' | 'enterprise';
         label: string;
         price: string;
+        period: string;
         queries: string;
         monthlyQueryLimit: number;
+        storageLabel: string;
         features: string[];
         highlighted?: boolean;
+        contactUs?: boolean;
       }>;
     }, void>({
       query: () => '/billing/plans',

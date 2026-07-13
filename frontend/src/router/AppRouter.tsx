@@ -38,6 +38,9 @@ const TenantIsolationPage = lazy(() => import('../pages/dashboard/TenantIsolatio
 const LandingPage = lazy(() => import('../pages/LandingPage').then(m => ({ default: m.LandingPage })));
 const PrivacyPolicyPage = lazy(() => import('../pages/PrivacyPolicyPage').then(m => ({ default: m.PrivacyPolicyPage })));
 const DocsPage = lazy(() => import('../pages/DocsPage').then(m => ({ default: m.DocsPage })));
+const FaqPage = lazy(() => import('../pages/FaqPage').then(m => ({ default: m.FaqPage })));
+const ComparePinecone = lazy(() => import('../pages/marketing/ComparePinecone').then(m => ({ default: m.ComparePinecone })));
+const CompareLangChain = lazy(() => import('../pages/marketing/CompareLangChain').then(m => ({ default: m.CompareLangChain })));
 
 // System
 const NotFoundPage = lazy(() => import('../pages/system/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
@@ -53,6 +56,9 @@ export function AppRouter() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
           <Route path="/docs" element={<DocsPage />} />
+          <Route path="/faq" element={<FaqPage />} />
+          <Route path="/compare/pinecone" element={<ComparePinecone />} />
+          <Route path="/compare/langchain" element={<CompareLangChain />} />
 
           {/* Auth routes (redirect to dashboard if already logged in) */}
           <Route element={<PublicRoute />}>
