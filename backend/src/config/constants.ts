@@ -15,6 +15,11 @@ export const AUTH_RATE_LIMIT = {
   SLIDING_WINDOW_KEY_PREFIX: 'rl:auth:',
 } as const;
 
+// Ceiling on chunks per document — without it, a pathologically large upload
+// (e.g. a huge concatenated log file) turns into thousands of embedding calls
+// and can loop the ingestion worker on one document for a very long time.
+export const MAX_CHUNKS_PER_DOCUMENT = 2000;
+
 export const PAGINATION = {
   DEFAULT_LIMIT: 20,
   MAX_LIMIT: 100,

@@ -3,7 +3,7 @@ import { DocumentRepository } from '../repositories/document.repository';
 import { VectorRepository } from '../repositories/vector.repository';
 import { GraphRepository } from '../repositories/graph.repository';
 import { DocumentParserService } from './document-parser.service';
-import { DOCUMENT_STATUS } from '../config/constants';
+import { DOCUMENT_STATUS, MAX_CHUNKS_PER_DOCUMENT } from '../config/constants';
 import { logger } from '../utils/logger';
 import { embedBatch } from './embedding.service';
 import { CredentialService } from './credential.service';
@@ -261,6 +261,12 @@ export const DocumentIngestionService = {
       // the larger default.
       const chunkSize = env.EMBEDDING_PROVIDER === 'ollama' ? 350 : 1200;
       const chunks = chunkText(rawText, chunkSize);
+
+      if (chunks.length > MAX_CHUNKS_PER_DOCUMENT) {
+        throw new Error(
+          `Document too large: ${chunks.length} chunks exceeds the ${MAX_CHUNKS_PER_DOCUMENT}-chunk limit per document`
+        );
+      }
 
       // Use the org's BYOK credential for embedding when its provider matches
       // the configured EMBEDDING_PROVIDER, falling back to the static env key
