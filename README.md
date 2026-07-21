@@ -4,6 +4,8 @@ A production-grade RAG (Retrieval-Augmented Generation) platform that intelligen
 
 ## Overview
 
+![Fugu Hero Architecture](fugu_hero_architecture.png)
+
 FUGU combines:
 - **Smart Query Routing**: Classifies queries into "general knowledge" (answered via LLM directly) or "document-grounded" (answered via RAG), routing each to the optimal LLM provider.
 - **Multi-Provider Support**: Pluggable embedding (OpenAI, OpenRouter, Cohere, Gemini, Ollama, AWS Bedrock) and synthesis (OpenAI, OpenRouter, Cohere, Anthropic, Gemini) providers with both platform-paid and Bring-Your-Own-Key (BYOK) options.
@@ -28,6 +30,8 @@ FUGU combines:
 | **Payments** | Stripe |
 | **Email** | SMTP (configurable, disabled by default in dev) |
 | **Infra** | Docker Compose, GitHub Actions CI/CD, Terraform (IAM + S3 provisioning) |
+
+![Fugu Architecture](fugu_architecture.png)
 
 ## Project Structure
 
@@ -62,6 +66,8 @@ FUGU combines:
     ├── git-token.txt             # GitHub PAT (gitignored, invalid — needs renewal)
     └── terraform-aws-access-key.txt # Terraform admin IAM credentials (gitignored)
 ```
+
+![Fugu Data Flow](fugu_data_flow.png)
 
 ## Key Concepts
 
