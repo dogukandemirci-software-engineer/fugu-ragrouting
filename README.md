@@ -468,6 +468,4 @@ Proprietary. See LICENSE file for details.
 
 ## Contact & Support
 
-- **Issues**: GitHub Issues (this repo)
-- **Email**: support@fugu.ai (if applicable)
-- **Dashboard**: https://fugu-routes.com (prod), http://localhost:5173 (local dev)
+- **Dashboard**: https://fugu-routes.com (old production ,not in prod now), http://localhost:5173 (local dev)
