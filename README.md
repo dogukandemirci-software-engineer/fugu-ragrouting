@@ -17,6 +17,10 @@ FUGU combines:
 
 ![Github Actions](github-actions.png)
 
+## Pipeline
+
+![Pipeline](pipeline.png)
+
 ## Tech Stack
 
 | Layer | Tech |
