@@ -15,6 +15,8 @@ FUGU combines:
 - **Secure Credentials**: BYOK provider keys encrypted in the database (AES-256-GCM, requires a 32-byte master key at deploy time).
 - **Billing Integration**: Stripe payment processing with webhook support for subscription lifecycle events.
 
+![Github Actions](github-actions.png)
+
 ## Tech Stack
 
 | Layer | Tech |
