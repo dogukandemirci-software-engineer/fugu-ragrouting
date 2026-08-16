@@ -1,12 +1,10 @@
-import 'reflect-metadata';
 import { Request, Response, NextFunction } from 'express';
 import { validate } from 'class-validator';
-import { plainToInstance } from 'class-transformer';
 import { ValidationError } from '../utils/errors';
 
 export function validateDto<T extends object>(DtoClass: new () => T) {
   return async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
-    const instance = plainToInstance(DtoClass, req.body);
+    const instance = Object.assign(new DtoClass(), req.body) as T;
     const errors = await validate(instance, {
       whitelist: true,
       forbidNonWhitelisted: false,

@@ -1,6 +1,4 @@
-import 'reflect-metadata';
 import { IsString, MinLength, MaxLength, IsOptional, IsIn, IsInt, Min, Max } from 'class-validator';
-import { Type } from 'class-transformer';
 
 export class QueryDto {
   @IsString()
@@ -13,7 +11,6 @@ export class QueryDto {
   strategy?: 'vector_only' | 'graph_only' | 'hybrid' | 'auto';
 
   @IsOptional()
-  @Type(() => Number)
   @IsInt()
   @Min(1)
   @Max(50)
