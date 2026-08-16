@@ -248,7 +248,7 @@ export function QueryExplorerPage() {
                     </div>
                   ))}
                   {displayResult.explain.graph_available === false && (
-                    <div className="col-span-2 md:col-span-4 flex items-center gap-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-[12px]">
+                    <div className="col-span-2 md:col-span-4 flex items-center gap-2 px-3 py-2 bg-surface-container border border-outline-variant rounded-lg text-on-surface text-[12px]">
                       ⚠ Graph routing unavailable — results served via vector-only fallback
                     </div>
                   )}
@@ -263,7 +263,7 @@ export function QueryExplorerPage() {
 
               {/* Degraded warning */}
               {displayResult?.answer_degraded && (
-                <div className="mx-4 mt-4 flex items-center gap-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-[12px]">
+                <div className="mx-4 mt-4 flex items-center gap-2 px-3 py-2 bg-surface-container border border-outline-variant rounded-lg text-on-surface text-[12px]">
                   <AlertTriangle size={14} className="shrink-0" />
                   Answer generation is temporarily unavailable — showing raw retrieved passages below.
                 </div>

@@ -31,10 +31,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             className={clsx(
-              'w-full px-3 py-2.5 text-body-sm font-body text-on-surface bg-surface-container-lowest',
+              'magic-input w-full px-3 py-2.5 text-body-sm font-body text-on-surface bg-surface-container-lowest',
               'border rounded-lg transition-all duration-150',
               'placeholder:text-on-surface-variant/60',
-              'focus:outline-none focus:ring-2 focus:ring-accent-violet/30 focus:border-accent-violet',
+              'focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black',
               error ? 'border-error' : 'border-outline-variant hover:border-outline',
               leftIcon && 'pl-10',
               rightElement && 'pr-10',

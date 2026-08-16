@@ -47,7 +47,7 @@ export function QueryExplainPanel({ result }: Props) {
         </div>
 
         {explain.graph_available === false && (
-          <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-body-sm">
+          <div className="flex items-center gap-2 px-3 py-2 bg-surface-container border border-outline-variant rounded-lg text-on-surface text-body-sm">
             ⚠ Graph routing was unavailable — results served via vector-only fallback
           </div>
         )}

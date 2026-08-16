@@ -23,8 +23,8 @@ export function QuotaBanner() {
   }
 
   return (
-    <div className="flex items-center gap-3 px-6 py-3 bg-amber-50 border-b border-amber-200 text-amber-900 text-body-sm font-body">
-      <AlertTriangle size={16} className="text-amber-600 shrink-0" />
+    <div className="flex items-center gap-3 px-6 py-3 bg-surface-container border-b border-outline-variant text-on-surface text-body-sm font-body">
+      <AlertTriangle size={16} className="text-on-surface-variant shrink-0" />
       <span className="flex-1">
         You've used <strong>{Math.round(percent * 100)}%</strong> of your monthly queries ({used.toLocaleString()}/{limit.toLocaleString()}).{' '}
         <Link to="/dashboard/billing" className="font-semibold underline hover:no-underline">
@@ -32,7 +32,7 @@ export function QuotaBanner() {
         </Link>{' '}
         to avoid interruption.
       </span>
-      <button onClick={dismiss} className="p-1 rounded hover:bg-amber-100 transition-colors shrink-0">
+      <button onClick={dismiss} className="p-1 rounded hover:bg-surface-container-high transition-colors shrink-0">
         <X size={14} />
       </button>
     </div>

@@ -11,9 +11,7 @@ interface RadialGaugeProps {
 
 const GRADIENT_ID = 'radial-gauge-brand-gradient';
 
-// Circular progress gauge — animates its arc in on mount instead of a
-// flat bar snapping to width. Uses the brand terracotta→gold gradient
-// (falls back to a flat error red past the danger threshold).
+// Circular progress gauge with a monochrome Magic UI-style progress arc.
 export function RadialGauge({ percent, size = 96, strokeWidth = 8, label, sublabel, danger }: RadialGaugeProps) {
   const clamped = Math.min(Math.max(percent, 0), 100);
   const radius = (size - strokeWidth) / 2;
@@ -32,8 +30,8 @@ export function RadialGauge({ percent, size = 96, strokeWidth = 8, label, sublab
       <svg width={size} height={size} className="-rotate-90">
         <defs>
           <linearGradient id={GRADIENT_ID} x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#C15F3C" />
-            <stop offset="100%" stopColor="#D4A24E" />
+            <stop offset="0%" stopColor="#000000" />
+            <stop offset="100%" stopColor="#777777" />
           </linearGradient>
         </defs>
         <circle
@@ -51,7 +49,7 @@ export function RadialGauge({ percent, size = 96, strokeWidth = 8, label, sublab
           fill="none"
           strokeWidth={strokeWidth}
           strokeLinecap="round"
-          stroke={danger ? '#B3261E' : `url(#${GRADIENT_ID})`}
+          stroke={danger ? '#111111' : `url(#${GRADIENT_ID})`}
           strokeDasharray={circumference}
           strokeDashoffset={animatedOffset}
           style={{ transition: 'stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1)' }}

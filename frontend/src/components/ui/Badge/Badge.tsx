@@ -10,11 +10,11 @@ interface BadgeProps {
 }
 
 const variantClasses: Record<BadgeVariant, string> = {
-  'full-access': 'bg-secondary-container text-white',
+  'full-access': 'bg-black text-white',
   'read-only': 'bg-surface-container-highest text-on-surface',
   'success': 'text-success-green',
   'error': 'bg-error-container text-on-error-container',
-  'warning': 'bg-amber-100 text-amber-800',
+  'warning': 'bg-surface-container-high text-on-surface',
   'info': 'bg-secondary-fixed text-on-secondary-fixed',
   'neutral': 'bg-surface-container-high text-on-surface-variant',
 };

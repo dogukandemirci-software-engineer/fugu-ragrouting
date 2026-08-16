@@ -1,5 +1,6 @@
 import React from 'react';
 import { clsx } from 'clsx';
+import { MagicCard } from '../magicui/MagicCard';
 
 interface CardProps {
   className?: string;
@@ -13,16 +14,15 @@ export function Card({ className, children, accent, padding = 'md', hoverable }:
   const paddings = { sm: 'p-4', md: 'p-6', lg: 'p-8' };
 
   return (
-    <div
+    <MagicCard
       className={clsx(
-        'bg-surface-container-lowest border border-outline-variant rounded-card',
         paddings[padding],
-        accent && 'border-l-2 border-l-secondary',
-        hoverable && 'transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md',
+        accent && 'border-black',
+        hoverable && 'transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl',
         className
       )}
     >
       {children}
-    </div>
+    </MagicCard>
   );
 }

@@ -171,7 +171,7 @@ export function ApiKeysPage() {
       {/* Reveal key modal */}
       <Modal open={!!newKey} onClose={() => setNewKey(null)} title="Save your API key" size="md">
         <div className="space-y-4">
-          <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-900 text-body-sm">
+          <div className="flex items-start gap-2 p-3 bg-surface-container border border-outline-variant rounded-lg text-on-surface text-body-sm">
             <Eye size={16} className="mt-0.5 shrink-0" />
             <span>This key will only be shown once. Store it securely — you cannot view it again.</span>
           </div>

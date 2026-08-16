@@ -23,13 +23,13 @@ export function Button({
   children,
   ...props
 }: ButtonProps) {
-  const base = 'inline-flex items-center justify-center font-body font-medium rounded-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 focus:outline-none focus:ring-2 focus:ring-accent-violet/40';
+  const base = 'magic-button inline-flex items-center justify-center font-body font-medium rounded-xl transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-black/20';
 
   const variants = {
-    brand: 'btn-brand',
-    secondary: 'bg-surface-container-lowest border border-border-subtle text-primary hover:bg-surface-container',
-    destructive: 'border border-error text-error hover:bg-error hover:text-white',
-    ghost: 'text-on-surface-variant hover:bg-surface-container-high hover:text-primary',
+    brand: 'magic-button-solid',
+    secondary: 'magic-button-outline',
+    destructive: 'magic-button-outline',
+    ghost: 'magic-button-ghost',
   };
 
   return (
@@ -39,7 +39,7 @@ export function Button({
       className={clsx(base, variants[variant], sizeClasses[size], className)}
     >
       {loading && (
-        <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+        <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
         </svg>
