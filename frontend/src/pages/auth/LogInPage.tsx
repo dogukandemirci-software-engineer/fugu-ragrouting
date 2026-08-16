@@ -6,7 +6,6 @@ import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { GoogleSignInButton } from '../../components/ui/GoogleSignInButton/GoogleSignInButton';
 import { useLogInMutation } from '../../store/api/authApi';
 import toast from 'react-hot-toast';
 
@@ -74,15 +73,9 @@ export function LogInPage() {
         </Button>
       </form>
 
-      <div className="mt-6 flex items-center gap-3">
-        <hr className="flex-1 border-outline-variant" />
-        <span className="text-body-sm text-on-surface-variant">or</span>
-        <hr className="flex-1 border-outline-variant" />
-      </div>
-
-      <div className="mt-4">
-        <GoogleSignInButton label="Continue with Google" />
-      </div>
+      <p className="mt-5 text-center text-[11px] uppercase tracking-[0.24em] text-on-surface-variant/70">
+        Secured with FUGU JWT sessions
+      </p>
 
       <p className="mt-6 text-center text-body-sm text-on-surface-variant">
         Don't have an account?{' '}

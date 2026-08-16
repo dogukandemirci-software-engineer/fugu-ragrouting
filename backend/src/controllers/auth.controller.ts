@@ -54,10 +54,4 @@ export const AuthController = {
     res.json({ message: 'Password reset successfully' });
   }),
 
-  googleAuth: asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
-    const { id_token } = req.body;
-    if (!id_token) { res.status(400).json({ error: { code: 'VALIDATION_ERROR', message: 'id_token is required' } }); return; }
-    const result = await AuthService.googleAuth(id_token);
-    res.json(result);
-  }),
 };

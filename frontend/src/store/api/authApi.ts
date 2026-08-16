@@ -53,17 +53,6 @@ export const authApi = createApi({
     resetPassword: builder.mutation<{ message: string }, { token: string; new_password: string }>({
       query: (body) => ({ url: '/auth/reset-password', method: 'POST', body }),
     }),
-    googleAuth: builder.mutation<
-      { tokens: { access_token: string; refresh_token: string }; user: AuthUser; organization_id: string },
-      { id_token: string }
-    >({
-      query: (body) => ({ url: '/auth/google', method: 'POST', body }),
-      async onQueryStarted(_, { dispatch, queryFulfilled }) {
-        const { data } = await queryFulfilled;
-        dispatch(setCredentials({ user: data.user, organizationId: data.organization_id, accessToken: data.tokens.access_token }));
-        localStorage.setItem('refresh_token', data.tokens.refresh_token);
-      },
-    }),
     switchOrg: builder.mutation<
       { tokens: { access_token: string; refresh_token: string }; user: AuthUser; organization_id: string },
       string
@@ -84,7 +73,6 @@ export const {
   useLogoutMutation,
   useForgotPasswordMutation,
   useResetPasswordMutation,
-  useGoogleAuthMutation,
   useSwitchOrgMutation,
   useListMyOrganizationsQuery,
 } = authApi;

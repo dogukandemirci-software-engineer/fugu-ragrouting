@@ -107,9 +107,6 @@ const envSchema = z.object({
   KAFKA_BROKERS: z.string().default('localhost:9092'),
   INGESTION_MAX_ATTEMPTS: z.coerce.number().default(3),
 
-  // Google OAuth
-  GOOGLE_CLIENT_ID: z.string().optional(),
-
   FRONTEND_URL: z.string().url().default('http://localhost:5173'),
 });
 

@@ -18,7 +18,6 @@ import {
   NotFoundError,
   ValidationError,
 } from '../utils/errors';
-import { verifyGoogleIdToken } from './google-auth.service';
 import { UserPublic } from '../entities/user.entity';
 import { query } from '../config/database';
 import { AuditLogService } from './audit-log.service';
@@ -289,66 +288,6 @@ export const AuthService = {
     await query('UPDATE password_resets SET used_at = NOW() WHERE id = $1', [rows[0].id]);
     // Revoke all refresh tokens for security
     await query('UPDATE refresh_tokens SET revoked_at = NOW() WHERE user_id = $1 AND revoked_at IS NULL', [rows[0].user_id]);
-  },
-
-  /**
-   * Sign in or register via Google ID token (One Tap / OAuth flow).
-   * - If user exists by google_id → log in
-   * - If user exists by email → link google_id and log in
-   * - Otherwise → create new user + org
-   */
-  async googleAuth(idToken: string): Promise<AuthResult> {
-    const googleUser = await verifyGoogleIdToken(idToken);
-
-    // 1. Existing user by google_id
-    let user = await userRepo.findByGoogleId(googleUser.sub);
-
-    if (!user) {
-      // 2. Existing user by email → link accounts
-      user = await userRepo.findByEmail(googleUser.email);
-      if (user) {
-        await userRepo.setGoogleId(user.id, googleUser.sub, googleUser.picture);
-        // Re-fetch to get updated avatar
-        user = (await userRepo.findById(user.id))!;
-      }
-    }
-
-    if (!user) {
-      // 3. New user — create user + org in a transaction
-      const client = await pool.connect();
-      try {
-        await client.query('BEGIN');
-
-        user = await userRepo.create({
-          email: googleUser.email,
-          password_hash: null,
-          full_name: googleUser.name,
-          avatar_url: googleUser.picture ?? null,
-          email_verified_at: new Date(),
-        });
-
-        await userRepo.setGoogleId(user.id, googleUser.sub, googleUser.picture);
-
-        const orgName = googleUser.name.split(' ')[0] + "'s Workspace";
-        const slug = await orgRepo.generateUniqueSlug(orgName);
-        const org = await orgRepo.create({ name: orgName, slug, owner_user_id: user.id });
-        await subRepo.create(org.id);
-
-        await client.query('COMMIT');
-      } catch (err) {
-        await client.query('ROLLBACK');
-        throw err;
-      } finally {
-        client.release();
-      }
-    }
-
-    const orgs = await orgRepo.getUserOrganizations(user!.id);
-    const org = orgs[0];
-    const member = await orgRepo.getMember(org.id, user!.id);
-    const tokens = await AuthService._issueTokens(user!.id, org.id, member?.role ?? 'owner', user!.email);
-    const { password_hash: _, ...userPublic } = user!;
-    return { tokens, user: userPublic, organization_id: org.id };
   },
 
   async _issueTokens(userId: string, orgId: string, role: string, email: string): Promise<AuthTokens> {

@@ -11,7 +11,6 @@ import { RefreshTokenDto } from '../dto/auth/refresh-token.dto';
 const router = Router();
 
 router.post('/sign-up', authRateLimitMiddleware, validateDto(SignUpDto), AuthController.signUp);
-router.post('/google', authRateLimitMiddleware, AuthController.googleAuth);
 router.post('/log-in', authRateLimitMiddleware, validateDto(LogInDto), AuthController.logIn);
 router.post('/refresh', validateDto(RefreshTokenDto), AuthController.refresh);
 router.post('/logout', validateDto(RefreshTokenDto), AuthController.logout);

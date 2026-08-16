@@ -6,7 +6,6 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { GoogleSignInButton } from '../../components/ui/GoogleSignInButton/GoogleSignInButton';
 import { useSignUpMutation } from '../../store/api/authApi';
 import toast from 'react-hot-toast';
 
@@ -79,15 +78,9 @@ export function SignUpPage() {
         </Button>
       </form>
 
-      <div className="mt-6 flex items-center gap-3">
-        <hr className="flex-1 border-outline-variant" />
-        <span className="text-body-sm text-on-surface-variant">or</span>
-        <hr className="flex-1 border-outline-variant" />
-      </div>
-
-      <div className="mt-4">
-        <GoogleSignInButton label="Sign up with Google" />
-      </div>
+      <p className="mt-5 text-center text-[11px] uppercase tracking-[0.24em] text-on-surface-variant/70">
+        JWT session created on signup
+      </p>
 
       <p className="mt-6 text-center text-body-sm text-on-surface-variant">
         Already have an account?{' '}

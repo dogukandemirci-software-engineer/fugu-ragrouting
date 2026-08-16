@@ -1,88 +1,55 @@
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { LogoMark } from '../ui/Logo';
+import { MagicCard } from '../ui/magicui/MagicCard';
+import { BorderBeam } from '../ui/magicui/BorderBeam';
 
-const FEATURE_PILLS = [
-  { label: 'Vector Search', className: 'border-accent-violet/40 bg-accent-violet/15' },
-  { label: 'Graph Routing', className: 'border-accent-teal-glow/40 bg-accent-teal-glow/15' },
-  { label: 'Hybrid Mode', className: 'border-accent-magenta/40 bg-accent-magenta/15' },
-  { label: 'Auto-classify', className: 'border-secondary/40 bg-secondary/15' },
-];
+const FEATURE_PILLS = ['Vector search', 'Graph routing', 'Hybrid retrieval', 'JWT sessions'];
 
 export function AuthLayout() {
   return (
-    <div className="min-h-screen flex">
-      {/* Left: form panel */}
-      <div className="flex-1 flex flex-col justify-center px-8 py-12 bg-surface-container-lowest lg:max-w-[480px] xl:max-w-[520px] relative z-10">
-        <div className="w-full max-w-sm mx-auto">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 mb-10">
-            <LogoMark size={36} className="rounded-xl" />
+    <div className="auth-grid min-h-screen text-black">
+      <div className="auth-orb -left-32 -top-32" aria-hidden="true" />
+      <div className="auth-orb -bottom-40 right-0" aria-hidden="true" />
+
+      <div className="relative z-10 mx-auto grid min-h-screen max-w-7xl items-center gap-12 px-6 py-10 lg:grid-cols-[0.9fr_1.1fr] lg:px-12">
+        <div className="hidden lg:block">
+          <div className="mb-10 flex items-center gap-3">
+            <LogoMark size={42} className="rounded-xl grayscale" />
             <div>
-              <div className="text-[19px] font-headline font-semibold text-primary leading-tight">FUGU</div>
-              <div className="text-[10px] uppercase tracking-wider font-semibold text-on-surface-variant leading-none">
-                RAG Infrastructure
-              </div>
+              <div className="text-xl font-bold tracking-tight">FUGU</div>
+              <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-black/50">RAG infrastructure</div>
             </div>
-          </Link>
-
-          <Outlet />
-        </div>
-      </div>
-
-      {/* Right: warm ink panel — deliberate contrast with the paper-toned form side */}
-      <div className="hidden lg:block flex-1 relative overflow-hidden panel-dark">
-        {/* Ambient glow orbs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full blur-[120px] pointer-events-none bg-accent-violet/[0.22] animate-float" />
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full blur-[100px] pointer-events-none bg-accent-magenta/[0.18] animate-float" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-3/4 left-1/3 w-48 h-48 rounded-full blur-[80px] pointer-events-none bg-accent-teal-glow/[0.14] animate-float" style={{ animationDelay: '2s' }} />
-
-        {/* Content */}
-        <div className="relative z-10 flex flex-col justify-between h-full p-16">
-          {/* Top badge */}
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-white/10 border border-white/20 rounded-full w-fit text-white text-[13px] font-medium backdrop-blur-sm">
-            <span className="w-2 h-2 rounded-full bg-accent-teal-glow shadow-teal-glow" />
-            Intelligent RAG Routing
           </div>
-
-          {/* Center content */}
-          <div>
-            <h2 className="font-headline text-[46px] leading-[1.15] font-semibold text-white mb-6 tracking-tight">
-              Route queries
-              <span className="block brand-gradient-text">
-                with AI precision
+          <p className="mb-5 text-xs font-semibold uppercase tracking-[0.28em] text-black/45">Private AI routing layer</p>
+          <h1 className="max-w-xl text-5xl font-bold leading-[1.02] tracking-[-0.06em] xl:text-7xl">
+            Your data.
+            <br />
+            <span className="text-black/45">Routed precisely.</span>
+          </h1>
+          <p className="mt-7 max-w-md text-base leading-7 text-black/60">
+            A focused workspace for routing every question across vector and graph retrieval with a secure JWT session.
+          </p>
+          <div className="mt-9 flex max-w-md flex-wrap gap-2">
+            {FEATURE_PILLS.map((pill) => (
+              <span key={pill} className="rounded-full border border-black/15 bg-white/60 px-3 py-1.5 text-xs font-medium text-black/65 backdrop-blur">
+                {pill}
               </span>
-            </h2>
-            <p className="text-[17px] text-white/60 leading-relaxed max-w-md mb-10">
-              FUGU automatically routes your queries between vector and graph backends,
-              delivering the most relevant results every time.
-            </p>
-
-            {/* Feature pills */}
-            <div className="flex flex-wrap gap-3">
-              {FEATURE_PILLS.map(({ label, className }) => (
-                <span
-                  key={label}
-                  className={`px-3 py-1.5 text-[12px] font-semibold rounded-full border text-white/90 backdrop-blur-sm ${className}`}
-                >
-                  {label}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Bottom stats */}
-          <div className="grid grid-cols-3 gap-6">
-            {[
-              { value: '< 200ms', label: 'Avg latency' },
-              { value: '99.9%', label: 'Uptime SLA' },
-              { value: '10M+', label: 'Queries routed' },
-            ].map(({ value, label }) => (
-              <div key={label}>
-                <div className="font-headline text-[24px] font-semibold text-white mb-1">{value}</div>
-                <div className="text-[12px] text-white/50 uppercase tracking-wider font-medium">{label}</div>
-              </div>
             ))}
           </div>
+        </div>
+
+        <div className="flex justify-center lg:justify-end">
+          <MagicCard className="relative w-full max-w-md p-7 sm:p-9">
+            <BorderBeam />
+            <div className="mb-8 flex items-center gap-3 lg:hidden">
+              <LogoMark size={36} className="rounded-lg grayscale" />
+              <div>
+                <div className="text-lg font-bold tracking-tight">FUGU</div>
+                <div className="text-[9px] font-semibold uppercase tracking-[0.2em] text-black/45">RAG infrastructure</div>
+              </div>
+            </div>
+            <Outlet />
+          </MagicCard>
         </div>
       </div>
     </div>
