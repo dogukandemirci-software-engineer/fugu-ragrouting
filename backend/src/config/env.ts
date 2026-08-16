@@ -8,16 +8,12 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(3001),
 
   DATABASE_URL: z.string().url(),
-  REDIS_URL: z.string().url(),
+  REDIS_URL: z.string().url().default('redis://localhost:6379'),
 
   JWT_ACCESS_SECRET: z.string().min(32),
   JWT_REFRESH_SECRET: z.string().min(32),
   JWT_ACCESS_EXPIRES_IN: z.string().default('15m'),
   JWT_REFRESH_EXPIRES_IN: z.string().default('7d'),
-
-  SUPABASE_URL: z.string().url(),
-  SUPABASE_ANON_KEY: z.string().optional(),
-  SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
 
   STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
@@ -100,7 +96,7 @@ const envSchema = z.object({
       return buf.length === 32;
     },
     { message: 'must decode to exactly 32 bytes for AES-256-GCM (64 hex chars, or base64 of 32 bytes)' }
-  ),
+  ).optional(),
 
   // Ingestion queue (Redpanda / Kafka-compatible)
   INGESTION_QUEUE_ENABLED: z.coerce.boolean().default(true),

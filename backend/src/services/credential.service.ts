@@ -8,6 +8,13 @@ import { logger } from '../utils/logger';
 
 const credentialRepo = new CredentialRepository();
 
+function getCredentialMasterKey(): Buffer {
+  if (!env.CREDENTIAL_ENCRYPTION_KEY) {
+    throw new ValidationError('Credential encryption is not configured. Set CREDENTIAL_ENCRYPTION_KEY before saving API keys.');
+  }
+  return parseMasterKey(env.CREDENTIAL_ENCRYPTION_KEY);
+}
+
 // Maps a raw provider error (which may embed upstream response bodies —
 // quota figures, account/project identifiers, internal doc links) to a
 // short, safe classification. Provider fetch helpers throw
@@ -62,7 +69,7 @@ export const CredentialService = {
   async save(orgId: string, provider: LLMCredentialProvider, model: string, apiKey: string): Promise<LLMCredentialDisplay> {
     await testCredential(provider, model, apiKey);
 
-    const { ciphertext, iv, authTag } = encryptCredential(apiKey, parseMasterKey(env.CREDENTIAL_ENCRYPTION_KEY));
+    const { ciphertext, iv, authTag } = encryptCredential(apiKey, getCredentialMasterKey());
     const row = await credentialRepo.upsert({
       organization_id: orgId,
       provider,
@@ -88,7 +95,7 @@ export const CredentialService = {
     return {
       provider: row.provider,
       model: row.model,
-      apiKey: decryptCredential(row.encrypted_api_key, row.key_iv, row.key_auth_tag, parseMasterKey(env.CREDENTIAL_ENCRYPTION_KEY)),
+      apiKey: decryptCredential(row.encrypted_api_key, row.key_iv, row.key_auth_tag, getCredentialMasterKey()),
     };
   },
 
