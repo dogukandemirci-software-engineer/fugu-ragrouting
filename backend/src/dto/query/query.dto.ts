@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { IsString, MinLength, MaxLength, IsOptional, IsIn, IsInt, Min, Max } from 'class-validator';
 import { Type } from 'class-transformer';
 

@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { Request, Response, NextFunction } from 'express';
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
